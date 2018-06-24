@@ -72,8 +72,7 @@ namespace CJ.Exp.Admin.Controllers
       {
         return View(model);
       }
-
-      //var user = await _userManager.GetUserAsync(User);
+      
       var user = await _authService.GetUserByPrincipalAsync(User);
       if (user == null)
       {

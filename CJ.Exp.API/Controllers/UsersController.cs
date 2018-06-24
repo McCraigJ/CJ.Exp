@@ -37,7 +37,7 @@ namespace WebApiJwt.Controllers
     [HttpPost]
     public async Task<IActionResult> Login([FromBody] LoginAM model)
     {      
-      var result = await _authService.AuthenticateAsync(model.Email, model.Password);
+      var result = await _authService.AuthenticateAsync(model.Email, model.Password, false, false);
 
       if (result.Succeeded)
       {

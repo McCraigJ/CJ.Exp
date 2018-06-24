@@ -23,9 +23,9 @@ namespace CJ.Exp.BusinessLogic.Auth
       _signInManager = signInManager;
     }
 
-    public async Task<AuthResultSM> AuthenticateAsync(string userName, string password)
+    public async Task<AuthResultSM> AuthenticateAsync(string userName, string password, bool isPersistent, bool lockoutOnFailure)
     {
-      var result = await _signInManager.PasswordSignInAsync(userName, password, false, false);
+      var result = await _signInManager.PasswordSignInAsync(userName, password, isPersistent, lockoutOnFailure);
       return AuthResultFactory.CreateResultFromSignInResult(result);      
     }
 
@@ -70,7 +70,7 @@ namespace CJ.Exp.BusinessLogic.Auth
 
     public async Task<AuthResultSM> RegisterUserAsync(UserSM user, string password)
     {
-      var appUser = new ApplicationUser { UserName = user.Email, Email = user.Email };
+      var appUser = Mapper.Map<ApplicationUser>(user);
       var result = await _userManager.CreateAsync(appUser, password);
       return AuthResultFactory.CreateResultFromIdentityResult(result);      
     }
@@ -120,20 +120,18 @@ namespace CJ.Exp.BusinessLogic.Auth
         {
           return AuthResultFactory.CreateResultFromIdentityResult(setEmailResult);
         }
-      }
-      
-      if (userUpdates.PhoneNumber != user.PhoneNumber)
-      {
-        var setPhoneResult = await _userManager.SetPhoneNumberAsync(user, userUpdates.PhoneNumber);
-        if (!setPhoneResult.Succeeded)
+        var setUserNameResult = await _userManager.SetUserNameAsync(user, userUpdates.Email);
+        if (!setUserNameResult.Succeeded)
         {
-          return AuthResultFactory.CreateResultFromIdentityResult(setPhoneResult);
+          return AuthResultFactory.CreateResultFromIdentityResult(setEmailResult);
         }
       }
-      return AuthResultFactory.CreateGenericSuccessResult();
-    }
 
-    
-    
+      user.FirstName = userUpdates.FirstName;
+      user.LastName = userUpdates.LastName;
+      var result = await _userManager.UpdateAsync(user);
+      
+      return AuthResultFactory.CreateResultFromIdentityResult(result);
+    }    
   }
 }

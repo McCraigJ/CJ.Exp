@@ -2,9 +2,6 @@
 using CJ.Exp.ServiceModels;
 using CJ.Exp.ServiceModels.Auth;
 using Microsoft.AspNetCore.Identity;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace CJ.Exp.BusinessLogic.Auth
 {
@@ -12,7 +9,9 @@ namespace CJ.Exp.BusinessLogic.Auth
   {
     public ModelMapper()
     {
-      CreateMap<UserSM, ApplicationUser>();
+      CreateMap<UserSM, ApplicationUser>()
+       .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.Email));
+
       CreateMap<ApplicationUser, UserSM>();
 
       CreateMap<IdentityError, ProcessingErrorSM>();

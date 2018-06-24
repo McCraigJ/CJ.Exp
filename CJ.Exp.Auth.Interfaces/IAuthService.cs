@@ -9,7 +9,7 @@ namespace CJ.Exp.Auth.Interfaces
   public interface IAuthService
   {
     bool IsSignedIn(ClaimsPrincipal principal);
-    Task<AuthResultSM> AuthenticateAsync(string userName, string password);
+    Task<AuthResultSM> AuthenticateAsync(string userName, string password, bool isPersistent, bool lockoutOnFailure);
     Task SignInAsync(UserSM user);
     Task<AuthResultSM> RegisterUserAsync(UserSM user, string password);
     Task<string> GeneratePasswordResetTokenAsync(string email);

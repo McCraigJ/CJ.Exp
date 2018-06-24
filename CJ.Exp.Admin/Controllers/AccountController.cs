@@ -57,7 +57,7 @@ namespace CJ.Exp.Admin.Controllers
       {
         // This doesn't count login failures towards account lockout
         // To enable password failures to trigger account lockout, set lockoutOnFailure: true
-        var result = await _authService.AuthenticateAsync(model.Email, model.Password);
+        var result = await _authService.AuthenticateAsync(model.Email, model.Password, model.RememberMe, false);
         if (result.Succeeded)
         {
           _logger.LogInformation("User logged in.");
@@ -111,7 +111,7 @@ namespace CJ.Exp.Admin.Controllers
         {
           _logger.LogInformation("User created a new account with password.");
 
-          await _authService.AuthenticateAsync(user.Email, model.Password);
+          await _authService.AuthenticateAsync(user.Email, model.Password, false, false);
 
           _logger.LogInformation("User created a new account with password.");
           return RedirectToLocal(returnUrl);
