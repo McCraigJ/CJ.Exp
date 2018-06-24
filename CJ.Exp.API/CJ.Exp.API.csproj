@@ -21,6 +21,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CJ.Exp.Auth\CJ.Exp.BusinessLogic.Auth.csproj" />
+    <ProjectReference Include="..\CJ.Exp.Data\CJ.Exp.Data.csproj" />
   </ItemGroup>
 
 </Project>

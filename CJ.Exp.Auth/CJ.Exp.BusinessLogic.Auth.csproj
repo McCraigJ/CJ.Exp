@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CJ.Exp.Auth.Interfaces\CJ.Exp.Auth.Interfaces.csproj" />
+    <ProjectReference Include="..\CJ.Exp.Data\CJ.Exp.Data.csproj" />
     <ProjectReference Include="..\CJ.Exp.ServiceModels\CJ.Exp.ServiceModels.csproj" />
   </ItemGroup>
 

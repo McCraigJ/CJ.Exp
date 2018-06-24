@@ -1,10 +1,9 @@
 ﻿using AutoMapper;
 using CJ.Exp.Auth.Interfaces;
+using CJ.Exp.Data.Models;
 using CJ.Exp.ServiceModels;
 using CJ.Exp.ServiceModels.Auth;
 using Microsoft.AspNetCore.Identity;
-using System;
-using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 

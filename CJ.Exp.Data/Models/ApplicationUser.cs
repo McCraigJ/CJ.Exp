@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System;
 
-namespace CJ.Exp.ServiceModels.Auth
+namespace CJ.Exp.Data.Models
 {
   public class ApplicationUser : IdentityUser
   {

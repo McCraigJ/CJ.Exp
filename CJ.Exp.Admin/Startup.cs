@@ -1,9 +1,7 @@
 ﻿using AutoMapper;
 using CJ.Exp.Admin.Services;
-using CJ.Exp.Auth.Interfaces;
-using CJ.Exp.BusinessLogic.Auth;
-using CJ.Exp.BusinessLogic.Auth.Data;
-using CJ.Exp.ServiceModels.Auth;
+using CJ.Exp.Data;
+using CJ.Exp.Data.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -24,17 +22,17 @@ namespace CJ.Exp.Admin
 
     // This method gets called by the runtime. Use this method to add services to the container.
     public void ConfigureServices(IServiceCollection services)
-    {
-      services.AddDbContext<AuthDbContext>(options =>
-          options.UseSqlServer(Configuration.GetConnectionString("CJ.Exp.ConnectionString"), b => b.MigrationsAssembly("CJ.Exp.BusinessLogic.Auth")));
+    {      
+      services.AddDbContext<ExpDbContext>(options =>
+          options.UseSqlServer(Configuration.GetConnectionString("CJ.Exp.ConnectionString"), b => b.MigrationsAssembly("CJ.Exp.Data")));
 
       services.AddIdentity<ApplicationUser, IdentityRole>()
-          .AddEntityFrameworkStores<AuthDbContext>()
+          .AddEntityFrameworkStores<ExpDbContext>()
           .AddDefaultTokenProviders();
 
       // Add application services.
       services.AddTransient<IEmailSender, EmailSender>();
-      services.AddTransient<IAuthService, AuthService>();
+      CommonStartup.AddCommonServices(services);            
 
       services.AddAutoMapper();
       services.AddMvc();

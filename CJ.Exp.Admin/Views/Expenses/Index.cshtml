@@ -1,0 +1,26 @@
+﻿@model ExpensesVM
+@{
+  ViewData["Title"] = "Expenses";
+}
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col">DateTime</th>
+      <th scope="col">Expense Type</th>
+      <th scope="col">Amount</th>
+    </tr>
+  </thead>
+  <tbody>
+    @foreach (var exp in Model.Expenses)
+    {
+      <tr>
+        <td>@exp.ExpenseDate.ToShortDateString()</td>
+        <td>@exp.ExpenseType.ExpenseType</td>
+        <td>@string.Format("0:c", exp.ExpenseValue)</td>
+      </tr>
+
+    }
+
+  </tbody>
+</table>

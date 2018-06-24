@@ -22,6 +22,19 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CJ.Exp.Auth\CJ.Exp.BusinessLogic.Auth.csproj" />
+    <ProjectReference Include="..\CJ.Exp.BusinessLogic.Interfaces\CJ.Exp.BusinessLogic.Interfaces.csproj" />
+    <ProjectReference Include="..\CJ.Exp.BusinessLogic\CJ.Exp.BusinessLogic.csproj" />
+    <ProjectReference Include="..\CJ.Exp.CommonStartup\CJ.Exp.CommonStartup.csproj" />
+    <ProjectReference Include="..\CJ.Exp.Data\CJ.Exp.Data.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="Views\ExpenseTypes\Index.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Expenses\Index.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
   </ItemGroup>
 
 </Project>

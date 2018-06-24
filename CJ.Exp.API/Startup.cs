@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using CJ.Exp.Auth.Interfaces;
 using CJ.Exp.BusinessLogic.Auth;
-using CJ.Exp.BusinessLogic.Auth.Data;
-using CJ.Exp.ServiceModels.Auth;
+using CJ.Exp.Data;
+using CJ.Exp.Data.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -16,9 +10,10 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using System;
+using System.IdentityModel.Tokens.Jwt;
+using System.Text;
 
 namespace CJ.Exp.API
 {
@@ -35,11 +30,11 @@ namespace CJ.Exp.API
     public void ConfigureServices(IServiceCollection services)
     {
       services.AddCors();
-      services.AddDbContext<AuthDbContext>(options =>
-          options.UseSqlServer(Configuration.GetConnectionString("CJ.Exp.ConnectionString"), b => b.MigrationsAssembly("CJ.Exp.BusinessLogic.Auth")));
+      services.AddDbContext<ExpDbContext>(options =>
+          options.UseSqlServer(Configuration.GetConnectionString("CJ.Exp.ConnectionString"), b => b.MigrationsAssembly("CJ.Exp.Data")));
 
       services.AddIdentity<ApplicationUser, IdentityRole>()
-          .AddEntityFrameworkStores<AuthDbContext>()
+          .AddEntityFrameworkStores<ExpDbContext>()
           .AddDefaultTokenProviders();
 
 

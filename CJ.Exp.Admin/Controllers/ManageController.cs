@@ -1,21 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Encodings.Web;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using CJ.Exp.Admin.Models;
-using CJ.Exp.Admin.Models.ManageViewModels;
+﻿using CJ.Exp.Admin.Models.ManageViewModels;
 using CJ.Exp.Admin.Services;
 using CJ.Exp.Auth.Interfaces;
 using CJ.Exp.ServiceModels;
 using CJ.Exp.ServiceModels.Auth;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using System;
+using System.Text.Encodings.Web;
+using System.Threading.Tasks;
 
 namespace CJ.Exp.Admin.Controllers
 {

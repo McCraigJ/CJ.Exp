@@ -1,0 +1,22 @@
+﻿@model ExpenseTypesVM
+@{
+  ViewData["Title"] = "Expense Types";
+}
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col">Expense Type</th>      
+    </tr>
+  </thead>
+  <tbody>
+    @foreach (var exp in Model.ExpenseTypes)
+    {
+      <tr>
+        <td>@exp.ExpenseType</td>        
+      </tr>
+
+    }
+
+  </tbody>
+</table>
