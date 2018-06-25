@@ -41,7 +41,22 @@ namespace CJ.Exp.BusinessLogic
 
     public bool DeleteExpenseType(ExpenseTypeSM expenseType)
     {
-      throw new NotImplementedException();
+      try
+      {
+        var exp = _data.ExpenseTypes.SingleOrDefault(x => x.Id == expenseType.Id);
+        if (exp == null)
+        {
+          return false;
+        }
+        _data.Remove(exp);
+        _data.SaveChanges();
+
+        return true;
+      }
+      catch(Exception ex)
+      {
+        return false;
+      }
     }
 
     public IQueryable<ExpenseSM> GetExpenses()
@@ -61,7 +76,16 @@ namespace CJ.Exp.BusinessLogic
 
     public ExpenseTypeSM UpdateExpenseType(ExpenseTypeSM expenseType)
     {
-      throw new NotImplementedException();
+      var exp = _data.ExpenseTypes.SingleOrDefault(x => x.Id == expenseType.Id);
+      if (exp == null)
+      {
+        return null;
+      }
+      exp.ExpenseType = expenseType.ExpenseType;
+      _data.SaveChanges();
+
+      return expenseType;
+
     }
   }
 }

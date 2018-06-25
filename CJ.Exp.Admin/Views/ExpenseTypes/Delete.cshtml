@@ -1,0 +1,31 @@
+﻿@model ExpenseTypeVM
+@{
+  ViewData["Title"] = "Delete Expense Type";
+}
+
+
+<div class="row">
+  <div class="col-md-4">
+    <section>
+      <form method="post">
+        <input type="hidden" asp-for="Id" />
+        <h4>Delete Expense Type</h4>
+        <hr />
+        <div asp-validation-summary="All" class="text-danger"></div>
+        <div class="form-group">
+          <label asp-for="ExpenseType"></label>
+          <input asp-for="ExpenseType" class="form-control" readonly="readonly" />
+          <span asp-validation-for="ExpenseType" class="text-danger"></span>
+        </div>        
+        <div class="form-group">
+          <button type="submit" class="btn btn-default">Delete</button>
+        </div>       
+      </form>
+    </section>
+  </div>
+
+</div>
+
+@section Scripts {
+  @await Html.PartialAsync("_ValidationScriptsPartial")
+}

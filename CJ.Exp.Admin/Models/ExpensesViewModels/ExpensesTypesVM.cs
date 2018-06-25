@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace CJ.Exp.Admin.Models.ExpensesViewModels
 {
-  public class ExpenseTypeVM
+  public class ExpenseTypeVM : ViewModelBase
   {
     public int Id { get; set; }
     public string ExpenseType { get; set; }

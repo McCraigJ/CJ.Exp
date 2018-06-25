@@ -3,19 +3,28 @@
   ViewData["Title"] = "Expense Types";
 }
 
-<a asp-area="" asp-controller="ExpenseTypes" asp-action="Add">Add</a>
+<div class="table-add">
+  <a asp-area="" asp-controller="ExpenseTypes" asp-action="Add">Add</a>
+</div>
 
-<table>
+<table class="table">
   <thead>
     <tr>
-      <th scope="col">Expense Type</th>      
+      <th scope="col">Expense Type</th>
+      <th scope="col"></th>
     </tr>
   </thead>
   <tbody>
     @foreach (var exp in Model.ExpenseTypes)
     {
       <tr>
-        <td>@exp.ExpenseType</td>        
+        <td>
+          @exp.ExpenseType
+        </td>
+        <td class="admin-links">
+          <a asp-area="" asp-controller="ExpenseTypes" asp-action="Edit" asp-route-id="@exp.Id">Edit</a>
+          <a asp-area="" asp-controller="ExpenseTypes" asp-action="Delete" asp-route-id="@exp.Id">Delete</a>
+        </td>
       </tr>
 
     }
