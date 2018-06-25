@@ -1,6 +1,7 @@
 ﻿using AutoMapper.QueryableExtensions;
 using CJ.Exp.BusinessLogic.Interfaces;
 using CJ.Exp.Data;
+using CJ.Exp.Data.Models;
 using CJ.Exp.ServiceModels.Expenses;
 using System;
 using System.Collections.Generic;
@@ -9,7 +10,7 @@ using System.Text;
 
 namespace CJ.Exp.BusinessLogic
 {
-  
+
   public class ExpensesService : IExpensesService
   {
     private readonly ExpDbContext _data;
@@ -19,14 +20,18 @@ namespace CJ.Exp.BusinessLogic
       _data = data;
     }
 
-    public ExpenseSM AddExpense()
+    public ExpenseSM AddExpense(ExpenseSM expense)
     {
       throw new NotImplementedException();
     }
 
-    public ExpenseTypeSM AddExpenseType()
+    public ExpenseTypeSM AddExpenseType(ExpenseTypeSM expenseType)
     {
-      throw new NotImplementedException();
+      var exp = AutoMapper.Mapper.Map<ExpenseTypeDM>(expenseType);      
+      _data.ExpenseTypes.Add(exp);
+      _data.SaveChanges();
+      expenseType.Id = exp.Id;
+      return expenseType;
     }
 
     public bool DeleteExpense()
@@ -34,7 +39,7 @@ namespace CJ.Exp.BusinessLogic
       throw new NotImplementedException();
     }
 
-    public bool DeleteExpenseType()
+    public bool DeleteExpenseType(ExpenseTypeSM expenseType)
     {
       throw new NotImplementedException();
     }
@@ -49,12 +54,12 @@ namespace CJ.Exp.BusinessLogic
       return (from t in _data.ExpenseTypes select t).ProjectTo<ExpenseTypeSM>();
     }
 
-    public ExpenseSM UpdateExpense()
+    public ExpenseSM UpdateExpense(ExpenseSM expense)
     {
       throw new NotImplementedException();
     }
 
-    public ExpenseTypeSM UpdateExpenseType()
+    public ExpenseTypeSM UpdateExpenseType(ExpenseTypeSM expenseType)
     {
       throw new NotImplementedException();
     }

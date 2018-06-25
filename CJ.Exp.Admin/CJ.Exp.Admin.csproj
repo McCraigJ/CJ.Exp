@@ -29,6 +29,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Update="Views\ExpenseTypes\Add.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="Views\ExpenseTypes\Index.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>

@@ -1,0 +1,30 @@
+﻿@model ExpenseTypeVM
+@{
+  ViewData["Title"] = "Add Expense Type";
+}
+
+
+<div class="row">
+  <div class="col-md-4">
+    <section>
+      <form method="post">
+        <h4>Add an Expense Type</h4>
+        <hr />
+        <div asp-validation-summary="All" class="text-danger"></div>
+        <div class="form-group">
+          <label asp-for="ExpenseType"></label>
+          <input asp-for="ExpenseType" class="form-control" />
+          <span asp-validation-for="ExpenseType" class="text-danger"></span>
+        </div>        
+        <div class="form-group">
+          <button type="submit" class="btn btn-default">Add</button>
+        </div>       
+      </form>
+    </section>
+  </div>
+
+</div>
+
+@section Scripts {
+  @await Html.PartialAsync("_ValidationScriptsPartial")
+}

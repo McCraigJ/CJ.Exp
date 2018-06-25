@@ -8,18 +8,18 @@ namespace CJ.Exp.BusinessLogic.Interfaces
   {
     IQueryable<ExpenseSM> GetExpenses();
 
-    ExpenseSM AddExpense();
+    ExpenseSM AddExpense(ExpenseSM expense);
 
-    ExpenseSM UpdateExpense();
+    ExpenseSM UpdateExpense(ExpenseSM expense);
 
     bool DeleteExpense();
 
     IQueryable<ExpenseTypeSM> GetExpenseTypes();
 
-    ExpenseTypeSM AddExpenseType();
+    ExpenseTypeSM AddExpenseType(ExpenseTypeSM expenseType);
 
-    ExpenseTypeSM UpdateExpenseType();
+    ExpenseTypeSM UpdateExpenseType(ExpenseTypeSM expenseType);
 
-    bool DeleteExpenseType();
+    bool DeleteExpenseType(ExpenseTypeSM expenseType);
   }
 }
