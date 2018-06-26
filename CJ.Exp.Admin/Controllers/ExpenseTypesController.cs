@@ -85,7 +85,8 @@ namespace CJ.Exp.Admin.Controllers
         if (deleted)
         {
           return RedirectToAction("Index");
-        }        
+        }
+        model.ErrorMessage = "Expense Type could not be deleted as it is being used";
       }
       return View(model);
     }

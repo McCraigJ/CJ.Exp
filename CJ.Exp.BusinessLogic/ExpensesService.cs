@@ -1,4 +1,6 @@
-﻿using AutoMapper.QueryableExtensions;
+﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using CJ.Exp.Auth.Interfaces;
 using CJ.Exp.BusinessLogic.Interfaces;
 using CJ.Exp.Data;
 using CJ.Exp.Data.Models;
@@ -11,32 +13,53 @@ using System.Text;
 namespace CJ.Exp.BusinessLogic
 {
 
-  public class ExpensesService : IExpensesService
+  public class ExpensesService : ServiceBase, IExpensesService
   {
     private readonly ExpDbContext _data;
+    
 
-    public ExpensesService(ExpDbContext data)
+    public ExpensesService(ExpDbContext data, IAuthService authService)
     {
       _data = data;
     }
 
     public ExpenseSM AddExpense(ExpenseSM expense)
     {
-      throw new NotImplementedException();
+      var exp = Mapper.Map<ExpenseDM>(expense);
+      exp.ExpenseType = _data.ExpenseTypes.SingleOrDefault(x => x.Id == expense.ExpenseType.Id);
+      _data.Expenses.Add(exp);
+      _data.SaveChanges();
+      expense.Id = exp.Id;
+      return expense;
     }
 
     public ExpenseTypeSM AddExpenseType(ExpenseTypeSM expenseType)
     {
-      var exp = AutoMapper.Mapper.Map<ExpenseTypeDM>(expenseType);      
+      var exp = Mapper.Map<ExpenseTypeDM>(expenseType);      
       _data.ExpenseTypes.Add(exp);
       _data.SaveChanges();
       expenseType.Id = exp.Id;
       return expenseType;
     }
 
-    public bool DeleteExpense()
+    public bool DeleteExpense(ExpenseSM expense)
     {
-      throw new NotImplementedException();
+      try
+      {
+        var exp = _data.Expenses.SingleOrDefault(x => x.Id == expense.Id);
+        if (exp == null)
+        {
+          return false;
+        }
+        _data.Remove(exp);
+        _data.SaveChanges();
+
+        return true;
+      }
+      catch (Exception ex)
+      {
+        return false;
+      }
     }
 
     public bool DeleteExpenseType(ExpenseTypeSM expenseType)
@@ -71,7 +94,16 @@ namespace CJ.Exp.BusinessLogic
 
     public ExpenseSM UpdateExpense(ExpenseSM expense)
     {
-      throw new NotImplementedException();
+      var exp = _data.Expenses.SingleOrDefault(x => x.Id == expense.Id);
+      AssertObjectNotNull(exp);
+      
+      exp.ExpenseType = _data.ExpenseTypes.SingleOrDefault(x => x.Id == expense.ExpenseType.Id);
+      exp.ExpenseValue = expense.ExpenseValue;
+      exp.ExpenseDate = expense.ExpenseDate;
+      
+      _data.SaveChanges();
+      
+      return expense;
     }
 
     public ExpenseTypeSM UpdateExpenseType(ExpenseTypeSM expenseType)

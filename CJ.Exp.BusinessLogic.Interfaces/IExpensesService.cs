@@ -12,7 +12,7 @@ namespace CJ.Exp.BusinessLogic.Interfaces
 
     ExpenseSM UpdateExpense(ExpenseSM expense);
 
-    bool DeleteExpense();
+    bool DeleteExpense(ExpenseSM expense);
 
     IQueryable<ExpenseTypeSM> GetExpenseTypes();
 

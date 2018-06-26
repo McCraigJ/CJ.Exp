@@ -9,7 +9,7 @@ namespace CJ.Exp.Admin.Models.ExpensesViewModels
     public string ExpenseType { get; set; }
   }
 
-  public class ExpenseTypesVM
+  public class ExpenseTypesVM : ViewModelBase
   {
     public List<ExpenseTypeSM> ExpenseTypes { get; set; }
   }

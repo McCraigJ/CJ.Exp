@@ -29,6 +29,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Update="Views\Expenses\Delete.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Expenses\Edit.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Expenses\Add.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="Views\ExpenseTypes\Delete.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>

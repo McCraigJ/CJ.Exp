@@ -3,22 +3,31 @@
   ViewData["Title"] = "Expenses";
 }
 
-<table>
+<div class="table-add">
+  <a asp-area="" asp-controller="Expenses" asp-action="Add">Add</a>
+</div>
+
+<table class="table">
   <thead>
     <tr>
       <th scope="col">DateTime</th>
       <th scope="col">Expense Type</th>
       <th scope="col">Amount</th>
+      <th></th>
     </tr>
   </thead>
   <tbody>
     @foreach (var exp in Model.Expenses)
     {
-      <tr>
-        <td>@exp.ExpenseDate.ToShortDateString()</td>
-        <td>@exp.ExpenseType.ExpenseType</td>
-        <td>@string.Format("0:c", exp.ExpenseValue)</td>
-      </tr>
+    <tr>
+      <td>@exp.ExpenseDate.ToShortDateString()</td>
+      <td>@exp.ExpenseType.ExpenseType</td>
+      <td>@string.Format("{0:c}", exp.ExpenseValue)</td>
+      <td class="admin-links">
+        <a asp-area="" asp-controller="Expenses" asp-action="Edit" asp-route-id="@exp.Id">Edit</a>
+        <a asp-area="" asp-controller="Expenses" asp-action="Delete" asp-route-id="@exp.Id">Delete</a>
+      </td>
+    </tr>
 
     }
 

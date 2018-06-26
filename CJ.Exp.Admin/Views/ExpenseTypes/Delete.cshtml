@@ -3,6 +3,13 @@
   ViewData["Title"] = "Delete Expense Type";
 }
 
+@Html.Partial("_UserMessage", Model.ErrorMessage)
+@if (Model.ErrorMessage != null)
+{
+<div class="error-message">
+
+</div>
+}
 
 <div class="row">
   <div class="col-md-4">

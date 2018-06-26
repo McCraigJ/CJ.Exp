@@ -24,6 +24,17 @@ namespace CJ.Exp.Admin
       CreateMap<ExpenseTypeVM, ExpenseTypeSM>();
       CreateMap<ExpenseTypeSM, ExpenseTypeVM>();
 
+      CreateMap<ExpenseVM, ExpenseSM>()
+        //.ForMember(dst => dst.SyncDate, opt => opt.Ignore())
+        .ForMember(dst => dst.ExpenseType, opt => opt.Ignore());
+        //.ForMember(dst => dst.ExpenseType, opt => opt.Ignore())
+
+
+
+      CreateMap<ExpenseSM, ExpenseVM>()
+        .ForMember(dst => dst.ExpenseTypeId, opt => opt.MapFrom(src => src.ExpenseType.Id))
+        .ForMember(dst => dst.User, opt => opt.MapFrom(src => src.User.FirstName + " " + src.User.LastName));
+
     }
   }
 }
