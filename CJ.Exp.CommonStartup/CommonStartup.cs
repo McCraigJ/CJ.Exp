@@ -1,5 +1,4 @@
-﻿using CJ.Exp.Auth.Interfaces;
-using CJ.Exp.BusinessLogic;
+﻿using CJ.Exp.BusinessLogic;
 using CJ.Exp.BusinessLogic.Auth;
 using CJ.Exp.BusinessLogic.Interfaces;
 using Microsoft.Extensions.DependencyInjection;

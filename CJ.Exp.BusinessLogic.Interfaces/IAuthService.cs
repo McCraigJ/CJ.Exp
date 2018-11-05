@@ -1,14 +1,13 @@
-﻿using CJ.Exp.ServiceModels;
-using CJ.Exp.ServiceModels.Auth;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using CJ.Exp.ServiceModels.Roles;
+using CJ.Exp.ServiceModels;
+using CJ.Exp.ServiceModels.Auth;
 
-namespace CJ.Exp.Auth.Interfaces
+namespace CJ.Exp.BusinessLogic.Interfaces
 {
-  public interface IAuthService
+  public interface IAuthService : IServiceBase
   {
     bool IsSignedIn(ClaimsPrincipal principal);
     Task<AuthResultSM> AuthenticateAsync(string userName, string password, bool isPersistent, bool lockoutOnFailure);
@@ -22,12 +21,13 @@ namespace CJ.Exp.Auth.Interfaces
     Task<AuthResultSM> UpdateCurrentUser(ClaimsPrincipal principal, UserSM user);
     Task<AuthResultSM> ChangePasswordAsync(ClaimsPrincipal principal, string oldPassword, string newPassword);    
     Task<AuthResultSM> AddToRole(string userName, string role);
-    Task<AuthResultSM> SeedData(UserSM adminUser);
-    Task<List<UserSM>> GetUsers();
-    Task<UserSM> AddUser(UserSM user);
+    Task<AuthResultSM> SeedData();
+    IQueryable<UserSM> GetUsers();
+    Task<UserSM> AddUser(UserSM user, string password);
     Task<UserSM> UpdateUser(UserSM user);
+    Task<bool> UpdatePassword(UserSM user, string oldPassword, string newPassword);
     Task DeleteUser(UserSM user);
-    Task<AuthResultSM> UpdateUserRoles(UserSM user, List<string> roles);
+    Task UpdateUserRoles(UserSM user, List<string> roles);
 
 
   }

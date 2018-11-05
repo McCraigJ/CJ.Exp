@@ -22,5 +22,4 @@ namespace CJ.Exp.ServiceModels.Auth
       UserNotFound = true;
     }
   }
-
 }

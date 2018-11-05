@@ -1,6 +1,4 @@
 ﻿using AutoMapper;
-using CJ.Exp.Auth.Interfaces;
-using CJ.Exp.BusinessLogic.Auth;
 using CJ.Exp.Data;
 using CJ.Exp.Data.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -14,6 +12,8 @@ using Microsoft.IdentityModel.Tokens;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
+using CJ.Exp.BusinessLogic.Interfaces;
+using CJ.Exp.BusinessLogic.Auth;
 
 namespace CJ.Exp.API
 {

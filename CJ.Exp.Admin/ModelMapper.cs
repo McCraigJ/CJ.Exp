@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CJ.Exp.Admin.Models.UsersViewModels;
 
 namespace CJ.Exp.Admin
 {
@@ -34,6 +35,10 @@ namespace CJ.Exp.Admin
       CreateMap<ExpenseSM, ExpenseVM>()
         .ForMember(dst => dst.ExpenseTypeId, opt => opt.MapFrom(src => src.ExpenseType.Id))
         .ForMember(dst => dst.User, opt => opt.MapFrom(src => src.User.FirstName + " " + src.User.LastName));
+
+      CreateMap<UserSM, UserVM>();
+
+      CreateMap<UserSM, AddUserVM>();
 
     }
   }

@@ -1,0 +1,33 @@
+﻿@model UsersVM
+@{
+  ViewData["Title"] = "Users";
+}
+
+<div class="table-add">
+  <a asp-area="" asp-controller="Users" asp-action="Add">Add</a>
+</div>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">Email</th>
+      <th scope="col">Name</th>      
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    @foreach (var user in Model.Users)
+    {
+    <tr>
+      <td>@user.Email</td>
+      <td>@user.FirstName @user.LastName</td>      
+      <td class="admin-links">
+        <a asp-area="" asp-controller="Users" asp-action="Edit" asp-route-id="@user.Id">Edit</a>
+        <a asp-area="" asp-controller="Users" asp-action="Delete" asp-route-id="@user.Id">Delete</a>
+      </td>
+    </tr>
+
+    }
+
+  </tbody>
+</table>

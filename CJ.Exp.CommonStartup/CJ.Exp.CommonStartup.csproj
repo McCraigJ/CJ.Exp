@@ -5,8 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CJ.Exp.Auth.Interfaces\CJ.Exp.Auth.Interfaces.csproj" />
-    <ProjectReference Include="..\CJ.Exp.Auth\CJ.Exp.BusinessLogic.Auth.csproj" />
     <ProjectReference Include="..\CJ.Exp.BusinessLogic.Interfaces\CJ.Exp.BusinessLogic.Interfaces.csproj" />
     <ProjectReference Include="..\CJ.Exp.BusinessLogic\CJ.Exp.BusinessLogic.csproj" />
   </ItemGroup>

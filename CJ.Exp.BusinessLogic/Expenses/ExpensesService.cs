@@ -1,27 +1,18 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
-using CJ.Exp.Auth.Interfaces;
 using CJ.Exp.BusinessLogic.Interfaces;
 using CJ.Exp.Data;
 using CJ.Exp.Data.Models;
 using CJ.Exp.ServiceModels.Expenses;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace CJ.Exp.BusinessLogic
 {
 
   public class ExpensesService : ServiceBase, IExpensesService
   {
-    private readonly ExpDbContext _data;
-    
-
-    public ExpensesService(ExpDbContext data, IAuthService authService)
-    {
-      _data = data;
-    }
+    public ExpensesService(ExpDbContext data) : base(data) { }
 
     public ExpenseSM AddExpense(ExpenseSM expense)
     {
@@ -35,7 +26,7 @@ namespace CJ.Exp.BusinessLogic
 
     public ExpenseTypeSM AddExpenseType(ExpenseTypeSM expenseType)
     {
-      var exp = Mapper.Map<ExpenseTypeDM>(expenseType);      
+      var exp = Mapper.Map<ExpenseTypeDM>(expenseType);
       _data.ExpenseTypes.Add(exp);
       _data.SaveChanges();
       expenseType.Id = exp.Id;
@@ -76,7 +67,7 @@ namespace CJ.Exp.BusinessLogic
 
         return true;
       }
-      catch(Exception ex)
+      catch (Exception ex)
       {
         return false;
       }
@@ -96,13 +87,13 @@ namespace CJ.Exp.BusinessLogic
     {
       var exp = _data.Expenses.SingleOrDefault(x => x.Id == expense.Id);
       AssertObjectNotNull(exp);
-      
+
       exp.ExpenseType = _data.ExpenseTypes.SingleOrDefault(x => x.Id == expense.ExpenseType.Id);
       exp.ExpenseValue = expense.ExpenseValue;
       exp.ExpenseDate = expense.ExpenseDate;
-      
+
       _data.SaveChanges();
-      
+
       return expense;
     }
 
