@@ -63,13 +63,15 @@ namespace CJ.Exp.Admin.Controllers
 
     }
 
-    public IActionResult Edit(string id)
+    public async Task<IActionResult> Edit(string id)
     {
       var user = _authService.GetUsers().SingleOrDefault(x => x.Id == id);
       if (user != null)
       {
+        var userRole = await _authService.GetUserRole(user);
         var editUserVm = Mapper.Map<AddUserVM>(user);
         editUserVm.Roles = CreateRolesList();
+        editUserVm.Role = userRole;
         return View(editUserVm);
       }
 
@@ -93,13 +95,13 @@ namespace CJ.Exp.Admin.Controllers
       updateUser.Roles = CreateRolesList();
       return View(updateUser);
     }
-
+    
     private List<SelectListItem> CreateRolesList()
     {
       var rolesList = new List<SelectListItem>();      
       foreach (var role in ApplicationRoles.AllRoles())
       {
-        rolesList.Add(new SelectListItem { Text = role, Value = role});
+        rolesList.Add(new SelectListItem { Text = role.Value, Value = role.Key});
       }
 
       return rolesList;

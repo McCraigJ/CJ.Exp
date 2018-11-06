@@ -68,14 +68,13 @@ namespace CJ.Exp.BusinessLogic.Auth
       try
       {
 
-
-        foreach (var roleName in ApplicationRoles.AllRoles())
+        foreach (var appRole in ApplicationRoles.AllRoles())
         {
-          var exists = await _roleManager.RoleExistsAsync(roleName);
+          var exists = await _roleManager.RoleExistsAsync(appRole.Key);
           if (!exists)
           {
             var role = new IdentityRole();
-            role.Name = roleName;
+            role.Name = appRole.Key;
             await _roleManager.CreateAsync(role);
           }
         }
@@ -194,14 +193,11 @@ namespace CJ.Exp.BusinessLogic.Auth
       AddBusinessError(BusinessErrorCodes.Generic, "User could not be removed");
     }
 
-    public async Task UpdateUserRoles(UserSM user, List<string> roles)
+    
+
+    public async Task UpdateUserRoles(UserSM user, string role)
     {
-      var currentUser = await _userManager.FindByNameAsync(user.Email);
-      if (currentUser == null)
-      {
-        AddBusinessError(BusinessErrorCodes.DataNotFound, "User cannot be found");
-        return;
-      }
+      var currentUser = await GetUserByEmail(user.Email);
 
       var currentRoles = (from ur in _data.UserRoles
                           join r in _data.Roles on ur.RoleId equals r.Id
@@ -209,12 +205,16 @@ namespace CJ.Exp.BusinessLogic.Auth
                           select r.Name).ToList();
 
       await _userManager.RemoveFromRolesAsync(currentUser, currentRoles);
+      
+      await _userManager.AddToRoleAsync(currentUser, role);      
 
-      foreach (var role in roles)
-      {
-        await _userManager.AddToRoleAsync(currentUser, role);
-      }
+    }
 
+    public async Task<string> GetUserRole(UserSM user)
+    {
+      var currentUser = await GetUserByEmail(user.Email);
+
+      return GetUserRoleInternal(currentUser);      
     }
 
     public async Task<UserSM> FindByEmailAsync(string email)
@@ -308,6 +308,25 @@ namespace CJ.Exp.BusinessLogic.Auth
       var result = await _userManager.UpdateAsync(user);
 
       return AuthResultFactory.CreateResultFromIdentityResult(result);
+    }
+
+    private async Task<ApplicationUser> GetUserByEmail(string email)
+    {
+      var currentUser = await _userManager.FindByNameAsync(email);
+      if (currentUser == null)
+      {
+        AddBusinessError(BusinessErrorCodes.DataNotFound, "User cannot be found");        
+      }
+
+      return currentUser;
+    }
+
+    private string GetUserRoleInternal(ApplicationUser user)
+    {
+      return (from ur in _data.UserRoles
+        join r in _data.Roles on ur.RoleId equals r.Id
+        where ur.UserId == user.Id
+        select r.Name).FirstOrDefault();
     }
   }
 }

@@ -27,7 +27,8 @@ namespace CJ.Exp.BusinessLogic.Interfaces
     Task<UserSM> UpdateUser(UserSM user);
     Task<bool> UpdatePassword(UserSM user, string oldPassword, string newPassword);
     Task DeleteUser(UserSM user);
-    Task UpdateUserRoles(UserSM user, List<string> roles);
+    Task UpdateUserRoles(UserSM user, string role);
+    Task<string> GetUserRole(UserSM user);
 
 
   }
