@@ -49,11 +49,17 @@ namespace CJ.Exp.BusinessLogic.Auth
       return AuthResultFactory.CreateResultFromIdentityResult(changePasswordResult);
     }
 
-    public async Task<AuthResultSM> AddToRole(string userName, string role)
+    public async Task<AuthResultSM> UpdateRole(string userName, string role)
     {
       var user = await _userManager.FindByNameAsync(userName);
       if (user != null)
       {
+        var currentRole = GetUserRoleInternal(user);
+        if (currentRole != null)
+        {
+          await _userManager.RemoveFromRoleAsync(user, currentRole);
+        }        
+
         var addToRoleResult = await _userManager.AddToRoleAsync(user, role);
         return AuthResultFactory.CreateResultFromIdentityResult(addToRoleResult);
       }
@@ -70,11 +76,11 @@ namespace CJ.Exp.BusinessLogic.Auth
 
         foreach (var appRole in ApplicationRoles.AllRoles())
         {
-          var exists = await _roleManager.RoleExistsAsync(appRole.Key);
+          var exists = await _roleManager.RoleExistsAsync(appRole);
           if (!exists)
           {
             var role = new IdentityRole();
-            role.Name = appRole.Key;
+            role.Name = appRole;
             await _roleManager.CreateAsync(role);
           }
         }

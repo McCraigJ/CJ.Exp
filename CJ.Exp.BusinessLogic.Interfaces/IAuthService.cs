@@ -20,7 +20,7 @@ namespace CJ.Exp.BusinessLogic.Interfaces
     Task<UserSM> GetUserByPrincipalAsync(ClaimsPrincipal principal);
     Task<AuthResultSM> UpdateCurrentUser(ClaimsPrincipal principal, UserSM user);
     Task<AuthResultSM> ChangePasswordAsync(ClaimsPrincipal principal, string oldPassword, string newPassword);    
-    Task<AuthResultSM> AddToRole(string userName, string role);
+    Task<AuthResultSM> UpdateRole(string userName, string role);
     Task<AuthResultSM> SeedData();
     IQueryable<UserSM> GetUsers();
     Task<UserSM> AddUser(UserSM user, string password);

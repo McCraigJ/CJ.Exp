@@ -44,4 +44,13 @@ namespace CJ.Exp.Admin.Models.UsersViewModels
 
     public List<SelectListItem> Roles { get; set; }
   }
+
+  public class EditUserVM : UserVM
+  {
+    [Required]
+    [Display(Name = "Role")]
+    public string Role { get; set; }
+
+    public List<SelectListItem> Roles { get; set; }
+  }
 }

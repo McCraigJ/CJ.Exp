@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace CJ.Exp.Admin.Controllers
 {
-  [Authorize(Roles = "_admin")]
+  [Authorize(Roles = "Admin")]
   public class UsersController : ControllerBase
   {
     private readonly IAuthService _authService;
@@ -49,6 +49,7 @@ namespace CJ.Exp.Admin.Controllers
       {
         var user = Mapper.Map<UserSM>(addUser);
         await _authService.AddUser(user, addUser.Password);
+        await _authService.UpdateRole(user.Email, addUser.Role);
         if (_authService.BusinessErrors.Any())
         {
           MergeBusinessErrors(_authService.BusinessErrors);
@@ -69,7 +70,7 @@ namespace CJ.Exp.Admin.Controllers
       if (user != null)
       {
         var userRole = await _authService.GetUserRole(user);
-        var editUserVm = Mapper.Map<AddUserVM>(user);
+        var editUserVm = Mapper.Map<EditUserVM>(user);
         editUserVm.Roles = CreateRolesList();
         editUserVm.Role = userRole;
         return View(editUserVm);
@@ -79,15 +80,17 @@ namespace CJ.Exp.Admin.Controllers
     }
 
     [HttpPost]
-    public async Task<IActionResult> Edit(AddUserVM updateUser)
+    public async Task<IActionResult> Edit(EditUserVM updateUser)
     {
       if (ModelState.IsValid)
       {
         var user = Mapper.Map<UserSM>(updateUser);
         await _authService.UpdateUser(user);
+        await _authService.UpdateRole(user.Email, updateUser.Role);
         if (_authService.BusinessErrors.Any())
         {
           MergeBusinessErrors(_authService.BusinessErrors);
+        } else {
           return RedirectToAction("Index");
         }
       }
@@ -101,7 +104,7 @@ namespace CJ.Exp.Admin.Controllers
       var rolesList = new List<SelectListItem>();      
       foreach (var role in ApplicationRoles.AllRoles())
       {
-        rolesList.Add(new SelectListItem { Text = role.Value, Value = role.Key});
+        rolesList.Add(new SelectListItem { Text = role, Value = role });
       }
 
       return rolesList;

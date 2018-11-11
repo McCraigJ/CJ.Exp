@@ -6,20 +6,15 @@ namespace CJ.Exp.ServiceModels.Roles
 {
   public static class ApplicationRoles
   {
-    public static string RoleAdmin = "_admin";
-    public static string RoleUser = "_user";
+    public static string RoleAdmin = "Admin";
+    public static string RoleUser = "User";
 
-    public static Dictionary<string, string> AllRoles()
+    public static List<string> AllRoles()
     {
-      return new Dictionary<string, string>
+      return new List<string>
       {
-        {
-          RoleAdmin, "Admin"
-        },
-        {
-          RoleUser, "User"
-        }
+        "Admin", "User"        
       };
-    }
+    }    
   }
 }

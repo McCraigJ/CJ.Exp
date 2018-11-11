@@ -39,6 +39,7 @@ namespace CJ.Exp.Admin
       CreateMap<UserSM, UserVM>();
 
       CreateMap<UserSM, AddUserVM>();
+      CreateMap<UserSM, EditUserVM>();
 
     }
   }
