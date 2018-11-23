@@ -1,4 +1,9 @@
-﻿
+﻿using System;
+using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using System.Threading.Tasks;
 using AutoMapper;
 using CJ.Exp.API.ApiModels;
 using CJ.Exp.BusinessLogic.Interfaces;
@@ -6,16 +11,10 @@ using CJ.Exp.ServiceModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace WebApiJwt.Controllers
+namespace CJ.Exp.API.Controllers
 {
-  [Route("[controller]/[action]")]
+  [Route("api/users")]
   public class UsersController : Controller
   {
     private readonly IAuthService _authService;    
@@ -28,6 +27,12 @@ namespace WebApiJwt.Controllers
     {
       _authService = authService;      
       _configuration = configuration;
+    }
+
+    [HttpGet]
+    public IEnumerable<string> Test()
+    {
+      return new string[] { "value1", "value2" };
     }
 
     [HttpPost]
