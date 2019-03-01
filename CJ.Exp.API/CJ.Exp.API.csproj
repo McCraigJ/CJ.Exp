@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CJ.Exp.BusinessLogic.Interfaces\CJ.Exp.BusinessLogic.Interfaces.csproj" />
+    <ProjectReference Include="..\CJ.Exp.BusinessLogic.Interfaces\CJ.Exp.Core.BusinessLogic.csproj" />
     <ProjectReference Include="..\CJ.Exp.BusinessLogic\CJ.Exp.BusinessLogic.csproj" />
     <ProjectReference Include="..\CJ.Exp.Data\CJ.Exp.Data.csproj" />
   </ItemGroup>
