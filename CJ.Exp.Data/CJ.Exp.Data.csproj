@@ -10,6 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CJ.Exp.Data.Interfaces\CJ.Exp.Data.Interfaces.csproj" />
     <ProjectReference Include="..\CJ.Exp.ServiceModels\CJ.Exp.ServiceModels.csproj" />
   </ItemGroup>
 

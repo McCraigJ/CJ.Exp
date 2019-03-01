@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CJ.Exp.BusinessLogic.Interfaces\CJ.Exp.BusinessLogic.Interfaces.csproj" />
     <ProjectReference Include="..\CJ.Exp.Data\CJ.Exp.Data.csproj" />
     <ProjectReference Include="..\CJ.Exp.ServiceModels\CJ.Exp.ServiceModels.csproj" />
   </ItemGroup>

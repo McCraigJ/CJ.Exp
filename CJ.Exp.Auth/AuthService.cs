@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using AutoMapper;
-using CJ.Exp.Auth.Interfaces;
 using CJ.Exp.Data.Models;
 using CJ.Exp.ServiceModels;
 using CJ.Exp.ServiceModels.Auth;
@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using CJ.Exp.ServiceModels.Roles;
+using CJ.Exp.BusinessLogic.Interfaces;
+using CJ.Exp.Data;
 
 namespace CJ.Exp.BusinessLogic.Auth
 {
@@ -20,7 +22,7 @@ namespace CJ.Exp.BusinessLogic.Auth
 
     public AuthService(
       UserManager<ApplicationUser> userManager,
-      SignInManager<ApplicationUser> signInManager, RoleManager<IdentityRole> roleManager)
+      SignInManager<ApplicationUser> signInManager, RoleManager<IdentityRole> roleManager, ExpDbContext data)
     {
       _userManager = userManager;
       _signInManager = signInManager;
@@ -38,18 +40,24 @@ namespace CJ.Exp.BusinessLogic.Auth
       var user = await _userManager.GetUserAsync(principal);
       if (user == null)
       {
-        return AuthResultFactory.CreateUserNotFoundResult();        
+        return AuthResultFactory.CreateUserNotFoundResult();
       }
 
       var changePasswordResult = await _userManager.ChangePasswordAsync(user, oldPassword, newPassword);
-      return AuthResultFactory.CreateResultFromIdentityResult(changePasswordResult);      
+      return AuthResultFactory.CreateResultFromIdentityResult(changePasswordResult);
     }
 
-    public async Task<AuthResultSM> AddToRole(string userName, string role)
+    public async Task<AuthResultSM> UpdateRole(string userName, string role)
     {
       var user = await _userManager.FindByNameAsync(userName);
       if (user != null)
       {
+        var currentRole = GetUserRoleInternal(user);
+        if (currentRole != null)
+        {
+          await _userManager.RemoveFromRoleAsync(user, currentRole);
+        }
+
         var addToRoleResult = await _userManager.AddToRoleAsync(user, role);
         return AuthResultFactory.CreateResultFromIdentityResult(addToRoleResult);
       }
@@ -59,55 +67,158 @@ namespace CJ.Exp.BusinessLogic.Auth
       }
     }
 
-    public async Task<AuthResultSM> SeedData(UserSM adminUser)
+    public async Task<AuthResultSM> SeedData()
     {
-      foreach (var roleName in ApplicationRoles.AllRoles())
+      try
       {
-        var exists = await _roleManager.RoleExistsAsync(roleName);
-        if (!exists)
+
+        foreach (var appRole in ApplicationRoles.AllRoles())
         {
-          var role = new IdentityRole();
-          role.Name = roleName;
-          await _roleManager.CreateAsync(role);
-        }        
+          var exists = await _roleManager.RoleExistsAsync(appRole);
+          if (!exists)
+          {
+            var role = new IdentityRole();
+            role.Name = appRole;
+            await _roleManager.CreateAsync(role);
+          }
+        }
+
+        var adminUser = new UserSM
+        {
+          Email = "admin@admin.com",
+          FirstName = "Admin",
+          LastName = "Admin"
+        };
+
+        var result = await RegisterUserAsync(adminUser, "Qwe!23");
+        if (result.Succeeded)
+        {
+          var user = await _userManager.FindByNameAsync(adminUser.Email);
+          await _userManager.AddToRoleAsync(user, ApplicationRoles.RoleAdmin);
+          return AuthResultFactory.CreateGenericSuccessResult();
+        }
+        else
+        {
+          return AuthResultFactory.CreateGenericFailResult(result.Errors.FirstOrDefault()?.Description);
+        }
+      }
+      catch (Exception ex)
+      {
+        return AuthResultFactory.CreateGenericFailResult(ex.Message);
+      }
+    }
+
+    public IQueryable<UserSM> GetUsers()
+    {
+      return (from u in _data.Users
+              select u).ProjectTo<UserSM>();
+    }
+
+    public async Task<UserSM> AddUser(UserSM user, string password)
+    {
+      var currentUser = await _userManager.FindByNameAsync(user.Email);
+      if (currentUser != null)
+      {
+        AddBusinessError(BusinessErrorCodes.DataAlreadyExists, "User already exists");
+        return null;
       }
 
-      var result = await RegisterUserAsync(adminUser, "_admin123");
+      var appUser = Mapper.Map<ApplicationUser>(user);
+      var result = await _userManager.CreateAsync(appUser, password);
       if (result.Succeeded)
       {
-        var user = await _userManager.FindByNameAsync(adminUser.Email);
-        await _userManager.AddToRoleAsync(user, ApplicationRoles.RoleAdmin);
-        return AuthResultFactory.CreateGenericSuccessResult();
+        var newUser = await _userManager.FindByNameAsync(user.Email);
+        user.Id = newUser.Id;
+        return user;
       }
-      else
+
+      foreach (var e in result.Errors)
       {
-        return AuthResultFactory.CreateGenericFailResult();
+        AddBusinessError(BusinessErrorCodes.Generic, e.Description);
       }
+
+      return null;
     }
 
-    public Task<List<UserSM>> GetUsers()
+    public async Task<UserSM> UpdateUser(UserSM user)
     {
-      _data
+      var currentUser = await _userManager.FindByNameAsync(user.Email);
+      if (currentUser == null)
+      {
+        AddBusinessError(BusinessErrorCodes.DataNotFound, "User cannot be found");
+        return null;
+      }
+
+      currentUser.FirstName = user.FirstName;
+      currentUser.LastName = user.LastName;
+      var result = await _userManager.UpdateAsync(currentUser);
+      if (result.Succeeded)
+      {
+        return user;
+      }
+      AddBusinessError(BusinessErrorCodes.Generic, "User could not be updated");
+      return null;
     }
 
-    public Task<UserSM> AddUser(UserSM user)
+    public async Task<bool> UpdatePassword(UserSM user, string oldPassword, string newPassword)
     {
-      throw new System.NotImplementedException();
+      var currentUser = await _userManager.FindByNameAsync(user.Email);
+      if (currentUser != null)
+      {
+        AddBusinessError(BusinessErrorCodes.DataAlreadyExists, "User already exists");
+        return false;
+      }
+
+      var result = await _userManager.ChangePasswordAsync(currentUser, oldPassword, newPassword);
+
+      if (result.Succeeded)
+      {
+        return true;
+      }
+
+      AddBusinessError(BusinessErrorCodes.CouldNotUpdate, result.Errors.FirstOrDefault()?.Description);
+      return false;
     }
 
-    public Task<UserSM> UpdateUser(UserSM user)
+    public async Task DeleteUser(UserSM user)
     {
-      throw new System.NotImplementedException();
+      var currentUser = await _userManager.FindByNameAsync(user.Email);
+      if (currentUser == null)
+      {
+        AddBusinessError(BusinessErrorCodes.DataNotFound, "User cannot be found");
+        return;
+      }
+
+      var result = await _userManager.DeleteAsync(currentUser);
+      if (result.Succeeded)
+      {
+        return;
+      }
+      AddBusinessError(BusinessErrorCodes.Generic, "User could not be removed");
     }
 
-    public Task DeleteUser(UserSM user)
+
+
+    public async Task UpdateUserRoles(UserSM user, string role)
     {
-      throw new System.NotImplementedException();
+      var currentUser = await GetUserByEmail(user.Email);
+
+      var currentRoles = (from ur in _data.UserRoles
+                          join r in _data.Roles on ur.RoleId equals r.Id
+                          where ur.UserId == currentUser.Id
+                          select r.Name).ToList();
+
+      await _userManager.RemoveFromRolesAsync(currentUser, currentRoles);
+
+      await _userManager.AddToRoleAsync(currentUser, role);
+
     }
 
-    public Task<AuthResultSM> UpdateUserRoles(UserSM user, List<string> roles)
+    public async Task<string> GetUserRole(UserSM user)
     {
-      throw new System.NotImplementedException();
+      var currentUser = await GetUserByEmail(user.Email);
+
+      return GetUserRoleInternal(currentUser);
     }
 
     public async Task<UserSM> FindByEmailAsync(string email)
@@ -141,9 +252,9 @@ namespace CJ.Exp.BusinessLogic.Auth
     {
       var appUser = Mapper.Map<ApplicationUser>(user);
       var result = await _userManager.CreateAsync(appUser, password);
-      return AuthResultFactory.CreateResultFromIdentityResult(result);      
+      return AuthResultFactory.CreateResultFromIdentityResult(result);
     }
-    
+
 
     public async Task<AuthResultSM> ResetPasswordAsync(string email, string code, string newPassword)
     {
@@ -181,7 +292,7 @@ namespace CJ.Exp.BusinessLogic.Auth
       {
         return AuthResultFactory.CreateUserNotFoundResult();
       }
-      
+
       if (userUpdates.Email != user.Email)
       {
         var setEmailResult = await _userManager.SetEmailAsync(user, userUpdates.Email);
@@ -199,8 +310,27 @@ namespace CJ.Exp.BusinessLogic.Auth
       user.FirstName = userUpdates.FirstName;
       user.LastName = userUpdates.LastName;
       var result = await _userManager.UpdateAsync(user);
-      
+
       return AuthResultFactory.CreateResultFromIdentityResult(result);
-    }    
+    }
+
+    private async Task<ApplicationUser> GetUserByEmail(string email)
+    {
+      var currentUser = await _userManager.FindByNameAsync(email);
+      if (currentUser == null)
+      {
+        AddBusinessError(BusinessErrorCodes.DataNotFound, "User cannot be found");
+      }
+
+      return currentUser;
+    }
+
+    private string GetUserRoleInternal(ApplicationUser user)
+    {
+      return (from ur in _data.UserRoles
+              join r in _data.Roles on ur.RoleId equals r.Id
+              where ur.UserId == user.Id
+              select r.Name).FirstOrDefault();
+    }
   }
 }

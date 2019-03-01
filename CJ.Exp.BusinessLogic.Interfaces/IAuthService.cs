@@ -7,7 +7,7 @@ using CJ.Exp.ServiceModels.Auth;
 
 namespace CJ.Exp.BusinessLogic.Interfaces
 {
-  public interface IAuthService : IServiceBase
+  public interface IAuthService
   {
     bool IsSignedIn(ClaimsPrincipal principal);
     Task<AuthResultSM> AuthenticateAsync(string userName, string password, bool isPersistent, bool lockoutOnFailure);

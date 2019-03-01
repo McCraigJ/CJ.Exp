@@ -8,7 +8,7 @@ using CJ.Exp.ServiceModels.Expenses;
 namespace CJ.Exp.Data.DataAccess
 {
   using AutoMapper;
-  
+  using global::CJ.Exp.Data.Interfaces;
   using System;
   using System.Linq;
 
