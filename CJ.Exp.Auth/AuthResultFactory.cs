@@ -1,20 +1,19 @@
-﻿using AutoMapper;
-using CJ.Exp.ServiceModels;
+﻿using CJ.Exp.ServiceModels;
 using CJ.Exp.ServiceModels.Auth;
 using Microsoft.AspNetCore.Identity;
-using System;
 using System.Collections.Generic;
-using System.Text;
+using AutoMapper;
 
 namespace CJ.Exp.BusinessLogic.Auth
 {
   public static class AuthResultFactory
   {
-    public static AuthResultSM CreateGenericFailResult()
+    public static AuthResultSM CreateGenericFailResult(string message = null)
     {
       return new AuthResultSM
       {
-        Succeeded = false
+        Succeeded = false,
+        Errors = new List<ProcessingErrorSM> { new ProcessingErrorSM { Description = message } }
       };
     }
 

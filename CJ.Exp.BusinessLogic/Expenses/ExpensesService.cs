@@ -10,18 +10,14 @@ using System.Linq;
 namespace CJ.Exp.BusinessLogic
 {
 
-  public class ExpensesService : ServiceBase, IExpensesService
+  public class ExpensesService : IExpensesService
   {
-    public ExpensesService(ExpDbContext data) : base(data) { }
+    private IExpensesData _data;
+    public ExpensesService(IExpensesData data) { }
 
     public ExpenseSM AddExpense(ExpenseSM expense)
     {
-      var exp = Mapper.Map<ExpenseDM>(expense);
-      exp.ExpenseType = _data.ExpenseTypes.SingleOrDefault(x => x.Id == expense.ExpenseType.Id);
-      _data.Expenses.Add(exp);
-      _data.SaveChanges();
-      expense.Id = exp.Id;
-      return expense;
+      return _data.AddExpense(expense);      
     }
 
     public ExpenseTypeSM AddExpenseType(ExpenseTypeSM expenseType)
