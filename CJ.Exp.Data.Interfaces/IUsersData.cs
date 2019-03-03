@@ -1,4 +1,5 @@
 ﻿using CJ.Exp.ServiceModels;
+using CJ.Exp.ServiceModels.Users;
 using System.Collections.Generic;
 using System.Linq;
 

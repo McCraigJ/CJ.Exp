@@ -1,9 +1,9 @@
-﻿using CJ.Exp.BusinessLogic;
-using CJ.Exp.BusinessLogic.Auth;
-using CJ.Exp.BusinessLogic.Interfaces;
-using CJ.Exp.Data.DataAccess;
-using CJ.Exp.Data.DataAccess.CJ.Exp.BusinessLogic;
+﻿using CJ.Exp.Auth.EFIdentity;
+using CJ.Exp.BusinessLogic.Expenses;
+using CJ.Exp.Data.EF.DataAccess;
+using CJ.Exp.Data.EF.DataAccess.CJ.Exp.BusinessLogic;
 using CJ.Exp.Data.Interfaces;
+using CJ.Exp.DomainInterfaces;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CJ.Exp

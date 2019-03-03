@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using CJ.Exp.ServiceModels.Users;
+using System;
 
 namespace CJ.Exp.ServiceModels.Expenses
 {
-    public class ExpenseSM
+  public class ExpenseSM
     {
     public int Id { get; set; }
     //public string ExpenseTypeId { get; set; }

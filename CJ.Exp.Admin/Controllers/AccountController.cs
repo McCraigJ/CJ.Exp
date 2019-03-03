@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using CJ.Exp.Admin.Models.AccountViewModels;
 using CJ.Exp.Admin.Services;
-using CJ.Exp.ServiceModels;
-using CJ.Exp.ServiceModels.Auth;
+using CJ.Exp.DomainInterfaces;
+using CJ.Exp.ServiceModels.Users;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -10,7 +10,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
-using CJ.Exp.BusinessLogic.Interfaces;
 
 namespace CJ.Exp.Admin.Controllers
 {

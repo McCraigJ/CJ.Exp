@@ -21,10 +21,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CJ.Exp.BusinessLogic.Interfaces\CJ.Exp.Core.BusinessLogic.csproj" />
+    <ProjectReference Include="..\CJ.Exp.DomainInterfaces\CJ.Exp.DomainInterfaces.csproj" />
     <ProjectReference Include="..\CJ.Exp.BusinessLogic\CJ.Exp.BusinessLogic.csproj" />
     <ProjectReference Include="..\CJ.Exp.CommonStartup\CJ.Exp.CommonStartup.csproj" />
-    <ProjectReference Include="..\CJ.Exp.Data\CJ.Exp.Data.csproj" />
+    <ProjectReference Include="..\CJ.Exp.Data.EF\CJ.Exp.Data.EF.csproj" />
   </ItemGroup>
 
   <ItemGroup>

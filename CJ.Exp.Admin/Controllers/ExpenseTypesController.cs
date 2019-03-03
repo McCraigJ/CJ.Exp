@@ -1,12 +1,10 @@
 ﻿using AutoMapper;
 using CJ.Exp.Admin.Models.ExpensesViewModels;
-using CJ.Exp.BusinessLogic.Interfaces;
+using CJ.Exp.DomainInterfaces;
 using CJ.Exp.ServiceModels.Expenses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace CJ.Exp.Admin.Controllers
 {

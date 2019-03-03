@@ -1,8 +1,10 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
-namespace CJ.Exp.ServiceModels.Expenses
+namespace CJ.Exp.Data.EF.DataModels
 {
-  public class ExpenseTypeSM
+  [Table(name: "ExpenseTypes")]
+  public class ExpenseTypeDM
   {
     public int Id { get; set; }
     public string ExpenseType { get; set; }

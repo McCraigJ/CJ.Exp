@@ -1,11 +1,10 @@
-﻿using CJ.Exp.BusinessLogic.Interfaces;
-using CJ.Exp.Data.Interfaces;
+﻿using CJ.Exp.Data.Interfaces;
+using CJ.Exp.DomainInterfaces;
 using CJ.Exp.ServiceModels.Expenses;
 using System.Linq;
 
-namespace CJ.Exp.BusinessLogic
+namespace CJ.Exp.BusinessLogic.Expenses
 {
-
   public class ExpensesService : IExpensesService
   {
     private IExpensesData _data;

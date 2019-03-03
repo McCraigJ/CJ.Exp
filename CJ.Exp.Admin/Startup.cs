@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using CJ.Exp.Admin.Services;
-using CJ.Exp.Data;
-using CJ.Exp.Data.Models;
+using CJ.Exp.Data.EF;
+using CJ.Exp.Data.EF.DataModels;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;

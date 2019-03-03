@@ -1,16 +1,16 @@
-﻿using System;
+﻿using AutoMapper;
+using CJ.Exp.API.ApiModels;
+using CJ.Exp.DomainInterfaces;
+using CJ.Exp.ServiceModels.Users;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
+using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
-using AutoMapper;
-using CJ.Exp.API.ApiModels;
-using CJ.Exp.BusinessLogic.Interfaces;
-using CJ.Exp.ServiceModels;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
 
 namespace CJ.Exp.API.Controllers
 {
