@@ -2,12 +2,13 @@
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using CJ.Exp.Core.BusinessLogic;
 using CJ.Exp.ServiceModels;
 using CJ.Exp.ServiceModels.Auth;
 
 namespace CJ.Exp.BusinessLogic.Interfaces
 {
-  public interface IAuthService
+  public interface IAuthService : IBusinessErrors
   {
     bool IsSignedIn(ClaimsPrincipal principal);
     Task<AuthResultSM> AuthenticateAsync(string userName, string password, bool isPersistent, bool lockoutOnFailure);

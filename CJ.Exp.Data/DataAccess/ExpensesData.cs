@@ -40,42 +40,31 @@ namespace CJ.Exp.Data.DataAccess
 
       public bool DeleteExpense(ExpenseSM expense)
       {
-        try
-        {
-          var exp = _data.Expenses.SingleOrDefault(x => x.Id == expense.Id);
-          if (exp == null)
-          {
-            return false;
-          }
-          _data.Remove(exp);
-          _data.SaveChanges();
 
-          return true;
-        }
-        catch (Exception ex)
+        var exp = _data.Expenses.SingleOrDefault(x => x.Id == expense.Id);
+        if (exp == null)
         {
           return false;
         }
+        _data.Remove(exp);
+        _data.SaveChanges();
+
+        return true;
+
       }
 
       public bool DeleteExpenseType(ExpenseTypeSM expenseType)
       {
-        try
-        {
-          var exp = _data.ExpenseTypes.SingleOrDefault(x => x.Id == expenseType.Id);
-          if (exp == null)
-          {
-            return false;
-          }
-          _data.Remove(exp);
-          _data.SaveChanges();
-
-          return true;
-        }
-        catch (Exception ex)
+        var exp = _data.ExpenseTypes.SingleOrDefault(x => x.Id == expenseType.Id);
+        if (exp == null)
         {
           return false;
         }
+        _data.Remove(exp);
+        _data.SaveChanges();
+
+        return true;
+
       }
 
       public IQueryable<ExpenseSM> GetExpenses()

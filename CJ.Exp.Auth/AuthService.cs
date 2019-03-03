@@ -1,16 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using AutoMapper;
+﻿using AutoMapper;
+using CJ.Exp.BusinessLogic.Interfaces;
+using CJ.Exp.Data.Interfaces;
 using CJ.Exp.Data.Models;
 using CJ.Exp.ServiceModels;
 using CJ.Exp.ServiceModels.Auth;
+using CJ.Exp.ServiceModels.Roles;
 using Microsoft.AspNetCore.Identity;
+using System;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using CJ.Exp.ServiceModels.Roles;
-using CJ.Exp.BusinessLogic.Interfaces;
-using CJ.Exp.Data;
 
 namespace CJ.Exp.BusinessLogic.Auth
 {
@@ -19,14 +18,18 @@ namespace CJ.Exp.BusinessLogic.Auth
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly RoleManager<IdentityRole> _roleManager;
+    private readonly IUsersData _usersData;
 
     public AuthService(
       UserManager<ApplicationUser> userManager,
-      SignInManager<ApplicationUser> signInManager, RoleManager<IdentityRole> roleManager, ExpDbContext data)
+      SignInManager<ApplicationUser> signInManager,
+      RoleManager<IdentityRole> roleManager, 
+      IUsersData usersData)
     {
       _userManager = userManager;
       _signInManager = signInManager;
       _roleManager = roleManager;
+      _usersData = usersData;
     }
 
     public async Task<AuthResultSM> AuthenticateAsync(string userName, string password, bool isPersistent, bool lockoutOnFailure)
@@ -110,8 +113,7 @@ namespace CJ.Exp.BusinessLogic.Auth
 
     public IQueryable<UserSM> GetUsers()
     {
-      return (from u in _data.Users
-              select u).ProjectTo<UserSM>();
+      return _usersData.GetUsers();
     }
 
     public async Task<UserSM> AddUser(UserSM user, string password)
@@ -203,10 +205,7 @@ namespace CJ.Exp.BusinessLogic.Auth
     {
       var currentUser = await GetUserByEmail(user.Email);
 
-      var currentRoles = (from ur in _data.UserRoles
-                          join r in _data.Roles on ur.RoleId equals r.Id
-                          where ur.UserId == currentUser.Id
-                          select r.Name).ToList();
+      var currentRoles = _usersData.GetCurrentUserRoles(currentUser.Id).ToList();
 
       await _userManager.RemoveFromRolesAsync(currentUser, currentRoles);
 
@@ -327,10 +326,7 @@ namespace CJ.Exp.BusinessLogic.Auth
 
     private string GetUserRoleInternal(ApplicationUser user)
     {
-      return (from ur in _data.UserRoles
-              join r in _data.Roles on ur.RoleId equals r.Id
-              where ur.UserId == user.Id
-              select r.Name).FirstOrDefault();
+      return _usersData.GetCurrentUserRoles(user.Id).FirstOrDefault();      
     }
   }
 }
