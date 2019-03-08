@@ -1,0 +1,45 @@
+install mongo4 from zip
+
+create conf based on mongod.cfg.template
+create folders and log file according to conf
+
+mongod.exe -f "D:\Mongo406\exp\mongod.cfg" --install --serviceName "MongoExp" --serviceDisplayName "Mongo Db instance for Exp"
+
+net start mongodb
+
+mongo.exe --port 27018
+show dbs
+
+
+setup editor
+------------
+//from the console
+set editor="myeditor.exe"
+//from the shell
+myFunction = function (x) {}
+edit myFunction
+
+Auth
+----
+Create admin user
+
+var adminUser = 
+{
+  user: "admin",
+  pwd: "QQwwee!!2233",
+  roles: [ { role: "userAdminAnyDatabase", db: "admin" }, "readWriteAnyDatabase" ]
+};
+
+use admin
+db.createUser(adminUser);
+
+Stop mongodb service
+
+add
+security.authorization = enabled 
+
+mongo.exe --port 27018 
+
+use admin
+db.auth("admin", "P@ssw0rd1")
+use exp
