@@ -1,6 +1,7 @@
 ﻿using System;
 using AutoMapper;
 using CJ.Exp.Admin.Services;
+using CJ.Exp.Auth.EFIdentity;
 using CJ.Exp.Data.EF;
 using CJ.Exp.Data.EF.DataModels;
 using CJ.Exp.ServiceModels.Users;
