@@ -1,29 +1,28 @@
-﻿using AutoMapper;
-using CJ.Exp.BusinessLogic;
+﻿using System;
+using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
+using AutoMapper;
 using CJ.Exp.BusinessLogic.Users;
-using CJ.Exp.Data.EF.DataModels;
 using CJ.Exp.Data.Interfaces;
 using CJ.Exp.DomainInterfaces;
 using CJ.Exp.ServiceModels;
 using CJ.Exp.ServiceModels.Users;
 using Microsoft.AspNetCore.Identity;
-using System;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
 
-namespace CJ.Exp.Auth.EFIdentity
+namespace CJ.Exp.BusinessLogic.Auth
 {
-  public class AuthService : ServiceBase, IAuthService
+  public class AuthService<TAppUser> : ServiceBase, IAuthService 
+    where TAppUser : class, IApplicationUser
   {
-    private readonly UserManager<ApplicationUser> _userManager;
-    private readonly SignInManager<ApplicationUser> _signInManager;
+    private readonly UserManager<TAppUser> _userManager;
+    private readonly SignInManager<TAppUser> _signInManager;
     private readonly RoleManager<IdentityRole> _roleManager;
     private readonly IUsersData _usersData;
 
     public AuthService(
-      UserManager<ApplicationUser> userManager,
-      SignInManager<ApplicationUser> signInManager,
+      UserManager<TAppUser> userManager,
+      SignInManager<TAppUser> signInManager,
       RoleManager<IdentityRole> roleManager,
       IUsersData usersData)
     {
@@ -126,7 +125,7 @@ namespace CJ.Exp.Auth.EFIdentity
         return null;
       }
 
-      var appUser = Mapper.Map<ApplicationUser>(user);
+      var appUser = Mapper.Map<TAppUser>(user);
       var result = await _userManager.CreateAsync(appUser, password);
       if (result.Succeeded)
       {
@@ -250,7 +249,7 @@ namespace CJ.Exp.Auth.EFIdentity
 
     public async Task<AuthResultSM> RegisterUserAsync(UserSM user, string password)
     {
-      var appUser = Mapper.Map<ApplicationUser>(user);
+      var appUser = Mapper.Map<TAppUser>(user);
       var result = await _userManager.CreateAsync(appUser, password);
       return AuthResultFactory.CreateResultFromIdentityResult(result);
     }
@@ -273,7 +272,7 @@ namespace CJ.Exp.Auth.EFIdentity
 
     public async Task SignInAsync(UserSM user)
     {
-      var appUser = Mapper.Map<ApplicationUser>(user);
+      var appUser = Mapper.Map<TAppUser>(user);
       if (appUser != null)
       {
         await _signInManager.SignInAsync(appUser, isPersistent: false);
@@ -314,7 +313,7 @@ namespace CJ.Exp.Auth.EFIdentity
       return AuthResultFactory.CreateResultFromIdentityResult(result);
     }
 
-    private async Task<ApplicationUser> GetUserByEmail(string email)
+    private async Task<TAppUser> GetUserByEmail(string email)
     {
       var currentUser = await _userManager.FindByNameAsync(email);
       if (currentUser == null)
@@ -325,12 +324,12 @@ namespace CJ.Exp.Auth.EFIdentity
       return currentUser;
     }
 
-    private string GetUserRoleInternal(ApplicationUser user)
+    private string GetUserRoleInternal(TAppUser user)
     {
       return _usersData.GetCurrentUserRoles(user.Id).FirstOrDefault();
     }
 
-    private async Task<ApplicationUser> GetUserByPrincipalInternal(ClaimsPrincipal principal)
+    private async Task<TAppUser> GetUserByPrincipalInternal(ClaimsPrincipal principal)
     {
       return await _userManager.GetUserAsync(principal);
     }

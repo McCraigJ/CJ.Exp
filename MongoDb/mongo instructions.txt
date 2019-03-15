@@ -10,7 +10,6 @@ net start mongodb
 mongo.exe --port 27018
 show dbs
 
-
 setup editor
 ------------
 //from the console
@@ -23,13 +22,6 @@ Auth
 ----
 Create admin user
 
-var adminUser = 
-{
-  user: "admin",
-  pwd: "QQwwee!!2233",
-  roles: [ { role: "userAdminAnyDatabase", db: "admin" }, "readWriteAnyDatabase" ]
-};
-
 use admin
 db.createUser(adminUser);
 
@@ -37,9 +29,5 @@ Stop mongodb service
 
 add
 security.authorization = enabled 
-
-mongo.exe --port 27018 
-
-use admin
-db.auth("admin", "P@ssw0rd1")
-use exp
+to conf
+or --auth to command line

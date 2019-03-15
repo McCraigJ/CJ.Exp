@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations.Schema;
+using CJ.Exp.ServiceModels.Users;
 
 namespace CJ.Exp.Data.EF.DataModels
 {

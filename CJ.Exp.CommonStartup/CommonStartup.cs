@@ -1,4 +1,4 @@
-﻿using CJ.Exp.Auth.EFIdentity;
+﻿using CJ.Exp.BusinessLogic.Auth;
 using CJ.Exp.BusinessLogic.Expenses;
 using CJ.Exp.Data.EF.DataAccess;
 using CJ.Exp.Data.EF.DataAccess.CJ.Exp.BusinessLogic;

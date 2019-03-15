@@ -1,13 +1,16 @@
-﻿using AutoMapper;
+﻿using System;
+using AutoMapper;
 using CJ.Exp.Admin.Services;
 using CJ.Exp.Data.EF;
 using CJ.Exp.Data.EF.DataModels;
+using CJ.Exp.ServiceModels.Users;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using CJ.Exp.Data.MongoDb;
 
 namespace CJ.Exp.Admin
 {
@@ -22,13 +25,22 @@ namespace CJ.Exp.Admin
 
     // This method gets called by the runtime. Use this method to add services to the container.
     public void ConfigureServices(IServiceCollection services)
-    {      
-      services.AddDbContext<ExpDbContext>(options =>
-          options.UseSqlServer(Configuration.GetConnectionString("CJ.Exp.ConnectionString"), b => b.MigrationsAssembly("CJ.Exp.Data")));
+    {
+      //services.AddDbContext<ExpDbContext>(options =>
+      //    options.UseSqlServer(Configuration.GetConnectionString("CJ.Exp.ConnectionString"), b => b.MigrationsAssembly("CJ.Exp.Data")));
+
+      //services.AddIdentity<ApplicationUser, IdentityRole>()
+      //    .AddEntityFrameworkStores<ExpDbContext>()        
+      //    .AddDefaultTokenProviders();
+
+
+      var mongoSettings = Configuration.GetSection(nameof(MongoDbSettings));
+      var settings = Configuration.GetSection(nameof(MongoDbSettings)).Get<MongoDbSettings>();
 
       services.AddIdentity<ApplicationUser, IdentityRole>()
-          .AddEntityFrameworkStores<ExpDbContext>()
-          .AddDefaultTokenProviders();
+        .AddMongoDbStores<ApplicationUser, IdentityRole, Guid>(settings.ConnectionString, settings.DatabaseName)
+        //.AddMongoDbStores<>
+        .AddDefaultTokenProviders();
 
       // Add application services.
       services.AddTransient<IEmailSender, EmailSender>();

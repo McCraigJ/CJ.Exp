@@ -9,8 +9,11 @@
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="7.0.1" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="4.0.1" />
-    <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.5" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="2.0.1" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.9" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="2.0.3">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.0.2" PrivateAssets="All" />
   </ItemGroup>
 
@@ -21,6 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CJ.Exp.Data.MongoDb\CJ.Exp.Data.MongoDb.csproj" />
     <ProjectReference Include="..\CJ.Exp.DomainInterfaces\CJ.Exp.DomainInterfaces.csproj" />
     <ProjectReference Include="..\CJ.Exp.BusinessLogic\CJ.Exp.BusinessLogic.csproj" />
     <ProjectReference Include="..\CJ.Exp.CommonStartup\CJ.Exp.CommonStartup.csproj" />
