@@ -12,7 +12,7 @@ namespace CJ.Exp
   {
     public static void AddCommonServices(IServiceCollection services)
     {
-      services.AddTransient<IAuthService, AuthService>();
+      //services.AddTransient<IAuthService, AuthService>();
       services.AddTransient<IExpensesService, ExpensesService>();
 
       services.AddTransient<IUsersData, UserData>();

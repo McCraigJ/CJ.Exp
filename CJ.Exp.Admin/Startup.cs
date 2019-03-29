@@ -1,17 +1,20 @@
 ﻿using System;
 using AutoMapper;
 using CJ.Exp.Admin.Services;
-using CJ.Exp.Auth.EFIdentity;
+using CJ.Exp.BusinessLogic.Auth;
+//using CJ.Exp.Auth.EFIdentity;
 using CJ.Exp.Data.EF;
 using CJ.Exp.Data.EF.DataModels;
+using CJ.Exp.Data.MongoDb.User;
+using CJ.Exp.DomainInterfaces;
 using CJ.Exp.ServiceModels.Users;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
+
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using CJ.Exp.Data.MongoDb;
+
 
 namespace CJ.Exp.Admin
 {
@@ -30,22 +33,35 @@ namespace CJ.Exp.Admin
       //services.AddDbContext<ExpDbContext>(options =>
       //    options.UseSqlServer(Configuration.GetConnectionString("CJ.Exp.ConnectionString"), b => b.MigrationsAssembly("CJ.Exp.Data")));
 
-      //services.AddIdentity<ApplicationUser, IdentityRole>()
+      //services.AddIdentity<ApplicationUser, IdentityRole>();
       //    .AddEntityFrameworkStores<ExpDbContext>()        
       //    .AddDefaultTokenProviders();
 
+      //services.AddIdentityWithMongoStores("mongodb://localhost/myDB")
+      //  .AddDefaultTokenProviders();
 
-      var mongoSettings = Configuration.GetSection(nameof(MongoDbSettings));
-      var settings = Configuration.GetSection(nameof(MongoDbSettings)).Get<MongoDbSettings>();
 
-      services.AddIdentity<ApplicationUser, IdentityRole>()
-        .AddMongoDbStores<ApplicationUser, IdentityRole, Guid>(settings.ConnectionString, settings.DatabaseName)
-        //.AddMongoDbStores<>
+      services.AddIdentity<ApplicationUserMongo, ApplicationRoleMongo>()
+        .AddMongoDbStores<ApplicationUserMongo, ApplicationRoleMongo, Guid>
+        (
+          Configuration.GetConnectionString("CJ.Exp.ConnectionString.Mongo"), "exp"          
+        )
         .AddDefaultTokenProviders();
+
+      //var mongoSettings = Configuration.GetSection(nameof(MongoDbSettings));
+      //var settings = Configuration.GetSection(nameof(MongoDbSettings)).Get<MongoDbSettings>();
+
+      //services.AddIdentity<MongoDbApplicationUser, IdentityRole>()
+      //  .AddMongoDbStores<MongoDbApplicationUser, IdentityRole<Guid>, Guid>(settings.ConnectionString, settings.DatabaseName)
+      //  //.AddMongoDbStores<MongoDbApplicationUser, IdentityRole, Guid>(settings.ConnectionString, settings.DatabaseName)
+      //  //.AddMongoDbStores<>
+      //  .AddDefaultTokenProviders();
 
       // Add application services.
       services.AddTransient<IEmailSender, EmailSender>();
-      CommonStartup.AddCommonServices(services);            
+      CommonStartup.AddCommonServices(services);
+
+      services.AddTransient<IAuthService, AuthService<ApplicationUserMongo, ApplicationRoleMongo>>();
 
       services.AddAutoMapper();
       services.AddMvc();

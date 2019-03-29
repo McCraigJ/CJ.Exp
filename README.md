@@ -16,3 +16,7 @@ Infrastructure
 UI
 - Web 
 - API
+
+
+MongoDb Reference
+https://www.nuget.org/packages/AspNetCore.Identity.MongoDbCore/

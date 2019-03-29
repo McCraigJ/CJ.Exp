@@ -6,11 +6,16 @@ namespace CJ.Exp.DomainInterfaces
 {
   public interface IApplicationUser
   {
-    string Id { get; set; }
+    string ApplicationId { get; set; }
     string UserName { get; set; }
     string Email { get; set; }
     string FirstName { get; set; }
     string LastName { get; set; }
 
+  }
+
+  public interface IApplicationRole
+  {
+    string Name { get; set; }
   }
 }

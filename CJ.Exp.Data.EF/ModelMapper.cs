@@ -12,10 +12,10 @@ namespace CJ.Exp.Data.EF
     public ModelMapper()
     {
 
-      CreateMap<UserSM, ApplicationUser>()
+      CreateMap<UserSM, ApplicationUserEf>()
        .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.Email));
 
-      CreateMap<ApplicationUser, UserSM>();
+      CreateMap<ApplicationUserEf, UserSM>();
 
       CreateMap<IdentityError, ProcessingErrorSM>();
 

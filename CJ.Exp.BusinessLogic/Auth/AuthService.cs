@@ -12,18 +12,20 @@ using Microsoft.AspNetCore.Identity;
 
 namespace CJ.Exp.BusinessLogic.Auth
 {
-  public class AuthService<TAppUser> : ServiceBase, IAuthService 
+  public class AuthService<TAppUser, TAppRole> : ServiceBase, IAuthService 
     where TAppUser : class, IApplicationUser
+    where TAppRole : class, IApplicationRole
+  
   {
     private readonly UserManager<TAppUser> _userManager;
     private readonly SignInManager<TAppUser> _signInManager;
-    private readonly RoleManager<IdentityRole> _roleManager;
+    private readonly RoleManager<TAppRole> _roleManager;
     private readonly IUsersData _usersData;
 
     public AuthService(
       UserManager<TAppUser> userManager,
       SignInManager<TAppUser> signInManager,
-      RoleManager<IdentityRole> roleManager,
+      RoleManager<TAppRole> roleManager,
       IUsersData usersData)
     {
       _userManager = userManager;
@@ -79,8 +81,8 @@ namespace CJ.Exp.BusinessLogic.Auth
         {
           var exists = await _roleManager.RoleExistsAsync(appRole);
           if (!exists)
-          {
-            var role = new IdentityRole();
+          {            
+            var role = (TAppRole)Activator.CreateInstance(typeof(TAppRole)); // TAppRole.Create();
             role.Name = appRole;
             await _roleManager.CreateAsync(role);
           }
@@ -130,7 +132,7 @@ namespace CJ.Exp.BusinessLogic.Auth
       if (result.Succeeded)
       {
         var newUser = await _userManager.FindByNameAsync(user.Email);
-        user.Id = newUser.Id;
+        user.Id = newUser.ApplicationId;
         return user;
       }
 
@@ -205,7 +207,7 @@ namespace CJ.Exp.BusinessLogic.Auth
     {
       var currentUser = await GetUserByEmail(user.Email);
 
-      var currentRoles = _usersData.GetCurrentUserRoles(currentUser.Id).ToList();
+      var currentRoles = _usersData.GetCurrentUserRoles(currentUser.ApplicationId).ToList();
 
       await _userManager.RemoveFromRolesAsync(currentUser, currentRoles);
 
@@ -326,7 +328,7 @@ namespace CJ.Exp.BusinessLogic.Auth
 
     private string GetUserRoleInternal(TAppUser user)
     {
-      return _usersData.GetCurrentUserRoles(user.Id).FirstOrDefault();
+      return _usersData.GetCurrentUserRoles(user.ApplicationId).FirstOrDefault();
     }
 
     private async Task<TAppUser> GetUserByPrincipalInternal(ClaimsPrincipal principal)
@@ -337,7 +339,7 @@ namespace CJ.Exp.BusinessLogic.Auth
     public async Task<string> GetUserRoleForLoggedInUser(ClaimsPrincipal principal)
     {
       var user = await GetUserByPrincipalInternal(principal);
-      return _usersData.GetCurrentUserRoles(user.Id).FirstOrDefault();
+      return _usersData.GetCurrentUserRoles(user.ApplicationId).FirstOrDefault();
     }
   }
 }

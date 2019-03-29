@@ -12,7 +12,7 @@ namespace CJ.Exp.Data.EF.DataModels
     public ExpenseTypeDM ExpenseType { get; set; }
     public decimal ExpenseValue { get; set; }
     public DateTime ExpenseDate { get; set; }    
-    public ApplicationUser User { get; set; }
+    public ApplicationUserEf User { get; set; }
 
     public Guid SyncId { get; set; }
     public DateTime SyncDate { get; set; }

@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CJ.Exp.Data.EF
 {
-  public class ExpDbContext : IdentityDbContext<ApplicationUser>
+  public class ExpDbContext : IdentityDbContext<ApplicationUserEf>
   {
     public ExpDbContext(DbContextOptions<ExpDbContext> options)
             : base(options)

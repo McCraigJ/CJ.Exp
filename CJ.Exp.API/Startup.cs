@@ -63,7 +63,7 @@ namespace CJ.Exp.API
             };
           });
 
-      services.AddTransient<IAuthService, AuthService>();
+      //services.AddTransient<IAuthService, AuthService>();
 
       services.AddAutoMapper();
       services.AddMvc();
