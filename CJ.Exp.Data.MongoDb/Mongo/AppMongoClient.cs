@@ -1,10 +1,10 @@
 ﻿using CJ.Exp.DomainInterfaces;
 using MongoDB.Driver;
-using IMongoClient = CJ.Exp.Data.MongoDb.Interfaces.IMongoClient;
+using IAppMongoClient = CJ.Exp.Data.MongoDb.Interfaces.IAppMongoClient;
 
 namespace CJ.Exp.Data.MongoDb.Mongo
 {
-  public class AppMongoClient : IMongoClient
+  public class AppMongoClient : IAppMongoClient
   {
     public IApplicationSettings ApplicationSettings { get; }
 

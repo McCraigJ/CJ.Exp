@@ -4,12 +4,12 @@ using System.Collections.Generic;
 
 namespace CJ.Exp.Data.EF.DataAccess
 {
-  public class DataAccessBase
+  public class DataEfAccessBase
   {
     protected readonly ExpDbContext _data;
     public List<BusinessErrorSM> BusinessErrors { get; set; }
 
-    public DataAccessBase(ExpDbContext data)
+    public DataEfAccessBase(ExpDbContext data)
     {
       _data = data;
       BusinessErrors = new List<BusinessErrorSM>();

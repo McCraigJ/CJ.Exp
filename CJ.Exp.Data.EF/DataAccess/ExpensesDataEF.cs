@@ -1,4 +1,5 @@
-﻿using AutoMapper.QueryableExtensions;
+﻿using System;
+using AutoMapper.QueryableExtensions;
 using CJ.Exp.ServiceModels.Expenses;
 using System.Collections.Generic;
 
@@ -12,14 +13,14 @@ namespace CJ.Exp.Data.EF.DataAccess
   namespace CJ.Exp.BusinessLogic
   {
 
-    public class ExpensesData : DataAccessBase, IExpensesData
+    public class ExpensesDataEf : DataEfAccessBase, IExpensesData
     {
-      public ExpensesData(ExpDbContext data) : base(data) { }
+      public ExpensesDataEf(ExpDbContext data) : base(data) { }
 
       public ExpenseSM AddExpense(ExpenseSM expense)
       {
         var exp = Mapper.Map<ExpenseDM>(expense);
-        exp.ExpenseType = _data.ExpenseTypes.SingleOrDefault(x => x.Id == expense.ExpenseType.Id);
+        exp.ExpenseType = _data.ExpenseTypes.SingleOrDefault(x => x.Id == Convert.ToInt32(expense.ExpenseType.Id));
         _data.Expenses.Add(exp);
         _data.SaveChanges();
         expense.Id = exp.Id;
@@ -31,7 +32,7 @@ namespace CJ.Exp.Data.EF.DataAccess
         var exp = Mapper.Map<ExpenseTypeDM>(expenseType);
         _data.ExpenseTypes.Add(exp);
         _data.SaveChanges();
-        expenseType.Id = exp.Id;
+        expenseType.Id = exp.Id.ToString();
         return expenseType;
       }
 
@@ -52,7 +53,7 @@ namespace CJ.Exp.Data.EF.DataAccess
 
       public bool DeleteExpenseType(ExpenseTypeSM expenseType)
       {
-        var exp = _data.ExpenseTypes.SingleOrDefault(x => x.Id == expenseType.Id);
+        var exp = _data.ExpenseTypes.SingleOrDefault(x => x.Id == Convert.ToInt32(expenseType.Id));
         if (exp == null)
         {
           return false;
@@ -64,14 +65,14 @@ namespace CJ.Exp.Data.EF.DataAccess
 
       }
 
-      public IQueryable<ExpenseSM> GetExpenses()
+      public List<ExpenseSM> GetExpenses()
       {
-        return (from e in _data.Expenses select e).ProjectTo<ExpenseSM>();
+        return (from e in _data.Expenses select e).ProjectTo<ExpenseSM>().ToList();
       }
 
-      public IQueryable<ExpenseTypeSM> GetExpenseTypes()
+      public List<ExpenseTypeSM> GetExpenseTypes()
       {
-        return (from t in _data.ExpenseTypes select t).ProjectTo<ExpenseTypeSM>();
+        return (from t in _data.ExpenseTypes select t).ProjectTo<ExpenseTypeSM>().ToList();
       }
 
       public ExpenseSM UpdateExpense(ExpenseSM expense)
@@ -79,7 +80,7 @@ namespace CJ.Exp.Data.EF.DataAccess
         var exp = _data.Expenses.SingleOrDefault(x => x.Id == expense.Id);
         AssertObjectNotNull(exp);
 
-        exp.ExpenseType = _data.ExpenseTypes.SingleOrDefault(x => x.Id == expense.ExpenseType.Id);
+        exp.ExpenseType = _data.ExpenseTypes.SingleOrDefault(x => x.Id == Convert.ToInt32(expense.ExpenseType.Id));
         exp.ExpenseValue = expense.ExpenseValue;
         exp.ExpenseDate = expense.ExpenseDate;
 
@@ -90,7 +91,7 @@ namespace CJ.Exp.Data.EF.DataAccess
 
       public ExpenseTypeSM UpdateExpenseType(ExpenseTypeSM expenseType)
       {
-        var exp = _data.ExpenseTypes.SingleOrDefault(x => x.Id == expenseType.Id);
+        var exp = _data.ExpenseTypes.SingleOrDefault(x => x.Id == Convert.ToInt32(expenseType.Id));
         if (exp == null)
         {
           return null;

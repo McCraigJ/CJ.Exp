@@ -1,8 +1,8 @@
-﻿using AspNetCore.Identity.MongoDbCore.Models;
+﻿using System;
+using AspNetCore.Identity.MongoDbCore.Models;
 using CJ.Exp.DomainInterfaces;
-using System;
 
-namespace CJ.Exp.Data.MongoDb.User
+namespace CJ.Exp.Data.MongoDb.DataModels
 {
   public class ApplicationUserMongo : MongoIdentityUser<Guid>, IApplicationUser
   {

@@ -48,7 +48,7 @@ namespace CJ.Exp.Admin.Controllers
     }
 
     [HttpGet]
-    public IActionResult Edit(int id)
+    public IActionResult Edit(string id)
     {
       var expSm = _expensesService.GetExpenseTypes().SingleOrDefault(x => x.Id == id);
 
@@ -67,7 +67,7 @@ namespace CJ.Exp.Admin.Controllers
     }
 
     [HttpGet]
-    public IActionResult Delete(int id)
+    public IActionResult Delete(string id)
     {
       var expSm = _expensesService.GetExpenseTypes().SingleOrDefault(x => x.Id == id);
 

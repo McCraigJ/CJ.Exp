@@ -15,7 +15,7 @@ namespace CJ.Exp
       services.AddTransient<IExpensesService, ExpensesService>();
 
       services.AddTransient<IUsersData, UsersDataMongo>();
-      //services.AddTransient<IExpensesData, ExpensesData>();
+      //services.AddTransient<IExpensesData, ExpensesDataEf>();
 
     }
   }

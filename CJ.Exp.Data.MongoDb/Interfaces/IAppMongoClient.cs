@@ -5,7 +5,7 @@ using MongoDB.Driver;
 
 namespace CJ.Exp.Data.MongoDb.Interfaces
 {
-  public interface IMongoClient
+  public interface IAppMongoClient
   {
     MongoClient GetClient();
   }

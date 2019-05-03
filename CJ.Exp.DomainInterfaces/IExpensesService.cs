@@ -1,11 +1,12 @@
-﻿using CJ.Exp.ServiceModels.Expenses;
+﻿using System.Collections.Generic;
+using CJ.Exp.ServiceModels.Expenses;
 using System.Linq;
 
 namespace CJ.Exp.DomainInterfaces
 {
   public interface IExpensesService
   {
-    IQueryable<ExpenseSM> GetExpenses();
+    List<ExpenseSM> GetExpenses();
 
     ExpenseSM AddExpense(ExpenseSM expense);
 
@@ -13,7 +14,7 @@ namespace CJ.Exp.DomainInterfaces
 
     bool DeleteExpense(ExpenseSM expense);
 
-    IQueryable<ExpenseTypeSM> GetExpenseTypes();
+    List<ExpenseTypeSM> GetExpenseTypes();
 
     ExpenseTypeSM AddExpenseType(ExpenseTypeSM expenseType);
 

@@ -6,9 +6,11 @@ using CJ.Exp.BusinessLogic.Auth;
 //using CJ.Exp.Auth.EFIdentity;
 using CJ.Exp.Data.EF;
 using CJ.Exp.Data.EF.DataModels;
+using CJ.Exp.Data.Interfaces;
+using CJ.Exp.Data.MongoDb.DataAccess;
+using CJ.Exp.Data.MongoDb.DataModels;
 using CJ.Exp.Data.MongoDb.Interfaces;
 using CJ.Exp.Data.MongoDb.Mongo;
-using CJ.Exp.Data.MongoDb.User;
 using CJ.Exp.DomainInterfaces;
 using CJ.Exp.ServiceModels.Users;
 using Microsoft.AspNetCore.Builder;
@@ -50,7 +52,7 @@ namespace CJ.Exp.Admin
       appSettings.DatabaseName = Configuration.GetConnectionString("CJ.Exp.ConnectionString.MongoDatabaseName");
 
       services.AddSingleton<IApplicationSettings>(appSettings);
-      services.AddSingleton<IMongoClient, AppMongoClient>();
+      services.AddSingleton<IAppMongoClient, AppMongoClient>();
 
       services.AddIdentity<ApplicationUserMongo, ApplicationRoleMongo>()
         .AddMongoDbStores<ApplicationUserMongo, ApplicationRoleMongo, Guid>
@@ -73,6 +75,8 @@ namespace CJ.Exp.Admin
       CommonStartup.AddCommonServices(services);
 
       services.AddTransient<IAuthService, AuthService<ApplicationUserMongo, ApplicationRoleMongo>>();
+
+      services.AddTransient<IExpensesData, ExpensesDataMongo>();
 
       services.AddAutoMapper();
       services.AddMvc();

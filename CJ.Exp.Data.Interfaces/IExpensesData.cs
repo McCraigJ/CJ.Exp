@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using CJ.Exp.ServiceModels.Expenses;
 
@@ -14,9 +15,9 @@ namespace CJ.Exp.Data.Interfaces
 
     bool DeleteExpenseType(ExpenseTypeSM expenseType);
 
-    IQueryable<ExpenseSM> GetExpenses();
+    List<ExpenseSM> GetExpenses();
 
-    IQueryable<ExpenseTypeSM> GetExpenseTypes();
+    List<ExpenseTypeSM> GetExpenseTypes();
 
     ExpenseSM UpdateExpense(ExpenseSM expense);
 

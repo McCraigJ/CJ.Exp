@@ -1,6 +1,7 @@
 ﻿using CJ.Exp.Data.Interfaces;
 using CJ.Exp.DomainInterfaces;
 using CJ.Exp.ServiceModels.Expenses;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace CJ.Exp.BusinessLogic.Expenses
@@ -34,12 +35,12 @@ namespace CJ.Exp.BusinessLogic.Expenses
       return _data.DeleteExpenseType(expenseType);
     }
 
-    public IQueryable<ExpenseSM> GetExpenses()
+    public List<ExpenseSM> GetExpenses()
     {
       return _data.GetExpenses();
     }
 
-    public IQueryable<ExpenseTypeSM> GetExpenseTypes()
+    public List<ExpenseTypeSM> GetExpenseTypes()
     {
       return _data.GetExpenseTypes();
     }

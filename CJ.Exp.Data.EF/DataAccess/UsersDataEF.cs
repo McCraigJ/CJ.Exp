@@ -6,9 +6,9 @@ using System.Linq;
 
 namespace CJ.Exp.Data.EF.DataAccess
 {
-  public class UsersDataEF : DataAccessBase, IUsersData
+  public class UsersDataEfEf : DataEfAccessBase, IUsersData
   {
-    public UsersDataEF(ExpDbContext data) : base(data)
+    public UsersDataEfEf(ExpDbContext data) : base(data)
     {
     }
 
