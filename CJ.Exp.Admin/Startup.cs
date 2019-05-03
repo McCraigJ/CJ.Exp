@@ -1,10 +1,13 @@
 ﻿using System;
 using AutoMapper;
 using CJ.Exp.Admin.Services;
+using CJ.Exp.BusinessLogic;
 using CJ.Exp.BusinessLogic.Auth;
 //using CJ.Exp.Auth.EFIdentity;
 using CJ.Exp.Data.EF;
 using CJ.Exp.Data.EF.DataModels;
+using CJ.Exp.Data.MongoDb.Interfaces;
+using CJ.Exp.Data.MongoDb.Mongo;
 using CJ.Exp.Data.MongoDb.User;
 using CJ.Exp.DomainInterfaces;
 using CJ.Exp.ServiceModels.Users;
@@ -41,10 +44,18 @@ namespace CJ.Exp.Admin
       //  .AddDefaultTokenProviders();
 
 
+      IApplicationSettings appSettings = new ApplicationSettings();
+
+      appSettings.ConnectionString = Configuration.GetConnectionString("CJ.Exp.ConnectionString.Mongo");
+      appSettings.DatabaseName = Configuration.GetConnectionString("CJ.Exp.ConnectionString.MongoDatabaseName");
+
+      services.AddSingleton<IApplicationSettings>(appSettings);
+      services.AddSingleton<IMongoClient, AppMongoClient>();
+
       services.AddIdentity<ApplicationUserMongo, ApplicationRoleMongo>()
         .AddMongoDbStores<ApplicationUserMongo, ApplicationRoleMongo, Guid>
         (
-          Configuration.GetConnectionString("CJ.Exp.ConnectionString.Mongo"), Configuration.GetConnectionString("CJ.Exp.ConnectionString.MongoDatabaseName")
+          appSettings.ConnectionString, appSettings.DatabaseName
         )
         .AddDefaultTokenProviders();
 

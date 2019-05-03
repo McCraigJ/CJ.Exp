@@ -21,7 +21,7 @@ namespace CJ.Exp.API.Controllers
     private readonly IConfiguration _configuration;
 
     public UsersController(
-        IAuthService authService,        
+        IAuthService authService,
         IConfiguration configuration
         )
     {

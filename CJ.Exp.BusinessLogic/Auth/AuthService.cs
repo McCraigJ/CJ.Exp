@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -12,7 +13,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace CJ.Exp.BusinessLogic.Auth
 {
-  public class AuthService<TAppUser, TAppRole> : ServiceBase, IAuthService 
+  public class AuthService<TAppUser, TAppRole> : ServiceBase, IAuthService
     where TAppUser : class, IApplicationUser
     where TAppRole : class, IApplicationRole
   
@@ -71,7 +72,7 @@ namespace CJ.Exp.BusinessLogic.Auth
         return AuthResultFactory.CreateUserNotFoundResult();
       }
     }
-
+    
     public async Task<AuthResultSM> SeedData()
     {
       try
@@ -95,6 +96,13 @@ namespace CJ.Exp.BusinessLogic.Auth
           LastName = "Admin"
         };
 
+        // if there are any users in the admin role we don't want to create any users, so just return
+        var usersInAdminRole = await _userManager.GetUsersInRoleAsync(ApplicationRolesDefinition.RoleAdmin);
+        if (usersInAdminRole.Any())
+        {
+          return AuthResultFactory.CreateGenericSuccessResult();
+        }
+
         var result = await RegisterUserAsync(adminUser, "Qwe!23");
         if (result.Succeeded)
         {
@@ -112,10 +120,15 @@ namespace CJ.Exp.BusinessLogic.Auth
         return AuthResultFactory.CreateGenericFailResult(ex.Message);
       }
     }
-
-    public IQueryable<UserSM> GetUsers()
+    
+    public List<UserSM> GetUsers()
     {
       return _usersData.GetUsers();
+    }
+
+    public UserSM GetUserById(string id)
+    {
+      return _usersData.GetUserById(id);
     }
 
     public async Task<UserSM> AddUser(UserSM user, string password)

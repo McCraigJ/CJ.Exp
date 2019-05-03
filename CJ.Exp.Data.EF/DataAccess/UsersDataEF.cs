@@ -20,10 +20,20 @@ namespace CJ.Exp.Data.EF.DataAccess
        select r.Name);
     }
 
-    public IQueryable<UserSM> GetUsers()
+    public List<UserSM> GetUsers()
+    {
+      return GetUsersAsQueryable().ToList();
+    }
+
+    public UserSM GetUserById(string id)
+    {
+      return GetUsersAsQueryable().SingleOrDefault(x => x.Id == id);      
+    }
+
+    private IQueryable<UserSM> GetUsersAsQueryable()
     {
       return (from u in _data.Users
-              select u).ProjectTo<UserSM>();
+        select u).ProjectTo<UserSM>();
     }
   }
 }

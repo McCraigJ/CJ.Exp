@@ -66,7 +66,7 @@ namespace CJ.Exp.Admin.Controllers
 
     public async Task<IActionResult> Edit(string id)
     {
-      var user = _authService.GetUsers().SingleOrDefault(x => x.Id == id);
+      var user = _authService.GetUserById(id);
       if (user != null)
       {
         var userRole = await _authService.GetUserRole(user);

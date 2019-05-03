@@ -1,4 +1,6 @@
-﻿using CJ.Exp.ServiceModels.Users;
+﻿using System;
+using System.Collections.Generic;
+using CJ.Exp.ServiceModels.Users;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -20,7 +22,8 @@ namespace CJ.Exp.DomainInterfaces
     Task<AuthResultSM> ChangePasswordAsync(ClaimsPrincipal principal, string oldPassword, string newPassword);    
     Task<AuthResultSM> UpdateRole(string userName, string role);
     Task<AuthResultSM> SeedData();
-    IQueryable<UserSM> GetUsers();
+    List<UserSM> GetUsers();
+    UserSM GetUserById(string id);
     Task<UserSM> AddUser(UserSM user, string password);
     Task<UserSM> UpdateUser(UserSM user);
     Task<bool> UpdatePassword(UserSM user, string oldPassword, string newPassword);
