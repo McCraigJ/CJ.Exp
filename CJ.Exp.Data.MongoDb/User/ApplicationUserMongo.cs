@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using AspNetCore.Identity.MongoDbCore.Models;
+﻿using AspNetCore.Identity.MongoDbCore.Models;
 using CJ.Exp.DomainInterfaces;
+using System;
 
 namespace CJ.Exp.Data.MongoDb.User
 {

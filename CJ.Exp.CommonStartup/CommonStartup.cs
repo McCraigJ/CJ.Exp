@@ -1,8 +1,6 @@
-﻿using CJ.Exp.BusinessLogic.Auth;
-using CJ.Exp.BusinessLogic.Expenses;
-using CJ.Exp.Data.EF.DataAccess;
-using CJ.Exp.Data.EF.DataAccess.CJ.Exp.BusinessLogic;
+﻿using CJ.Exp.BusinessLogic.Expenses;
 using CJ.Exp.Data.Interfaces;
+using CJ.Exp.Data.MongoDb.DataAccess;
 using CJ.Exp.DomainInterfaces;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -15,8 +13,8 @@ namespace CJ.Exp
       //services.AddTransient<IAuthService, AuthService>();
       services.AddTransient<IExpensesService, ExpensesService>();
 
-      services.AddTransient<IUsersData, UserData>();
-      services.AddTransient<IExpensesData, ExpensesData>();
+      services.AddTransient<IUsersData, UsersDataMongo>();
+      //services.AddTransient<IExpensesData, ExpensesData>();
 
     }
   }

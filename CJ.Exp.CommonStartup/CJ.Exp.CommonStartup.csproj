@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CJ.Exp.Auth.EFIdentity\CJ.Exp.Auth.EFIdentity.csproj" />
+    <ProjectReference Include="..\CJ.Exp.Data.MongoDb\CJ.Exp.Data.MongoDb.csproj" />
     <ProjectReference Include="..\CJ.Exp.DomainInterfaces\CJ.Exp.DomainInterfaces.csproj" />
     <ProjectReference Include="..\CJ.Exp.BusinessLogic\CJ.Exp.BusinessLogic.csproj" />
   </ItemGroup>

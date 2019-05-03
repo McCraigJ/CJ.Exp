@@ -44,7 +44,7 @@ namespace CJ.Exp.Admin
       services.AddIdentity<ApplicationUserMongo, ApplicationRoleMongo>()
         .AddMongoDbStores<ApplicationUserMongo, ApplicationRoleMongo, Guid>
         (
-          Configuration.GetConnectionString("CJ.Exp.ConnectionString.Mongo"), "exp"          
+          Configuration.GetConnectionString("CJ.Exp.ConnectionString.Mongo"), Configuration.GetConnectionString("CJ.Exp.ConnectionString.MongoDatabaseName")
         )
         .AddDefaultTokenProviders();
 

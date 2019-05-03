@@ -6,11 +6,13 @@
 
   <ItemGroup>
     <PackageReference Include="AspNetCore.Identity.MongoDbCore" Version="1.1.0" />
+    <PackageReference Include="AutoMapper" Version="7.0.1" />
     <PackageReference Include="MongoDB.Driver" Version="2.8.0" />
     <PackageReference Include="MongoDbGenericRepository" Version="1.3.8" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CJ.Exp.Data.Interfaces\CJ.Exp.Data.Interfaces.csproj" />
     <ProjectReference Include="..\CJ.Exp.DomainInterfaces\CJ.Exp.DomainInterfaces.csproj" />
     <ProjectReference Include="..\CJ.Exp.ServiceModels\CJ.Exp.ServiceModels.csproj" />
   </ItemGroup>

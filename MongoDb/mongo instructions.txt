@@ -34,3 +34,4 @@ or --auth to command line
 
 use admin
 db.auth("admin", "P@ssw0rd1")
+db.auth("webuser", "Password123")

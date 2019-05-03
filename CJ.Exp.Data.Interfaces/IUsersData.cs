@@ -9,6 +9,6 @@ namespace CJ.Exp.Data.Interfaces
   {
     IQueryable<UserSM> GetUsers();
 
-    IQueryable<string> GetCurrentUserRoles(string userId);
+    //IQueryable<string> GetCurrentUserRoles(string userId);
   }
 }
