@@ -8,6 +8,7 @@ using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using MongoDB.Bson;
 
 namespace CJ.Exp.Data.MongoDb.DataAccess
 {
@@ -25,12 +26,13 @@ namespace CJ.Exp.Data.MongoDb.DataAccess
     }
 
     public ExpenseTypeSM AddExpenseType(ExpenseTypeSM expenseType)
-    {
+    {            
       var dm = Mapper.Map<ExpenseTypeMongoDM>(expenseType);
       Collection.InsertOne(dm);
       expenseType.Id = dm.Id.ToString();
-      return expenseType;
+      return expenseType;            
     }
+    
 
     public bool DeleteExpense(ExpenseSM expense)
     {
@@ -39,7 +41,8 @@ namespace CJ.Exp.Data.MongoDb.DataAccess
 
     public bool DeleteExpenseType(ExpenseTypeSM expenseType)
     {
-      throw new NotImplementedException();
+      Collection.FindOneAndDelete<ExpenseTypeMongoDM>(Builders<ExpenseTypeMongoDM>.Filter.Eq("_id", new ObjectId(expenseType.Id)));
+      return true;
     }
 
     public List<ExpenseSM> GetExpenses()
@@ -48,9 +51,19 @@ namespace CJ.Exp.Data.MongoDb.DataAccess
     }
 
     public List<ExpenseTypeSM> GetExpenseTypes()
-    {
+    {           
       var types = Collection.Find(_ => true).ToList();
       return Mapper.Map<List<ExpenseTypeSM>>(types);
+    }
+
+    public ExpenseTypeSM GetExpenseTypeByName(string expenseTypeName)
+    {
+      var type = Collection.Find(x => x.ExpenseType == expenseTypeName).SingleOrDefault();
+      if (type == null)
+      {
+        return null;
+      }
+      return Mapper.Map<ExpenseTypeSM>(type);
     }
 
     public ExpenseSM UpdateExpense(ExpenseSM expense)
@@ -61,16 +74,12 @@ namespace CJ.Exp.Data.MongoDb.DataAccess
     public ExpenseTypeSM UpdateExpenseType(ExpenseTypeSM expenseType)
     {
       Collection.FindOneAndUpdate<ExpenseTypeMongoDM>(
-        Builders<ExpenseTypeMongoDM>.Filter.Eq("_id", expenseType.Id),
+        Builders<ExpenseTypeMongoDM>.Filter.Eq("_id", new ObjectId(expenseType.Id)),
         Builders<ExpenseTypeMongoDM>.Update.Set("ExpenseType", expenseType.ExpenseType)
       );
-
-      var dm = Mapper.Map<ExpenseTypeMongoDM>(expenseType);
-      Collection.InsertOne(dm);
-      expenseType.Id = dm.Id.ToString();
+      
       return expenseType;
     }
 
-    
   }
 }

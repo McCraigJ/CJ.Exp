@@ -19,6 +19,8 @@ namespace CJ.Exp.Data.Interfaces
 
     List<ExpenseTypeSM> GetExpenseTypes();
 
+    ExpenseTypeSM GetExpenseTypeByName(string expenseTypeName);
+
     ExpenseSM UpdateExpense(ExpenseSM expense);
 
     ExpenseTypeSM UpdateExpenseType(ExpenseTypeSM expenseType);

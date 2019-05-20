@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using CJ.Exp.ServiceModels.Expenses;
 using System.Linq;
+using CJ.Exp.Core;
 
 namespace CJ.Exp.DomainInterfaces
 {
@@ -16,7 +17,7 @@ namespace CJ.Exp.DomainInterfaces
 
     List<ExpenseTypeSM> GetExpenseTypes();
 
-    ExpenseTypeSM AddExpenseType(ExpenseTypeSM expenseType);
+    ServiceResponse<ExpenseTypeSM> AddExpenseType(ExpenseTypeSM expenseType);
 
     ExpenseTypeSM UpdateExpenseType(ExpenseTypeSM expenseType);
 

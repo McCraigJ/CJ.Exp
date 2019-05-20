@@ -1,4 +1,5 @@
-﻿using CJ.Exp.Data.Interfaces;
+﻿using CJ.Exp.Core;
+using CJ.Exp.Data.Interfaces;
 using CJ.Exp.DomainInterfaces;
 using CJ.Exp.ServiceModels.Expenses;
 using System.Collections.Generic;
@@ -20,9 +21,15 @@ namespace CJ.Exp.BusinessLogic.Expenses
       return _data.AddExpense(expense);      
     }
 
-    public ExpenseTypeSM AddExpenseType(ExpenseTypeSM expenseType)
-    {
-      return _data.AddExpenseType(expenseType);
+    public ServiceResponse<ExpenseTypeSM> AddExpenseType(ExpenseTypeSM expenseType)
+    {      
+      if (_data.GetExpenseTypeByName(expenseType.ExpenseType) != null)
+      {        
+        return new ServiceResponse<ExpenseTypeSM>(expenseType, ServiceResponseCode.DataAlreadyExists);
+      }
+
+      expenseType = _data.AddExpenseType(expenseType);
+      return new ServiceResponse<ExpenseTypeSM>(expenseType, ServiceResponseCode.Success);
     }
 
     public bool DeleteExpense(ExpenseSM expense)

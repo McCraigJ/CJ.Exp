@@ -75,6 +75,11 @@ namespace CJ.Exp.Data.EF.DataAccess
         return (from t in _data.ExpenseTypes select t).ProjectTo<ExpenseTypeSM>().ToList();
       }
 
+      public ExpenseTypeSM GetExpenseTypeByName(string expenseTypeName)
+      {
+        throw new NotImplementedException();
+      }
+
       public ExpenseSM UpdateExpense(ExpenseSM expense)
       {
         var exp = _data.Expenses.SingleOrDefault(x => x.Id == expense.Id);

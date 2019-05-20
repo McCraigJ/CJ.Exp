@@ -33,13 +33,8 @@ namespace CJ.Exp.Admin.Controllers
     }
 
     public IActionResult Add()
-    {
-      var addUserVM = new AddUserVM
-      {
-        Roles = CreateRolesList()
-      };
-      
-      return View(addUserVM);
+    {      
+      return GetAddView(new AddUserVM());
     }
 
     [HttpPost]
@@ -53,15 +48,20 @@ namespace CJ.Exp.Admin.Controllers
         if (_authService.BusinessErrors.Any())
         {
           MergeBusinessErrors(_authService.BusinessErrors);
-          return View(addUser);
+          return GetAddView(addUser);
         }
 
         return RedirectToAction("Index");
       }
+      
+      return GetAddView(addUser);
 
-      addUser.Roles = CreateRolesList();
-      return View(addUser);
+    }
 
+    private IActionResult GetAddView(AddUserVM model)
+    {
+      model.Roles = CreateRolesList();
+      return View(model);
     }
 
     public async Task<IActionResult> Edit(string id)

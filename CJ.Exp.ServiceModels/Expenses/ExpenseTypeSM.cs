@@ -2,7 +2,7 @@
 
 namespace CJ.Exp.ServiceModels.Expenses
 {
-  public class ExpenseTypeSM
+  public class ExpenseTypeSM : ServiceModelBase
   {
     public string Id { get; set; }
     public string ExpenseType { get; set; }

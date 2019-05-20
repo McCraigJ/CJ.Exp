@@ -3,8 +3,8 @@ using System;
 
 namespace CJ.Exp.ServiceModels.Expenses
 {
-  public class ExpenseSM
-    {
+  public class ExpenseSM : ServiceModelBase
+  {
     public int Id { get; set; }
     //public string ExpenseTypeId { get; set; }
     public ExpenseTypeSM ExpenseType { get; set; }
