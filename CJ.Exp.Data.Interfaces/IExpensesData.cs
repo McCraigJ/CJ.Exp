@@ -7,7 +7,7 @@ namespace CJ.Exp.Data.Interfaces
 {
   public interface IExpensesData : IBaseData
   {
-    UpdateExpenseSM AddExpense(UpdateExpenseSM expense);
+    ExpenseSM AddExpense(ExpenseSM expense);
 
     ExpenseTypeSM AddExpenseType(ExpenseTypeSM expenseType);
 

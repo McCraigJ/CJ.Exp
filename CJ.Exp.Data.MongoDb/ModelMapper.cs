@@ -21,7 +21,14 @@ namespace CJ.Exp.Data.MongoDb
 
       CreateMap<ApplicationUserMongo, MongoUserDetails>();
 
-      CreateMap<ExpenseSM, ExpenseMongoDM>();
+      CreateMap<ExpenseSM, ExpenseMongoDM>()
+        .ForMember(dest => dest.Id, opt => opt.MapFrom(src => new ObjectId(src.Id)));
+
+      CreateMap<ExpenseTypeSM, ExpenseTypeMongoBaseDM>()
+        .ForMember(dest => dest.Id, opt => opt.MapFrom(src => new ObjectId(src.Id)));
+
+      CreateMap<UpdateExpenseSM, ExpenseMongoDM>()
+        .ForMember(dest => dest.Id, opt => opt.MapFrom(src => new ObjectId(src.Id)));
       //.ForMember(d => d.ExpenseType, opt => opt.MapFrom(src => src.ExpenseType.ExpenseType));
 
     }    

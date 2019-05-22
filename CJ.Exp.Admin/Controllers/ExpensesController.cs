@@ -31,7 +31,7 @@ namespace CJ.Exp.Admin.Controllers
     {
       var vm = new ExpensesVM
       {
-        Expenses = new List<ExpenseSM>() // _expensesService.GetExpenses().ToList()
+        Expenses = _expensesService.GetExpenses()
       };
       return View(vm);
     }

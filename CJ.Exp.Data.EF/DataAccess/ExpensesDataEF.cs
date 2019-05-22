@@ -17,7 +17,7 @@ namespace CJ.Exp.Data.EF.DataAccess
     {
       public ExpensesDataEf(ExpDbContext data) : base(data) { }
 
-      public UpdateExpenseSM AddExpense(UpdateExpenseSM expense)
+      public ExpenseSM AddExpense(ExpenseSM expense)
       {
         var exp = Mapper.Map<ExpenseDM>(expense);
         exp.ExpenseType = _data.ExpenseTypes.SingleOrDefault(x => x.Id == Convert.ToInt32(expense.ExpenseType.Id));

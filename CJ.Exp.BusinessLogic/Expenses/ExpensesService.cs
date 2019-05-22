@@ -4,6 +4,7 @@ using CJ.Exp.DomainInterfaces;
 using CJ.Exp.ServiceModels.Expenses;
 using System.Collections.Generic;
 using System.Linq;
+using AutoMapper;
 
 namespace CJ.Exp.BusinessLogic.Expenses
 {
@@ -17,7 +18,7 @@ namespace CJ.Exp.BusinessLogic.Expenses
     }
 
     public ServiceResponse<UpdateExpenseSM> AddExpense(UpdateExpenseSM expense)
-    {
+    {      
       if (string.IsNullOrEmpty(expense.NewExpenseType))
       {
         expense.ExpenseType = _data.GetExpenseTypeById(expense.ExpenseType.Id);
@@ -35,7 +36,11 @@ namespace CJ.Exp.BusinessLogic.Expenses
           ExpenseType = expense.NewExpenseType
         };
       }
-      return new ServiceResponse<UpdateExpenseSM>(_data.AddExpense(expense), ServiceResponseCode.Success);
+
+      var exp = _data.AddExpense(expense);
+      expense.Id = exp.Id;
+
+      return new ServiceResponse<UpdateExpenseSM>(expense, ServiceResponseCode.Success);
     }
 
     public ExpenseSM UpdateExpense(UpdateExpenseSM expense)

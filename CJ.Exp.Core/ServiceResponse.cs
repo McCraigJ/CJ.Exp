@@ -7,7 +7,8 @@ namespace CJ.Exp.Core
     Success = 0,
     DataAlreadyExists = 1,
     DataNotFound = 2,
-    UnknownError = 3
+    DataInUse = 3,
+    UnknownError = 4
   }
 
   public class ServiceResponse<TModel> where TModel : ServiceModelBase

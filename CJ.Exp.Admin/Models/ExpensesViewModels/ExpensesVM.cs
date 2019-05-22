@@ -9,7 +9,7 @@ namespace CJ.Exp.Admin.Models.ExpensesViewModels
 
   public class ExpenseVM : ViewModelBase
   {
-    public int Id { get; set; }
+    public string Id { get; set; }
     
     [Display(Name = "Expense Type")]
     public string ExpenseTypeId { get; set; }

@@ -18,7 +18,9 @@ namespace CJ.Exp.Admin
       CreateMap<UserSM, IndexViewModel>();
       CreateMap<IndexViewModel, UserSM>();
 
+      CreateMap<ExpenseTypeVM, UpdateExpenseTypeSM>();
       CreateMap<ExpenseTypeVM, ExpenseTypeSM>();
+      CreateMap<UpdateExpenseTypeSM, ExpenseTypeVM>();
       CreateMap<ExpenseTypeSM, ExpenseTypeVM>();
 
       CreateMap<ExpenseVM, UpdateExpenseSM>()

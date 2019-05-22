@@ -5,6 +5,7 @@ using CJ.Exp.ServiceModels.Expenses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
+using CJ.Exp.Core;
 
 namespace CJ.Exp.Admin.Controllers
 {
@@ -41,10 +42,14 @@ namespace CJ.Exp.Admin.Controllers
     {
       if (ModelState.IsValid)
       {
-        _expensesService.AddExpenseType(Mapper.Map<ExpenseTypeSM>(model));
-        return RedirectToAction("Index");
+        var result = _expensesService.AddExpenseType(Mapper.Map<ExpenseTypeSM>(model));
+        if (result.ResponseCode == ServiceResponseCode.Success)
+        {
+          return RedirectToAction("Index");
+        }
+        model.SetErrorMessage(result.ResponseCode, "Expense Type");
       }
-      return View(model);
+      return View("Add", model);
     }
 
     [HttpPost]
@@ -55,6 +60,12 @@ namespace CJ.Exp.Admin.Controllers
 
     [HttpGet]
     public IActionResult Edit()
+    {
+      return RedirectToAction("Index");
+    }
+
+    [HttpGet]
+    public IActionResult DoEdit()
     {
       return RedirectToAction("Index");
     }

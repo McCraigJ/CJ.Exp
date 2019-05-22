@@ -25,7 +25,7 @@ namespace CJ.Exp.Data.MongoDb.DataAccess
       _expenseCollection = Database.GetCollection<ExpenseMongoDM>("expenses");
     }
 
-    public UpdateExpenseSM AddExpense(UpdateExpenseSM expense)
+    public ExpenseSM AddExpense(ExpenseSM expense)
     {
 
       StartTransaction();
@@ -66,12 +66,13 @@ namespace CJ.Exp.Data.MongoDb.DataAccess
 
     public List<ExpenseSM> GetExpenses()
     {
-      throw new NotImplementedException();
+      var expenses = _expenseCollection.Find(_ => true).ToList();
+      return Mapper.Map<List<ExpenseSM>>(expenses);
     }
 
     public List<ExpenseTypeSM> GetExpenseTypes()
     {           
-      var types = _expenseTypeCollection.Find(_ => true).ToList();
+      var types = _expenseTypeCollection.Find(_ => true).SortBy(x => x.ExpenseType).ToList();
       return Mapper.Map<List<ExpenseTypeSM>>(types);
     }
 
