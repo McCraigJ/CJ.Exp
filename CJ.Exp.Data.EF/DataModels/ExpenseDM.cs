@@ -7,7 +7,7 @@ namespace CJ.Exp.Data.EF.DataModels
   [Table(name: "Expenses")]
   public class ExpenseDM
   {
-    public int Id { get; set; }        
+    public string Id { get; set; }        
     //public string ExpenseTypeId { get; set; }
     public ExpenseTypeDM ExpenseType { get; set; }
     public decimal ExpenseValue { get; set; }

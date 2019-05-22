@@ -9,16 +9,16 @@ using IAppMongoClient = CJ.Exp.Data.MongoDb.Interfaces.IAppMongoClient;
 
 namespace CJ.Exp.Data.MongoDb.DataAccess
 {
-  public class DataMongoAccessBase<TCollection>
-  {
-    protected IMongoCollection<TCollection> Collection { get; }
+  public class DataMongoAccessBase
+  {    
     protected MongoClient Client { get; }
     private IClientSessionHandle session;
+    protected IMongoDatabase Database { get; }
 
-    public DataMongoAccessBase(IAppMongoClient mongoClient, IApplicationSettings applicationSettings, string collectionName)
+    public DataMongoAccessBase(IAppMongoClient mongoClient, IApplicationSettings applicationSettings)
     {
       Client = mongoClient.GetClient();
-      Collection = Client.GetDatabase(applicationSettings.DatabaseName).GetCollection<TCollection>(collectionName);
+      Database = Client.GetDatabase(applicationSettings.DatabaseName);
     }
 
     /// <summary>
@@ -31,6 +31,7 @@ namespace CJ.Exp.Data.MongoDb.DataAccess
         throw new DomainException("Transaction session already started");
       }
       session = Client.StartSession();
+      session.StartTransaction();
     }
 
     public void CommitTransaction()

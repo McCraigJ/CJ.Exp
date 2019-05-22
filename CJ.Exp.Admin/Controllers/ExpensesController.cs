@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -30,7 +31,7 @@ namespace CJ.Exp.Admin.Controllers
     {
       var vm = new ExpensesVM
       {
-        Expenses = _expensesService.GetExpenses().ToList()
+        Expenses = new List<ExpenseSM>() // _expensesService.GetExpenses().ToList()
       };
       return View(vm);
     }
@@ -47,11 +48,11 @@ namespace CJ.Exp.Admin.Controllers
     }
 
     [HttpPost]
-    public async Task<IActionResult> Add(ExpenseVM model)
+    public async Task<IActionResult> DoAdd(ExpenseVM model)
     {
       if (ModelState.IsValid)
       {
-        var exp = Mapper.Map<ExpenseSM>(model);
+        var exp = Mapper.Map<UpdateExpenseSM>(model);
         var user = await _authService.GetUserByPrincipalAsync(User);
         exp.User = user;
         exp.ExpenseType = new ExpenseTypeSM { Id = model.ExpenseTypeId };
@@ -62,8 +63,8 @@ namespace CJ.Exp.Admin.Controllers
       return View(model);
     }
 
-    [HttpGet]
-    public IActionResult Edit(int id)
+    [HttpPost]
+    public IActionResult Edit(string id)
     {
       var expSm = _expensesService.GetExpenses().SingleOrDefault(x => x.Id == id);
 
@@ -74,11 +75,11 @@ namespace CJ.Exp.Admin.Controllers
     }
 
     [HttpPost]
-    public async Task<IActionResult> Edit(ExpenseVM model)
+    public async Task<IActionResult> DoEdit(ExpenseVM model)
     {
       if (ModelState.IsValid)
       {
-        var exp = Mapper.Map<ExpenseSM>(model);
+        var exp = Mapper.Map<UpdateExpenseSM>(model);
         var user = await _authService.GetUserByPrincipalAsync(User);
         exp.User = user;
         exp.ExpenseType = new ExpenseTypeSM { Id = model.ExpenseTypeId };
@@ -89,8 +90,8 @@ namespace CJ.Exp.Admin.Controllers
       return View(model);
     }
 
-    [HttpGet]
-    public IActionResult Delete(int id)
+    [HttpPost]
+    public IActionResult Delete(string id)
     {
       var expSm = _expensesService.GetExpenses().SingleOrDefault(x => x.Id == id);
 
@@ -101,7 +102,7 @@ namespace CJ.Exp.Admin.Controllers
     }
 
     [HttpPost]
-    public IActionResult Delete(ExpenseVM model)
+    public IActionResult DoDelete(ExpenseVM model)
     {
       if (ModelState.IsValid)
       {

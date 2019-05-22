@@ -13,6 +13,8 @@ namespace CJ.Exp.Admin.Models.ExpensesViewModels
     
     [Display(Name = "Expense Type")]
     public string ExpenseTypeId { get; set; }
+    [Display(Name="New Expense Type")]
+    public string NewExpenseType { get; set; }
     [Display(Name = "Value")]
     public decimal ExpenseValue { get; set; }
     [Display(Name = "Date")]

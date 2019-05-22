@@ -9,4 +9,9 @@ namespace CJ.Exp.ServiceModels.Expenses
     public Guid SyncId { get; set; }
     public DateTime SyncDate { get; set; }
   }
+
+  public class UpdateExpenseTypeSM : ExpenseTypeSM
+  {
+    public bool UpdateExpensesWithUpdatedType { get; set; }
+  }
 }

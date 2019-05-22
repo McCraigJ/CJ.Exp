@@ -16,9 +16,31 @@ namespace CJ.Exp.BusinessLogic.Expenses
       _data = data;
     }
 
-    public ExpenseSM AddExpense(ExpenseSM expense)
+    public ServiceResponse<UpdateExpenseSM> AddExpense(UpdateExpenseSM expense)
     {
-      return _data.AddExpense(expense);      
+      if (string.IsNullOrEmpty(expense.NewExpenseType))
+      {
+        expense.ExpenseType = _data.GetExpenseTypeById(expense.ExpenseType.Id);
+      }
+      else {
+
+        if (_data.GetExpenseTypeByName(expense.NewExpenseType) != null)
+        {
+          return new ServiceResponse<UpdateExpenseSM>(expense, ServiceResponseCode.DataAlreadyExists);
+        }
+
+        expense.ExpenseType = new ExpenseTypeSM
+        {
+          Id = null,
+          ExpenseType = expense.NewExpenseType
+        };
+      }
+      return new ServiceResponse<UpdateExpenseSM>(_data.AddExpense(expense), ServiceResponseCode.Success);
+    }
+
+    public ExpenseSM UpdateExpense(UpdateExpenseSM expense)
+    {
+      throw new System.NotImplementedException();
     }
 
     public ServiceResponse<ExpenseTypeSM> AddExpenseType(ExpenseTypeSM expenseType)
@@ -30,7 +52,7 @@ namespace CJ.Exp.BusinessLogic.Expenses
 
       expenseType = _data.AddExpenseType(expenseType);
       return new ServiceResponse<ExpenseTypeSM>(expenseType, ServiceResponseCode.Success);
-    }
+    }    
 
     public bool DeleteExpense(ExpenseSM expense)
     {
@@ -50,17 +72,25 @@ namespace CJ.Exp.BusinessLogic.Expenses
     public List<ExpenseTypeSM> GetExpenseTypes()
     {
       return _data.GetExpenseTypes();
-    }
+    }    
 
     public ExpenseSM UpdateExpense(ExpenseSM expense)
     {
       return _data.UpdateExpense(expense);
     }
 
-    public ExpenseTypeSM UpdateExpenseType(ExpenseTypeSM expenseType)
+    public ServiceResponse<UpdateExpenseTypeSM> UpdateExpenseType(UpdateExpenseTypeSM expenseType)
     {
-      return _data.UpdateExpenseType(expenseType);
+      _data.StartTransaction();
+      _data.UpdateExpenseType(expenseType);
 
+      if (expenseType.UpdateExpensesWithUpdatedType)
+      {
+        _data.UpdateExpenseWithUpdatedExpenseType(expenseType);
+      }
+      _data.CommitTransaction();
+
+      return new ServiceResponse<UpdateExpenseTypeSM>(expenseType, ServiceResponseCode.Success);
     }
   }
 }

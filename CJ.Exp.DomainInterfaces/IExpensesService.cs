@@ -9,9 +9,9 @@ namespace CJ.Exp.DomainInterfaces
   {
     List<ExpenseSM> GetExpenses();
 
-    ExpenseSM AddExpense(ExpenseSM expense);
+    ServiceResponse<UpdateExpenseSM> AddExpense(UpdateExpenseSM expense);
 
-    ExpenseSM UpdateExpense(ExpenseSM expense);
+    ExpenseSM UpdateExpense(UpdateExpenseSM expense);
 
     bool DeleteExpense(ExpenseSM expense);
 
@@ -19,7 +19,7 @@ namespace CJ.Exp.DomainInterfaces
 
     ServiceResponse<ExpenseTypeSM> AddExpenseType(ExpenseTypeSM expenseType);
 
-    ExpenseTypeSM UpdateExpenseType(ExpenseTypeSM expenseType);
+    ServiceResponse<UpdateExpenseTypeSM> UpdateExpenseType(UpdateExpenseTypeSM expenseType);
 
     bool DeleteExpenseType(ExpenseTypeSM expenseType);
   }

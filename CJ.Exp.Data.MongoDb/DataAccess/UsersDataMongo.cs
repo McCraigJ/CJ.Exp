@@ -11,22 +11,25 @@ using IAppMongoClient = CJ.Exp.Data.MongoDb.Interfaces.IAppMongoClient;
 
 namespace CJ.Exp.Data.MongoDb.DataAccess
 {
-  public class UsersDataMongo : DataMongoAccessBase<ApplicationUserMongo>, IUsersData
-  {    
+  public class UsersDataMongo : DataMongoAccessBase, IUsersData
+  {
+    private readonly IMongoCollection<ApplicationUserMongo> _collection;
+
     public UsersDataMongo(IAppMongoClient mongoClient, IApplicationSettings applicationSettings) : 
-      base(mongoClient, applicationSettings, "applicationUserMongos")
-    {      
+      base(mongoClient, applicationSettings)
+    {
+      _collection = Database.GetCollection<ApplicationUserMongo>("applicationUserMongos");
     }
 
     public List<UserSM> GetUsers()
     {      
-      var users = Collection.Find(_ => true).ToList();
+      var users = _collection.Find(_ => true).ToList();
       return Mapper.Map<List<UserSM>>(users);
     }
 
     public UserSM GetUserById(string id)
     {
-      var user = Collection.Find(x => x.Id == new Guid(id)).SingleOrDefault();
+      var user = _collection.Find(x => x.Id == new Guid(id)).SingleOrDefault();
       return Mapper.Map<UserSM>(user);
     }
 

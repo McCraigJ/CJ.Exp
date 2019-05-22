@@ -14,10 +14,16 @@ namespace CJ.Exp.Data.MongoDb
         .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.Email));
 
       CreateMap<ExpenseTypeMongoDM, ExpenseTypeSM>()
-        .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id));
+        .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id));      
 
       CreateMap<ExpenseTypeSM, ExpenseTypeMongoDM>()
         .ForMember(dest => dest.Id, opt => opt.MapFrom(src => new ObjectId(src.Id)));
+
+      CreateMap<ApplicationUserMongo, MongoUserDetails>();
+
+      CreateMap<ExpenseSM, ExpenseMongoDM>();
+      //.ForMember(d => d.ExpenseType, opt => opt.MapFrom(src => src.ExpenseType.ExpenseType));
+
     }    
   }
 }

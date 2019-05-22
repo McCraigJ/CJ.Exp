@@ -7,6 +7,7 @@ namespace CJ.Exp.Admin.Models.ExpensesViewModels
   {
     public string Id { get; set; }
     public string ExpenseType { get; set; }
+    public bool UpdateExpensesWithUpdatedType { get; set; }
   }
 
   public class ExpenseTypesVM : ViewModelBase

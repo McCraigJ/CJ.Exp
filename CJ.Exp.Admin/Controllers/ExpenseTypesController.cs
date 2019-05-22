@@ -37,7 +37,7 @@ namespace CJ.Exp.Admin.Controllers
     }
 
     [HttpPost]
-    public IActionResult Add(ExpenseTypeVM model)
+    public IActionResult DoAdd(ExpenseTypeVM model)
     {
       if (ModelState.IsValid)
       {
@@ -47,35 +47,53 @@ namespace CJ.Exp.Admin.Controllers
       return View(model);
     }
 
-    [HttpGet]
-    public IActionResult Edit(string id)
+    [HttpPost]
+    public IActionResult Cancel()
     {
-      var expSm = _expensesService.GetExpenseTypes().SingleOrDefault(x => x.Id == id);
+      return RedirectToAction("Index");
+    }
+
+    [HttpGet]
+    public IActionResult Edit()
+    {
+      return RedirectToAction("Index");
+    }
+
+    [HttpPost]
+    public IActionResult Edit(string expenseTypeId)
+    {
+      var expSm = _expensesService.GetExpenseTypes().SingleOrDefault(x => x.Id == expenseTypeId);
 
       return View(Mapper.Map<ExpenseTypeVM>(expSm));
     }
 
     [HttpPost]
-    public IActionResult Edit(ExpenseTypeVM model)
+    public IActionResult DoEdit(ExpenseTypeVM model)
     {
       if (ModelState.IsValid)
       {
-        var updatedModel = _expensesService.UpdateExpenseType(Mapper.Map<ExpenseTypeSM>(model));
+        var result = _expensesService.UpdateExpenseType(Mapper.Map<UpdateExpenseTypeSM>(model));
         return RedirectToAction("Index");
       }
       return View(model);      
     }
 
-    [HttpGet]
-    public IActionResult Delete(string id)
+    [HttpPost]
+    public IActionResult Delete(string expenseTypeId)
     {
-      var expSm = _expensesService.GetExpenseTypes().SingleOrDefault(x => x.Id == id);
+      var expSm = _expensesService.GetExpenseTypes().SingleOrDefault(x => x.Id == expenseTypeId);
 
       return View(Mapper.Map<ExpenseTypeVM>(expSm));
     }
 
+    [HttpGet]
+    public IActionResult Delete()
+    {
+      return RedirectToAction("Index");
+    }
+
     [HttpPost]
-    public IActionResult Delete(ExpenseTypeVM model)
+    public IActionResult DoDelete(ExpenseTypeVM model)
     {
       if (ModelState.IsValid)
       {

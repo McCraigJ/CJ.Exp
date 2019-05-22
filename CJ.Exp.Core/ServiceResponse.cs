@@ -20,5 +20,6 @@ namespace CJ.Exp.Core
       Model = model;
       ResponseCode = responseCode;
     }
+    
   }
 }

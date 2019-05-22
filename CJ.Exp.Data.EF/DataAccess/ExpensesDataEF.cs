@@ -17,7 +17,7 @@ namespace CJ.Exp.Data.EF.DataAccess
     {
       public ExpensesDataEf(ExpDbContext data) : base(data) { }
 
-      public ExpenseSM AddExpense(ExpenseSM expense)
+      public UpdateExpenseSM AddExpense(UpdateExpenseSM expense)
       {
         var exp = Mapper.Map<ExpenseDM>(expense);
         exp.ExpenseType = _data.ExpenseTypes.SingleOrDefault(x => x.Id == Convert.ToInt32(expense.ExpenseType.Id));
@@ -75,6 +75,11 @@ namespace CJ.Exp.Data.EF.DataAccess
         return (from t in _data.ExpenseTypes select t).ProjectTo<ExpenseTypeSM>().ToList();
       }
 
+      public ExpenseTypeSM GetExpenseTypeById(string id)
+      {
+        throw new NotImplementedException();
+      }
+
       public ExpenseTypeSM GetExpenseTypeByName(string expenseTypeName)
       {
         throw new NotImplementedException();
@@ -106,6 +111,21 @@ namespace CJ.Exp.Data.EF.DataAccess
 
         return expenseType;
 
+      }
+
+      public bool UpdateExpenseWithUpdatedExpenseType(ExpenseTypeSM expenseType)
+      {
+        throw new NotImplementedException();
+      }
+
+      public void StartTransaction()
+      {
+        throw new NotImplementedException();
+      }
+
+      public void CommitTransaction()
+      {
+        throw new NotImplementedException();
       }
     }
   }
