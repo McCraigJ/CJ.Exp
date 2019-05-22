@@ -15,7 +15,9 @@ namespace CJ.Exp.Data.Interfaces
 
     bool DeleteExpenseType(ExpenseTypeSM expenseType);
 
-    List<ExpenseSM> GetExpenses();
+    List<ExpenseSM> GetExpenses(ExpenseFilterSM filter);
+
+    ExpenseSM GetExpenseById(string id);
 
     List<ExpenseTypeSM> GetExpenseTypes();
 

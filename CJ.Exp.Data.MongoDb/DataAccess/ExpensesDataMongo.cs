@@ -64,10 +64,16 @@ namespace CJ.Exp.Data.MongoDb.DataAccess
       return true;
     }
 
-    public List<ExpenseSM> GetExpenses()
+    public List<ExpenseSM> GetExpenses(ExpenseFilterSM filter)
     {
-      var expenses = _expenseCollection.Find(_ => true).ToList();
+      var expenses = _expenseCollection.Find(x => x.ExpenseDate >= filter.StartDate && x.ExpenseDate <= filter.EndDate.AddDays(1)).ToList();
       return Mapper.Map<List<ExpenseSM>>(expenses);
+    }
+
+    public ExpenseSM GetExpenseById(string id)
+    {
+      var expense = _expenseCollection.Find(x => x.Id == new ObjectId(id)).SingleOrDefault();
+      return Mapper.Map<ExpenseSM>(expense);
     }
 
     public List<ExpenseTypeSM> GetExpenseTypes()

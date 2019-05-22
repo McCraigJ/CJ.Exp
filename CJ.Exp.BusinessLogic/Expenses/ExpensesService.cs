@@ -17,6 +17,11 @@ namespace CJ.Exp.BusinessLogic.Expenses
       _data = data;
     }
 
+    public ExpenseSM GetExpenseById(string id)
+    {
+      return _data.GetExpenseById(id);
+    }
+
     public ServiceResponse<UpdateExpenseSM> AddExpense(UpdateExpenseSM expense)
     {      
       if (string.IsNullOrEmpty(expense.NewExpenseType))
@@ -69,9 +74,9 @@ namespace CJ.Exp.BusinessLogic.Expenses
       return _data.DeleteExpenseType(expenseType);
     }
 
-    public List<ExpenseSM> GetExpenses()
+    public List<ExpenseSM> GetExpenses(ExpenseFilterSM filter)
     {
-      return _data.GetExpenses();
+      return _data.GetExpenses(filter);
     }
 
     public List<ExpenseTypeSM> GetExpenseTypes()

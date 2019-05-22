@@ -20,4 +20,10 @@ namespace CJ.Exp.ServiceModels.Expenses
   {
     public string NewExpenseType { get; set; }
   }
+
+  public class ExpenseFilterSM : ServiceModelBase
+  {
+    public DateTime StartDate { get; set; }
+    public DateTime EndDate { get; set; }
+  }
 }

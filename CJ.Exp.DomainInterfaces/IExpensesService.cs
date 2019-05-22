@@ -7,7 +7,9 @@ namespace CJ.Exp.DomainInterfaces
 {
   public interface IExpensesService
   {
-    List<ExpenseSM> GetExpenses();
+    List<ExpenseSM> GetExpenses(ExpenseFilterSM filter);
+
+    ExpenseSM GetExpenseById(string id);
 
     ServiceResponse<UpdateExpenseSM> AddExpense(UpdateExpenseSM expense);
 

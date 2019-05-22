@@ -65,9 +65,14 @@ namespace CJ.Exp.Data.EF.DataAccess
 
       }
 
-      public List<ExpenseSM> GetExpenses()
+      public List<ExpenseSM> GetExpenses(ExpenseFilterSM filter)
       {
         return (from e in _data.Expenses select e).ProjectTo<ExpenseSM>().ToList();
+      }
+
+      public ExpenseSM GetExpenseById(string id)
+      {
+        throw new NotImplementedException();
       }
 
       public List<ExpenseTypeSM> GetExpenseTypes()

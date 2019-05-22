@@ -32,6 +32,12 @@ security.authorization = enabled
 to conf
 or --auth to command line
 
+
 use admin
 db.auth("admin", "P@ssw0rd1")
 db.auth("webuser", "Password123")
+
+Indexes
+-------
+db.expensetypes.ensureIndex({"ExpenseType": 1})
+db.expenses.ensureIndex({"ExpenseType.ExpenseType": 1})

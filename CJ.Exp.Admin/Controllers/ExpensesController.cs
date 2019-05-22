@@ -31,12 +31,27 @@ namespace CJ.Exp.Admin.Controllers
     {
       var vm = new ExpensesVM
       {
-        Expenses = _expensesService.GetExpenses()
+        Expenses = null, //_expensesService.GetExpenses(),
+        Filter = new ExpensesFilterVM
+        {
+          StartDate = DateTime.Today,
+          EndDate = DateTime.Today,
+          IsFiltered = false
+        }
       };
       return View(vm);
     }
 
-    [HttpGet]
+    [HttpPost]
+    public IActionResult Filter(ExpensesVM model)
+    {
+      var filter = Mapper.Map<ExpenseFilterSM>(model.Filter);
+      TempData.Add("ExpensesFilter", filter);
+      model.Expenses = _expensesService.GetExpenses(filter);
+      return View("Index", model);
+    }
+
+    [HttpPost]
     public IActionResult Add()
     {
       var vm = new ExpenseVM
@@ -45,6 +60,38 @@ namespace CJ.Exp.Admin.Controllers
       };
       PopulateLists(vm);
       return View(vm);
+    }
+
+    [HttpPost]
+    public IActionResult BackToIndex()
+    {
+      var filter = (ExpenseFilterSM)TempData["ExpenseFilter"];      
+      if (filter != null)
+      {
+        var model = new ExpensesVM
+        {
+          Expenses = _expensesService.GetExpenses(filter),
+          Filter = Mapper.Map<ExpensesFilterVM>(filter)          
+        };
+        return View("Index", model);
+      }
+
+      return View("Index", GetNewExpensesVM());
+
+    }
+
+    private ExpensesVM GetNewExpensesVM()
+    {
+      return new ExpensesVM
+      {
+        Expenses = null, //_expensesService.GetExpenses(),
+        Filter = new ExpensesFilterVM
+        {
+          StartDate = DateTime.Today,
+          EndDate = DateTime.Today,
+          IsFiltered = false
+        }
+      };
     }
 
     [HttpPost]
@@ -66,7 +113,7 @@ namespace CJ.Exp.Admin.Controllers
     [HttpPost]
     public IActionResult Edit(string id)
     {
-      var expSm = _expensesService.GetExpenses().SingleOrDefault(x => x.Id == id);
+      var expSm = _expensesService.GetExpenseById(id);
 
       var vm = Mapper.Map<ExpenseVM>(expSm);
 
@@ -93,7 +140,7 @@ namespace CJ.Exp.Admin.Controllers
     [HttpPost]
     public IActionResult Delete(string id)
     {
-      var expSm = _expensesService.GetExpenses().SingleOrDefault(x => x.Id == id);
+      var expSm = _expensesService.GetExpenseById(id);
 
       var vm = Mapper.Map<ExpenseVM>(expSm);
 

@@ -23,8 +23,16 @@ namespace CJ.Exp.Admin.Models.ExpensesViewModels
     public List<SelectListItem> ExpenseTypes { get; set; }
   }
 
+  public class ExpensesFilterVM
+  {
+    public DateTime StartDate { get; set; }
+    public DateTime EndDate { get; set; }
+    public bool IsFiltered { get; set; }
+  }
+
   public class ExpensesVM : ViewModelBase
   {
+    public ExpensesFilterVM Filter { get; set; }
     public List<ExpenseSM> Expenses { get; set; }
   }
 }
