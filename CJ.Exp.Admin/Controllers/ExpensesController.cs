@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CJ.Exp.Admin.Extensions;
 
 namespace CJ.Exp.Admin.Controllers
 {
@@ -46,12 +47,15 @@ namespace CJ.Exp.Admin.Controllers
     public IActionResult Filter(ExpensesVM model)
     {
       var filter = Mapper.Map<ExpenseFilterSM>(model.Filter);
-      TempData.Add("ExpensesFilter", filter);
+      model.Filter.IsFiltered = true;
+
+      TempDataHelper.Put<ExpenseFilterSM>(TempData, "ExpensesFilter", filter);
       model.Expenses = _expensesService.GetExpenses(filter);
+      
       return View("Index", model);
     }
 
-    [HttpPost]
+    [HttpGet]
     public IActionResult Add()
     {
       var vm = new ExpenseVM
@@ -59,13 +63,13 @@ namespace CJ.Exp.Admin.Controllers
         ExpenseDate = DateTime.Today
       };
       PopulateLists(vm);
-      return View(vm);
+      return View("Add", vm);
     }
 
     [HttpPost]
     public IActionResult BackToIndex()
     {
-      var filter = (ExpenseFilterSM)TempData["ExpenseFilter"];      
+      var filter = TempDataHelper.Get<ExpenseFilterSM>(TempData, "ExpensesFilter");  // (ExpenseFilterSM)TempData["ExpenseFilter"];      
       if (filter != null)
       {
         var model = new ExpensesVM

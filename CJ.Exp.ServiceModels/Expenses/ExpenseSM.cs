@@ -21,7 +21,8 @@ namespace CJ.Exp.ServiceModels.Expenses
     public string NewExpenseType { get; set; }
   }
 
-  public class ExpenseFilterSM : ServiceModelBase
+  [Serializable]
+  public class ExpenseFilterSM
   {
     public DateTime StartDate { get; set; }
     public DateTime EndDate { get; set; }
