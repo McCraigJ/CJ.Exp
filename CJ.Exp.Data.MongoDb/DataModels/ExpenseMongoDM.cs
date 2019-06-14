@@ -8,8 +8,8 @@ namespace CJ.Exp.Data.MongoDb.DataModels
   public class ExpenseMongoDM
   {
     public ObjectId Id { get; set; }
-    public ExpenseTypeMongoBaseDM ExpenseType { get; set; }
-    public decimal ExpenseValue { get; set; }
+    public ExpenseTypeMongoBaseDM ExpenseType { get; set; }    
+    public int ExpenseValue { get; set; }
     public DateTime ExpenseDate { get; set; }
     public MongoUserDetails User { get; set; }
     public Guid SyncId { get; set; }

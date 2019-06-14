@@ -15,13 +15,15 @@ namespace CJ.Exp.Admin.Controllers
 {
   [Authorize]
   [Route("[controller]/[action]")]
-  public class ExpensesController : Controller
+  public class ExpensesController : ControllerBase
   {
+    private const string ExpensesFilterDataKey = "ExpensesFilter";
+    private const string ExpensesSuccessMessage = "ExpenseMessageKey";
 
     private readonly IExpensesService _expensesService;
     private readonly IAuthService _authService;
 
-    public ExpensesController(IExpensesService expensesService, IAuthService authService)
+    public ExpensesController(IExpensesService expensesService, IAuthService authService) : base(ExpensesSuccessMessage)
     {
       _expensesService = expensesService;
       _authService = authService;
@@ -30,32 +32,76 @@ namespace CJ.Exp.Admin.Controllers
     [HttpGet]
     public IActionResult Index()
     {
-      var vm = new ExpensesVM
-      {
-        Expenses = null, //_expensesService.GetExpenses(),
-        Filter = new ExpensesFilterVM
-        {
-          StartDate = DateTime.Today,
-          EndDate = DateTime.Today,
-          IsFiltered = false
-        }
-      };
+      //var filter = Mapper.Map<ExpensesFilterVM>(GetTempData<ExpensesFilterSM>(ExpensesFilterDataKey, false));
+
+      var vm = new ExpensesVM();
+
+      var filter = TempData.Get<ExpensesFilterSM>(ExpensesFilterDataKey);
+      PopulateFilteredExpenses(vm, filter);
+
+      //List<ExpenseSM> expenses;
+      //if (filter != null)
+      //{
+      //  filter.IsFiltered = true;
+      //}
+      //else
+      //{
+      //  filter = new ExpensesFilterVM
+      //  {
+      //    StartDate = DateTime.Today,
+      //    EndDate = DateTime.Today,
+      //    IsFiltered = false
+      //  };
+      //}
+
+
       return View(vm);
     }
 
     [HttpPost]
     public IActionResult Filter(ExpensesVM model)
     {
-      var filter = Mapper.Map<ExpenseFilterSM>(model.Filter);
-      model.Filter.IsFiltered = true;
+      PopulateFilteredExpenses(model);
 
-      TempDataHelper.Put<ExpenseFilterSM>(TempData, "ExpensesFilter", filter);
-      model.Expenses = _expensesService.GetExpenses(filter);
-      
       return View("Index", model);
     }
 
-    [HttpGet]
+    private void PopulateFilteredExpenses(ExpensesVM model, ExpensesFilterSM updateFilter = null)
+    {
+
+      if (updateFilter != null)
+      {
+        model.Filter = Mapper.Map<ExpensesFilterVM>(updateFilter);
+        model.Filter.IsFiltered = true;
+        //TempData.Put<ExpensesFilterSM>(ExpensesFilterDataKey, updateFilter);
+        AddTempData(ExpensesFilterDataKey, updateFilter);
+        model.ExpensesSummary = _expensesService.GetExpenses(updateFilter);
+      }
+      else
+      {
+        if (model.Filter == null)
+        {
+          model.Filter = new ExpensesFilterVM
+          {
+            StartDate = DateTime.Today,
+            EndDate = DateTime.Today,
+            IsFiltered = false
+          };
+        }
+        else
+        {
+          //AddTempData(model.Filter, ExpensesFilterDataKey);
+          var filterSM = Mapper.Map<ExpensesFilterSM>(model.Filter);          
+          AddTempData(ExpensesFilterDataKey, filterSM);
+          model.Filter.IsFiltered = true;
+          model.ExpensesSummary = _expensesService.GetExpenses(filterSM);
+        }
+      }
+
+    }
+
+
+    [HttpPost]
     public IActionResult Add()
     {
       var vm = new ExpenseVM
@@ -69,14 +115,20 @@ namespace CJ.Exp.Admin.Controllers
     [HttpPost]
     public IActionResult BackToIndex()
     {
-      var filter = TempDataHelper.Get<ExpenseFilterSM>(TempData, "ExpensesFilter");  // (ExpenseFilterSM)TempData["ExpenseFilter"];      
+      var filter = TempData.Get<ExpensesFilterSM>(ExpensesFilterDataKey);
+      //var filter = TempDataHelper.Get<ExpensesFilterSM>(TempData, "ExpensesFilter");  // (ExpensesFilterSM)TempData["ExpenseFilter"];      
       if (filter != null)
       {
         var model = new ExpensesVM
         {
-          Expenses = _expensesService.GetExpenses(filter),
-          Filter = Mapper.Map<ExpensesFilterVM>(filter)          
+          ExpensesSummary = _expensesService.GetExpenses(filter),
+          Filter = Mapper.Map<ExpensesFilterVM>(filter)
         };
+        if (model.Filter != null)
+        {
+          model.Filter.IsFiltered = true;
+        }
+
         return View("Index", model);
       }
 
@@ -88,7 +140,7 @@ namespace CJ.Exp.Admin.Controllers
     {
       return new ExpensesVM
       {
-        Expenses = null, //_expensesService.GetExpenses(),
+        ExpensesSummary = null, //_expensesService.GetExpenses(),
         Filter = new ExpensesFilterVM
         {
           StartDate = DateTime.Today,
@@ -108,6 +160,8 @@ namespace CJ.Exp.Admin.Controllers
         exp.User = user;
         exp.ExpenseType = new ExpenseTypeSM { Id = model.ExpenseTypeId };
         _expensesService.AddExpense(exp);
+
+        SetSuccessMessage(SuccessMessageKey, "Expense successfully added");
         return RedirectToAction("Index");
       }
       PopulateLists(model);

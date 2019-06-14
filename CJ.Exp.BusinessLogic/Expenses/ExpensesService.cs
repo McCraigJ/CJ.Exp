@@ -74,9 +74,9 @@ namespace CJ.Exp.BusinessLogic.Expenses
       return _data.DeleteExpenseType(expenseType);
     }
 
-    public List<ExpenseSM> GetExpenses(ExpenseFilterSM filter)
+    public ExpenseSummarySM GetExpenses(ExpensesFilterSM filter)
     {
-      return _data.GetExpenses(filter);
+      return _data.GetExpenses(filter, null);
     }
 
     public List<ExpenseTypeSM> GetExpenseTypes()

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using CJ.Exp.ServiceModels;
 using CJ.Exp.ServiceModels.Expenses;
 
 namespace CJ.Exp.Data.Interfaces
@@ -15,7 +16,7 @@ namespace CJ.Exp.Data.Interfaces
 
     bool DeleteExpenseType(ExpenseTypeSM expenseType);
 
-    List<ExpenseSM> GetExpenses(ExpenseFilterSM filter);
+    ExpenseSummarySM GetExpenses(ExpensesFilterSM filter, GridRequestSM gridRequest);
 
     ExpenseSM GetExpenseById(string id);
 

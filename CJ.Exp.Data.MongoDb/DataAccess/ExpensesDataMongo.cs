@@ -8,6 +8,7 @@ using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using CJ.Exp.ServiceModels;
 using MongoDB.Bson;
 
 namespace CJ.Exp.Data.MongoDb.DataAccess
@@ -64,10 +65,25 @@ namespace CJ.Exp.Data.MongoDb.DataAccess
       return true;
     }
 
-    public List<ExpenseSM> GetExpenses(ExpenseFilterSM filter)
+    public ExpenseSummarySM GetExpenses(ExpensesFilterSM filter, GridRequestSM gridRequest)
     {
-      var expenses = _expenseCollection.Find(x => x.ExpenseDate >= filter.StartDate && x.ExpenseDate <= filter.EndDate.AddDays(1)).ToList();
-      return Mapper.Map<List<ExpenseSM>>(expenses);
+
+      List<ExpenseMongoDM> expenses;
+      if (gridRequest == null)
+      {
+        expenses = _expenseCollection.Find(x => x.ExpenseDate >= filter.StartDate && x.ExpenseDate <= filter.EndDate.AddDays(1)).ToList();
+      }
+      else
+      {
+        expenses = _expenseCollection.Find(x => x.ExpenseDate >= filter.StartDate && x.ExpenseDate <= filter.EndDate.AddDays(1)).
+          Skip(gridRequest.Skip).Limit(gridRequest.ItemsPerPage).ToList();
+      }
+
+      return new ExpenseSummarySM
+      {
+        Expenses = Mapper.Map<List<ExpenseSM>>(expenses),
+        Total = 0m
+      };
     }
 
     public ExpenseSM GetExpenseById(string id)

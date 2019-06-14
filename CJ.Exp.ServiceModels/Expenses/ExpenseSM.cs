@@ -1,5 +1,6 @@
 ﻿using CJ.Exp.ServiceModels.Users;
 using System;
+using System.Collections.Generic;
 
 namespace CJ.Exp.ServiceModels.Expenses
 {
@@ -21,10 +22,19 @@ namespace CJ.Exp.ServiceModels.Expenses
     public string NewExpenseType { get; set; }
   }
 
+  public class ExpenseSummarySM
+  {
+    public List<ExpenseSM> Expenses { get; set; }
+    
+    public decimal Total { get; set; }    
+  }
+
   [Serializable]
-  public class ExpenseFilterSM
+  public class ExpensesFilterSM
   {
     public DateTime StartDate { get; set; }
     public DateTime EndDate { get; set; }
+    public ExpenseTypeSM ExpenseType { get; set; }
+
   }
 }

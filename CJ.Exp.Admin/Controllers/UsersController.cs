@@ -16,8 +16,9 @@ namespace CJ.Exp.Admin.Controllers
   public class UsersController : ControllerBase
   {
     private readonly IAuthService _authService;
+    private const string MessageKey = "UserMessage";
 
-    public UsersController(IAuthService authService)
+    public UsersController(IAuthService authService) : base (MessageKey)
     {
       _authService = authService;
     }

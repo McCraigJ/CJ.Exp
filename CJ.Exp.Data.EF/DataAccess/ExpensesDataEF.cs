@@ -2,6 +2,7 @@
 using AutoMapper.QueryableExtensions;
 using CJ.Exp.ServiceModels.Expenses;
 using System.Collections.Generic;
+using CJ.Exp.ServiceModels;
 
 namespace CJ.Exp.Data.EF.DataAccess
 {
@@ -65,9 +66,13 @@ namespace CJ.Exp.Data.EF.DataAccess
 
       }
 
-      public List<ExpenseSM> GetExpenses(ExpenseFilterSM filter)
+      public ExpenseSummarySM GetExpenses(ExpensesFilterSM filter, GridRequestSM gridRequest)
       {
-        return (from e in _data.Expenses select e).ProjectTo<ExpenseSM>().ToList();
+        return new ExpenseSummarySM
+        {
+          Expenses = (from e in _data.Expenses select e).ProjectTo<ExpenseSM>().ToList(),
+          Total = 0m
+        };
       }
 
       public ExpenseSM GetExpenseById(string id)

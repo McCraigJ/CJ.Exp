@@ -39,6 +39,14 @@ namespace CJ.Exp.Admin
       CreateMap<UserSM, AddUserVM>();
       CreateMap<UserSM, EditUserVM>();
 
+      CreateMap<ExpensesFilterSM, ExpensesFilterVM>()
+        .ForMember(x => x.IsFiltered, opt => opt.Ignore());
+
+
+
+      //CreateMap<ExpensesFilterVM, ExpensesFilterSM>()
+      //  .ForMember(x => x, opt => opt.Ignore());
+
     }
   }
 }

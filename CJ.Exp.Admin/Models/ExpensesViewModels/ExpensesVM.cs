@@ -28,11 +28,12 @@ namespace CJ.Exp.Admin.Models.ExpensesViewModels
     public DateTime StartDate { get; set; }
     public DateTime EndDate { get; set; }
     public bool IsFiltered { get; set; }
+    public ExpenseTypeSM ExpenseType { get; set; }
   }
 
   public class ExpensesVM : ViewModelBase
   {
     public ExpensesFilterVM Filter { get; set; }
-    public List<ExpenseSM> Expenses { get; set; }
+    public ExpenseSummarySM ExpensesSummary { get; set; }    
   }
 }
