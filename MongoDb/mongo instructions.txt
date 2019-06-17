@@ -41,3 +41,6 @@ Indexes
 -------
 db.expensetypes.ensureIndex({"ExpenseType": 1})
 db.expenses.ensureIndex({"ExpenseType.ExpenseType": 1})
+
+Sum:
+db.expenses.aggregate({$group: {_id: 1, sum: { $sum: "$ExpenseValue"}}})

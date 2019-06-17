@@ -19,6 +19,12 @@ namespace CJ.Exp.Data.MongoDb.DataAccess
     private readonly IMongoCollection<ExpenseTypeMongoDM> _expenseTypeCollection;
     private readonly IMongoCollection<ExpenseMongoDM> _expenseCollection;
 
+    private class SumResult
+    {
+      private string Id { get; set; }
+      public int Sum { get; set; }
+    }
+
     public ExpensesDataMongo(IAppMongoClient mongoClient, IApplicationSettings applicationSettings) : 
       base(mongoClient, applicationSettings)
     {      
@@ -68,16 +74,26 @@ namespace CJ.Exp.Data.MongoDb.DataAccess
     public ExpenseSummarySM GetExpenses(ExpensesFilterSM filter, GridRequestSM gridRequest)
     {
 
+      var query = _expenseCollection.Find(x => x.ExpenseDate >= filter.StartDate && x.ExpenseDate <= filter.EndDate.AddDays(1));
+
       List<ExpenseMongoDM> expenses;
       if (gridRequest == null)
       {
-        expenses = _expenseCollection.Find(x => x.ExpenseDate >= filter.StartDate && x.ExpenseDate <= filter.EndDate.AddDays(1)).ToList();
+        expenses = query.ToList();
       }
       else
       {
-        expenses = _expenseCollection.Find(x => x.ExpenseDate >= filter.StartDate && x.ExpenseDate <= filter.EndDate.AddDays(1)).
-          Skip(gridRequest.Skip).Limit(gridRequest.ItemsPerPage).ToList();
+        expenses = query.Skip(gridRequest.Skip).Limit(gridRequest.ItemsPerPage).ToList();
       }
+
+      var sum = _expenseCollection.Aggregate()
+        .Group(
+            x => null as string, //x.Id,
+            group => new
+        {
+          Id = group.Key,
+          Sum = group.Sum(x => x.ExpenseValue)
+        }).ToList();
 
       return new ExpenseSummarySM
       {
