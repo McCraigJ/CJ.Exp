@@ -65,7 +65,7 @@ namespace CJ.Exp.Admin.Controllers
       PopulateFilteredExpenses(model);
 
       return View("Index", model);
-    }
+    } 
 
     private void PopulateFilteredExpenses(ExpensesVM model, ExpensesFilterSM updateFilter = null)
     {
