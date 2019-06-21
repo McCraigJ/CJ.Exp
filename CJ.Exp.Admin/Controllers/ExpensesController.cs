@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CJ.Exp.Admin.Extensions;
+using CJ.Exp.ServiceModels;
 
 namespace CJ.Exp.Admin.Controllers
 {
@@ -75,7 +76,7 @@ namespace CJ.Exp.Admin.Controllers
         model.Filter.IsFiltered = true;
         //TempData.Put<ExpensesFilterSM>(ExpensesFilterDataKey, updateFilter);
         AddTempData(ExpensesFilterDataKey, updateFilter);
-        model.ExpensesSummary = _expensesService.GetExpenses(updateFilter);
+        model.ExpenseGrid = _expensesService.GetExpenses(updateFilter, new GridRequestSM { ItemsPerPage = 10, PageNumber = 1});
       }
       else
       {
@@ -94,7 +95,7 @@ namespace CJ.Exp.Admin.Controllers
           var filterSM = Mapper.Map<ExpensesFilterSM>(model.Filter);          
           AddTempData(ExpensesFilterDataKey, filterSM);
           model.Filter.IsFiltered = true;
-          model.ExpensesSummary = _expensesService.GetExpenses(filterSM);
+          model.ExpenseGrid = _expensesService.GetExpenses(filterSM, new GridRequestSM { ItemsPerPage = 10, PageNumber = 1 });
         }
       }
 
@@ -121,7 +122,7 @@ namespace CJ.Exp.Admin.Controllers
       {
         var model = new ExpensesVM
         {
-          ExpensesSummary = _expensesService.GetExpenses(filter),
+          ExpenseGrid = _expensesService.GetExpenses(filter, new GridRequestSM { ItemsPerPage = 10, PageNumber = 1 }),
           Filter = Mapper.Map<ExpensesFilterVM>(filter)
         };
         if (model.Filter != null)
@@ -140,7 +141,7 @@ namespace CJ.Exp.Admin.Controllers
     {
       return new ExpensesVM
       {
-        ExpensesSummary = null, //_expensesService.GetExpenses(),
+        ExpenseGrid = null, //_expensesService.GetExpenses(),
         Filter = new ExpensesFilterVM
         {
           StartDate = DateTime.Today,

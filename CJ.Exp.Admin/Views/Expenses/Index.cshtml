@@ -54,7 +54,7 @@
         </tr>
       </thead>
       <tbody>
-        @foreach (var exp in Model.ExpensesSummary.Expenses)
+        @foreach (var exp in Model.ExpenseGrid.GridRows)
         {
           <tr>
             <td>@exp.ExpenseDate.ToShortDateString()</td>
@@ -65,7 +65,6 @@
               <a asp-area="" asp-controller="Expenses" asp-action="Delete" asp-route-id="@exp.Id">Delete</a>
             </td>
           </tr>
-
         }
 
       </tbody>

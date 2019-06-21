@@ -66,14 +66,19 @@ namespace CJ.Exp.Data.EF.DataAccess
 
       }
 
-      public ExpenseSummarySM GetExpenses(ExpensesFilterSM filter, GridRequestSM gridRequest)
+      public GridResultSM<ExpenseSM> GetExpenses(ExpensesFilterSM filter, GridRequestSM gridRequest)
       {
-        return new ExpenseSummarySM
-        {
-          Expenses = (from e in _data.Expenses select e).ProjectTo<ExpenseSM>().ToList(),
-          Total = 0m
-        };
+        throw new NotImplementedException();
       }
+
+      //public ExpenseSummarySM GetExpenses(ExpensesFilterSM filter, GridRequestSM gridRequest)
+      //{
+      //  return new ExpenseSummarySM
+      //  {
+      //    Expenses = (from e in _data.Expenses select e).ProjectTo<ExpenseSM>().ToList(),
+      //    Total = 0m
+      //  };
+      //}
 
       public ExpenseSM GetExpenseById(string id)
       {

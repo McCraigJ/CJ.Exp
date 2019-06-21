@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using CJ.Exp.ServiceModels;
 
 namespace CJ.Exp.Admin.Models.ExpensesViewModels
 {
@@ -34,6 +35,6 @@ namespace CJ.Exp.Admin.Models.ExpensesViewModels
   public class ExpensesVM : ViewModelBase
   {
     public ExpensesFilterVM Filter { get; set; }
-    public ExpenseSummarySM ExpensesSummary { get; set; }    
+    public GridResultSM<ExpenseSM> ExpenseGrid { get; set; }    
   }
 }

@@ -1,10 +1,12 @@
-﻿using CJ.Exp.Core;
+﻿using System;
+using CJ.Exp.Core;
 using CJ.Exp.Data.Interfaces;
 using CJ.Exp.DomainInterfaces;
 using CJ.Exp.ServiceModels.Expenses;
 using System.Collections.Generic;
 using System.Linq;
 using AutoMapper;
+using CJ.Exp.ServiceModels;
 
 namespace CJ.Exp.BusinessLogic.Expenses
 {
@@ -74,9 +76,13 @@ namespace CJ.Exp.BusinessLogic.Expenses
       return _data.DeleteExpenseType(expenseType);
     }
 
-    public ExpenseSummarySM GetExpenses(ExpensesFilterSM filter)
+    public GridResultSM<ExpenseSM> GetExpenses(ExpensesFilterSM filter, GridRequestSM gridRequest)
     {
-      return _data.GetExpenses(filter, null);
+      if (gridRequest == null)
+      {
+        throw new ApplicationException("No Grid Request Data has been supplied");
+      }
+      return _data.GetExpenses(filter, gridRequest);
     }
 
     public List<ExpenseTypeSM> GetExpenseTypes()

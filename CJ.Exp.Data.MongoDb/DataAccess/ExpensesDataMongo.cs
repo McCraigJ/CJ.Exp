@@ -71,21 +71,19 @@ namespace CJ.Exp.Data.MongoDb.DataAccess
       return true;
     }
 
-    public ExpenseSummarySM GetExpenses(ExpensesFilterSM filter, GridRequestSM gridRequest)
+    public GridResultSM<ExpenseSM> GetExpenses(ExpensesFilterSM filter, GridRequestSM gridRequest)
     {
+      if (gridRequest == null)
+      {
+        return null;
+      }
 
       var query = _expenseCollection.Find(x => x.ExpenseDate >= filter.StartDate && x.ExpenseDate <= filter.EndDate.AddDays(1));
 
       List<ExpenseMongoDM> expenses;
-      if (gridRequest == null)
-      {
-        expenses = query.ToList();
-      }
-      else
-      {
-        expenses = query.Skip(gridRequest.Skip).Limit(gridRequest.ItemsPerPage).ToList();
-      }
-
+      
+      expenses = query.Skip(gridRequest.Skip).Limit(gridRequest.ItemsPerPage).ToList();
+      
       var sum = _expenseCollection.Aggregate()
         .Group(
             x => null as string, //x.Id,
@@ -93,13 +91,15 @@ namespace CJ.Exp.Data.MongoDb.DataAccess
         {
           Id = group.Key,
           Sum = group.Sum(x => x.ExpenseValue)
-        }).ToList();
+        }).SingleOrDefault();
 
-      return new ExpenseSummarySM
-      {
-        Expenses = Mapper.Map<List<ExpenseSM>>(expenses),
-        Total = 0m
-      };
+      var count = _expenseCollection.CountDocuments(x => true);
+
+      return new GridResultSM<ExpenseSM>(gridRequest.PageNumber, 
+        (int)count, 
+        gridRequest.ItemsPerPage, 
+        sum.Sum / 1000m, 
+        Mapper.Map<List<ExpenseSM>>(expenses));
     }
 
     public ExpenseSM GetExpenseById(string id)

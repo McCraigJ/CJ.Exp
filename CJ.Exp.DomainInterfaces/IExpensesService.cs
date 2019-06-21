@@ -2,12 +2,13 @@
 using CJ.Exp.ServiceModels.Expenses;
 using System.Linq;
 using CJ.Exp.Core;
+using CJ.Exp.ServiceModels;
 
 namespace CJ.Exp.DomainInterfaces
 {
   public interface IExpensesService
   {
-    ExpenseSummarySM GetExpenses(ExpensesFilterSM filter);
+    GridResultSM<ExpenseSM> GetExpenses(ExpensesFilterSM filter, GridRequestSM gridRequest);
 
     ExpenseSM GetExpenseById(string id);
 

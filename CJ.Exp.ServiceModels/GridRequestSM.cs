@@ -6,10 +6,11 @@ namespace CJ.Exp.ServiceModels
 {
   public class GridRequestSM
   {
+    private int _pageNumber;
     public int PageNumber
     {
-      get => PageNumber == 0 ? 1 : PageNumber;
-      set => PageNumber = value;
+      get => _pageNumber == 0 ? 1 : _pageNumber;
+      set => _pageNumber = value;
     }
 
     public int ItemsPerPage { get; set; }

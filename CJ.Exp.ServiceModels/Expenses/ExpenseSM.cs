@@ -22,12 +22,14 @@ namespace CJ.Exp.ServiceModels.Expenses
     public string NewExpenseType { get; set; }
   }
 
-  public class ExpenseSummarySM
-  {
-    public List<ExpenseSM> Expenses { get; set; }
+  //public class ExpenseSummarySM
+  //{
+  //  public List<ExpenseSM> Expenses { get; set; }
     
-    public decimal Total { get; set; }    
-  }
+  //  public decimal Total { get; set; }
+    
+  //  public GridResponseSM GridResponse { get; set; }
+  //}
 
   [Serializable]
   public class ExpensesFilterSM
