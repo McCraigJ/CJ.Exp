@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CJ.Exp.Admin.Extensions;
+using CJ.Exp.Admin.Models.GridViewModels;
 using CJ.Exp.ServiceModels;
 
 namespace CJ.Exp.Admin.Controllers
@@ -65,7 +66,28 @@ namespace CJ.Exp.Admin.Controllers
       PopulateFilteredExpenses(model);
 
       return View("Index", model);
-    } 
+    }
+
+    [HttpGet]
+    public IActionResult GetExpensesData(GridFilterViewModel filter)
+    {
+      var searchFilter = TempData.Get<ExpensesFilterSM>(ExpensesFilterDataKey);
+      var expenses = _expensesService.GetExpenses(searchFilter, new GridRequestSM {ItemsPerPage = filter.PageSize, PageNumber = filter.PageIndex });
+      AddTempData(ExpensesFilterDataKey, searchFilter);
+
+      //var expenseRows = new List<ExpenseRowVM>();
+      //foreach (var exp in expenses.GridRows)
+      //{
+      //  expenseRows.Add(new ExpenseRowVM
+      //  {
+      //    Date = $"{exp.ExpenseDate:d}",
+      //    ExpenseType = exp.ExpenseType.ExpenseType,
+      //    ExpenseValue = $"{exp.ExpenseValue:N}"
+      //  });
+      //}
+
+      return new JsonResult(expenses);
+    }
 
     private void PopulateFilteredExpenses(ExpensesVM model, ExpensesFilterSM updateFilter = null)
     {

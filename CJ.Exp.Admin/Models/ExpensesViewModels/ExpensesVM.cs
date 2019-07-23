@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using CJ.Exp.ServiceModels;
+using Newtonsoft.Json.Converters;
 
 namespace CJ.Exp.Admin.Models.ExpensesViewModels
 {
@@ -36,5 +37,12 @@ namespace CJ.Exp.Admin.Models.ExpensesViewModels
   {
     public ExpensesFilterVM Filter { get; set; }
     public GridResultSM<ExpenseSM> ExpenseGrid { get; set; }    
+  }
+
+  public class ExpenseRowVM
+  {
+    public string Date { get; set; }
+    public string ExpenseType { get; set; }
+    public string ExpenseValue { get; set; }
   }
 }
