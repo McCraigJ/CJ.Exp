@@ -46,7 +46,7 @@ namespace CJ.Exp.Admin
       CreateMap<ExpensesFilterVM, ExpensesFilterSM>()
         .ForMember(x => x.GridFilter, opt => opt.Ignore());
 
-
+      CreateMap<ExpenseSM, ExpenseVM>();
 
       //CreateMap<ExpensesFilterVM, ExpensesFilterSM>()
       //  .ForMember(x => x, opt => opt.Ignore());

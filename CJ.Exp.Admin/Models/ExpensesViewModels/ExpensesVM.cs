@@ -36,7 +36,7 @@ namespace CJ.Exp.Admin.Models.ExpensesViewModels
   public class ExpensesVM : ViewModelBase
   {
     public ExpensesFilterVM Filter { get; set; }
-    public GridResultSM<ExpenseSM> ExpenseGrid { get; set; }    
+    //public GridResultSM<ExpenseSM> ExpenseGrid { get; set; }
   }
 
   public class ExpenseRowVM

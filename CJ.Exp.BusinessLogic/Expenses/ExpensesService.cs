@@ -76,8 +76,11 @@ namespace CJ.Exp.BusinessLogic.Expenses
       return _data.DeleteExpenseType(expenseType);
     }
 
+    // Todo: remove gridRequest
     public GridResultSM<ExpenseSM> GetExpenses(ExpensesFilterSM filter, GridRequestSM gridRequest)
     {
+      // todo: remove
+      gridRequest = filter.GridFilter;
       if (gridRequest == null)
       {
         throw new ApplicationException("No Grid Request Data has been supplied");

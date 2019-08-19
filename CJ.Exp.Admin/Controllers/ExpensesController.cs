@@ -34,27 +34,11 @@ namespace CJ.Exp.Admin.Controllers
     [HttpGet]
     public IActionResult Index()
     {
-      //var filter = Mapper.Map<ExpensesFilterVM>(GetTempData<ExpensesFilterSM>(ExpensesFilterDataKey, false));
 
       var vm = new ExpensesVM();
 
       var filter = TempData.Get<ExpensesFilterSM>(ExpensesFilterDataKey);
       PopulateFilteredExpenses(vm, filter);
-
-      //List<ExpenseSM> expenses;
-      //if (filter != null)
-      //{
-      //  filter.IsFiltered = true;
-      //}
-      //else
-      //{
-      //  filter = new ExpensesFilterVM
-      //  {
-      //    StartDate = DateTime.Today,
-      //    EndDate = DateTime.Today,
-      //    IsFiltered = false
-      //  };
-      //}
 
 
       return View(vm);
@@ -72,19 +56,17 @@ namespace CJ.Exp.Admin.Controllers
     public IActionResult GetExpensesData(GridFilterViewModel filter)
     {
       var searchFilter = TempData.Get<ExpensesFilterSM>(ExpensesFilterDataKey);
-      var expenses = _expensesService.GetExpenses(searchFilter, new GridRequestSM {ItemsPerPage = filter.PageSize, PageNumber = filter.PageIndex });
-      AddTempData(ExpensesFilterDataKey, searchFilter);
+      if (searchFilter.GridFilter == null)
+      {
+        searchFilter.GridFilter = new GridRequestSM();
+      }
 
-      //var expenseRows = new List<ExpenseRowVM>();
-      //foreach (var exp in expenses.GridRows)
-      //{
-      //  expenseRows.Add(new ExpenseRowVM
-      //  {
-      //    Date = $"{exp.ExpenseDate:d}",
-      //    ExpenseType = exp.ExpenseType.ExpenseType,
-      //    ExpenseValue = $"{exp.ExpenseValue:N}"
-      //  });
-      //}
+      searchFilter.GridFilter.ItemsPerPage = 3;
+      var pageIndex = filter.PageIndex;
+      searchFilter.GridFilter.PageNumber = pageIndex >= 0 ? pageIndex : 0;
+
+      var expenses = _expensesService.GetExpenses(searchFilter, null); // new GridRequestSM {ItemsPerPage = filter.PageSize, PageNumber = filter.PageIndex });
+      AddTempData(ExpensesFilterDataKey, searchFilter);
 
       return new JsonResult(expenses);
     }
@@ -94,11 +76,11 @@ namespace CJ.Exp.Admin.Controllers
 
       if (updateFilter != null)
       {
+        // Update the filter - This has come from the Index
         model.Filter = Mapper.Map<ExpensesFilterVM>(updateFilter);
         model.Filter.IsFiltered = true;
-        //TempData.Put<ExpensesFilterSM>(ExpensesFilterDataKey, updateFilter);
         AddTempData(ExpensesFilterDataKey, updateFilter);
-        model.ExpenseGrid = _expensesService.GetExpenses(updateFilter, new GridRequestSM { ItemsPerPage = 10, PageNumber = 1});
+        //model.ExpenseGrid = _expensesService.GetExpenses(updateFilter, new GridRequestSM { ItemsPerPage = 10, PageNumber = 1});
       }
       else
       {
@@ -113,11 +95,10 @@ namespace CJ.Exp.Admin.Controllers
         }
         else
         {
-          //AddTempData(model.Filter, ExpensesFilterDataKey);
           var filterSM = Mapper.Map<ExpensesFilterSM>(model.Filter);          
           AddTempData(ExpensesFilterDataKey, filterSM);
           model.Filter.IsFiltered = true;
-          model.ExpenseGrid = _expensesService.GetExpenses(filterSM, new GridRequestSM { ItemsPerPage = 10, PageNumber = 1 });
+          //model.ExpenseGrid = _expensesService.GetExpenses(filterSM, new GridRequestSM { ItemsPerPage = 10, PageNumber = 1 });
         }
       }
 
@@ -144,7 +125,7 @@ namespace CJ.Exp.Admin.Controllers
       {
         var model = new ExpensesVM
         {
-          ExpenseGrid = _expensesService.GetExpenses(filter, new GridRequestSM { ItemsPerPage = 10, PageNumber = 1 }),
+          //ExpenseGrid = _expensesService.GetExpenses(filter, new GridRequestSM { ItemsPerPage = 10, PageNumber = 1 }),
           Filter = Mapper.Map<ExpensesFilterVM>(filter)
         };
         if (model.Filter != null)
@@ -163,7 +144,7 @@ namespace CJ.Exp.Admin.Controllers
     {
       return new ExpensesVM
       {
-        ExpenseGrid = null, //_expensesService.GetExpenses(),
+        //ExpenseGrid = null, //_expensesService.GetExpenses(),
         Filter = new ExpensesFilterVM
         {
           StartDate = DateTime.Today,
@@ -192,9 +173,9 @@ namespace CJ.Exp.Admin.Controllers
     }
 
     [HttpPost]
-    public IActionResult Edit(string id)
+    public IActionResult Edit(string editValue, int currentPage)
     {
-      var expSm = _expensesService.GetExpenseById(id);
+      var expSm = _expensesService.GetExpenseById(editValue);
 
       var vm = Mapper.Map<ExpenseVM>(expSm);
 

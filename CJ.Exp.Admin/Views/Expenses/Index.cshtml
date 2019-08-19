@@ -4,9 +4,7 @@
   ViewData["Title"] = "ExpensesSummary";
 }
 
-
-
-<form method="post" asp-action="Add">
+<form method="post" id="control" asp-action="Add">
   <div class="row">
     <div class="col-md-4">
       @*<a asp-area="" asp-controller="ExpensesSummary" asp-action="Add" class="btn btn-primary">Add +</a>*@
@@ -45,7 +43,7 @@
 
 @if (Model.Filter?.IsFiltered == true)
 {
-  <table class="table">
+  @*<table class="table">
     <thead>
       <tr>
         <th scope="col">DateTime</th>
@@ -69,8 +67,10 @@
       }
 
     </tbody>
-  </table>
-  <div id="jsGrid"></div>
+  </table>*@
+
+  @Html.Partial("_GridPartial")
+
 }
 
 
