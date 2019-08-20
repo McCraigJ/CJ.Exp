@@ -39,6 +39,9 @@
     <Content Update="nlog.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Update="Views\Expenses\_ExpenseFieldsPartial.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="Views\Expenses\Delete.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>

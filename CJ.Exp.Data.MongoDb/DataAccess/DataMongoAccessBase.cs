@@ -43,5 +43,10 @@ namespace CJ.Exp.Data.MongoDb.DataAccess
       session.CommitTransaction();
       session = null;
     }
+
+    public void RollbackTransaction()
+    {
+      session?.AbortTransaction();
+    }
   }
 }

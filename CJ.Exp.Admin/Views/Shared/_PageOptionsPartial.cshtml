@@ -1,0 +1,10 @@
+﻿
+@model ViewModelBase
+
+@if (Model?.Options != null)
+{
+  foreach (var opt in Model.Options)
+  {
+    <input type="hidden" id="@opt.Key" value="@opt.Value"/>
+  }
+}

@@ -1,4 +1,6 @@
-﻿$(document).ready(function() {
+﻿$(document).ready(function () {
+  var pageOptions = new PageOptions();
+  
   var grid = new Grid();
 
   var fields = [
@@ -8,5 +10,7 @@
     { type: "control", hasEdit: true, hasDelete: true }
     ];
 
-  grid.Initialise($("#jsGrid"), fields);
+  var currentPage = pageOptions.GetPageOption("CurrentPage", "int");
+
+  grid.Initialise($("#jsGrid"), fields, currentPage);
 });

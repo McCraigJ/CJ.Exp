@@ -62,7 +62,8 @@ namespace CJ.Exp.Data.MongoDb.DataAccess
 
     public bool DeleteExpense(ExpenseSM expense)
     {
-      throw new NotImplementedException();
+      _expenseCollection.FindOneAndDelete<ExpenseMongoDM>(Builders<ExpenseMongoDM>.Filter.Eq("_id", new ObjectId(expense.Id)));
+      return true;
     }
 
     public bool DeleteExpenseType(ExpenseTypeSM expenseType)
@@ -71,9 +72,9 @@ namespace CJ.Exp.Data.MongoDb.DataAccess
       return true;
     }
 
-    public GridResultSM<ExpenseSM> GetExpenses(ExpensesFilterSM filter, GridRequestSM gridRequest)
+    public GridResultSM<ExpenseSM> GetExpenses(ExpensesFilterSM filter)
     {
-      if (gridRequest == null)
+      if (filter?.GridFilter == null)
       {
         return null;
       }
@@ -82,7 +83,7 @@ namespace CJ.Exp.Data.MongoDb.DataAccess
 
       List<ExpenseMongoDM> expenses;
       
-      expenses = query.Skip(gridRequest.Skip).Limit(gridRequest.ItemsPerPage).ToList();
+      expenses = query.Skip(filter.GridFilter.Skip).Limit(filter.GridFilter.ItemsPerPage).ToList();
       
       var sum = _expenseCollection.Aggregate()
         .Group(
@@ -95,9 +96,9 @@ namespace CJ.Exp.Data.MongoDb.DataAccess
 
       var count = _expenseCollection.CountDocuments(x => true);
 
-      return new GridResultSM<ExpenseSM>(gridRequest.PageNumber, 
-        (int)count, 
-        gridRequest.ItemsPerPage, 
+      return new GridResultSM<ExpenseSM>(filter.GridFilter.PageNumber, 
+        (int)count,
+        filter.GridFilter.ItemsPerPage, 
         sum.Sum / 1000m, 
         Mapper.Map<List<ExpenseSM>>(expenses));
     }
@@ -136,7 +137,18 @@ namespace CJ.Exp.Data.MongoDb.DataAccess
 
     public ExpenseSM UpdateExpense(ExpenseSM expense)
     {
-      throw new NotImplementedException();
+      var expDataModel = Mapper.Map<ExpenseMongoDM>(expense);
+
+      _expenseCollection.FindOneAndUpdate<ExpenseMongoDM>(
+        Builders<ExpenseMongoDM>.Filter.Eq("_id", new ObjectId(expense.Id)),
+        Builders<ExpenseMongoDM>.Update
+          .Set("ExpenseType", expDataModel.ExpenseType)
+          .Set("ExpenseValue", expDataModel.ExpenseValue)
+          .Set("ExpenseDate", expDataModel.ExpenseDate)
+          .Set("User", expDataModel.User)
+      );
+      
+      return expense;
     }
 
     public ExpenseTypeSM UpdateExpenseType(ExpenseTypeSM expenseType)

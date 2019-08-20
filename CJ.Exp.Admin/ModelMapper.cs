@@ -23,6 +23,8 @@ namespace CJ.Exp.Admin
       CreateMap<UpdateExpenseTypeSM, ExpenseTypeVM>();
       CreateMap<ExpenseTypeSM, ExpenseTypeVM>();
 
+      CreateMap<ExpenseVM, ExpenseSM>();
+
       CreateMap<ExpenseVM, UpdateExpenseSM>()
         //.ForMember(dst => dst.SyncDate, opt => opt.Ignore())
         .ForMember(dst => dst.ExpenseType, opt => opt.Ignore());

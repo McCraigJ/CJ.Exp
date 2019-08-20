@@ -3,14 +3,16 @@
   var $grid;
   var formAccess = {};
   
-  my.Initialise = function (grid, fields) {
+  my.Initialise = function (grid, fields, currentPage) {
     $grid = $(grid);
     formAccess = {
       $gridForm: $("#grid-form"),
       $editValueInput: $("#editValue"),
       $currentPageInput: $("#currentPage")
     };
-    
+    if (currentPage > 0 === false) {
+      currentPage = 1;
+    }
     
     function getCellHtml(field)
     {
@@ -30,7 +32,7 @@
         paging: true,
         pageLoading: true,
         pageSize: 3,
-        pageIndex: 1,
+        pageIndex: currentPage,
         rowRenderer: function (item, itemIndex) {
           var rowHtml = "<tr class='jsgrid-row' data-id='" + item.id + "'>";
           for (var i = 0; i < this.fields.length; i++) {
@@ -97,10 +99,8 @@
           var $button = $(this);
           var id = $(this).closest("tr").attr("data-id");
           if ($button.hasClass("jsgrid-edit-button")) {
-            alert("edit clicked - " + id);
             submitGrid(id, 'Edit');
           } else {
-            alert("delete clicked - " + id);
             submitGrid(id, 'Delete');
           }
           

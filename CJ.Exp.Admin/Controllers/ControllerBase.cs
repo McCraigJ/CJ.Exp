@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CJ.Exp.Admin.Extensions;
+using CJ.Exp.Admin.Models;
 using CJ.Exp.BusinessLogic;
 using CJ.Exp.ServiceModels;
 using Microsoft.AspNetCore.Mvc;
@@ -88,6 +89,23 @@ namespace CJ.Exp.Admin.Controllers
     {
       ViewData["Message"] = GetSuccessMessage(SuccessMessageKey);
       base.OnActionExecuting(context);
+    }
+
+    public void SetPageOption<T>(T viewModel, string key, string value) where T : ViewModelBase
+    {
+      if (viewModel.Options == null)
+      {
+        viewModel.Options = new Dictionary<string, string>();
+      }
+
+      if (viewModel.Options.ContainsKey(key))
+      {
+        viewModel.Options[key] = value;
+      }
+      else
+      {
+        viewModel.Options.Add(key, value);
+      }
     }
 
   }

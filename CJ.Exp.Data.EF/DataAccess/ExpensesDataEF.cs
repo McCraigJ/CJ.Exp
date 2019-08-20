@@ -66,6 +66,11 @@ namespace CJ.Exp.Data.EF.DataAccess
 
       }
 
+      public GridResultSM<ExpenseSM> GetExpenses(ExpensesFilterSM filter)
+      {
+        throw new NotImplementedException();
+      }
+
       public GridResultSM<ExpenseSM> GetExpenses(ExpensesFilterSM filter, GridRequestSM gridRequest)
       {
         throw new NotImplementedException();
@@ -139,6 +144,11 @@ namespace CJ.Exp.Data.EF.DataAccess
       }
 
       public void CommitTransaction()
+      {
+        throw new NotImplementedException();
+      }
+
+      public void RollbackTransaction()
       {
         throw new NotImplementedException();
       }

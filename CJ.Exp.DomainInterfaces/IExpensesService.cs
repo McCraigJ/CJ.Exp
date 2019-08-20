@@ -1,29 +1,27 @@
 ﻿using System.Collections.Generic;
 using CJ.Exp.ServiceModels.Expenses;
-using System.Linq;
-using CJ.Exp.Core;
 using CJ.Exp.ServiceModels;
 
 namespace CJ.Exp.DomainInterfaces
 {
-  public interface IExpensesService
+  public interface IExpensesService : IBusinessErrors
   {
-    GridResultSM<ExpenseSM> GetExpenses(ExpensesFilterSM filter, GridRequestSM gridRequest);
+    GridResultSM<ExpenseSM> GetExpenses(ExpensesFilterSM filter);
 
     ExpenseSM GetExpenseById(string id);
 
-    ServiceResponse<UpdateExpenseSM> AddExpense(UpdateExpenseSM expense);
+    void AddExpense(UpdateExpenseSM expense);
 
-    ExpenseSM UpdateExpense(UpdateExpenseSM expense);
+    void UpdateExpense(UpdateExpenseSM expense);
 
-    bool DeleteExpense(ExpenseSM expense);
+    void DeleteExpense(ExpenseSM expense);
 
     List<ExpenseTypeSM> GetExpenseTypes();
 
-    ServiceResponse<ExpenseTypeSM> AddExpenseType(ExpenseTypeSM expenseType);
+    void AddExpenseType(ExpenseTypeSM expenseType);
 
-    ServiceResponse<UpdateExpenseTypeSM> UpdateExpenseType(UpdateExpenseTypeSM expenseType);
+    void UpdateExpenseType(UpdateExpenseTypeSM expenseType);
 
-    bool DeleteExpenseType(ExpenseTypeSM expenseType);
+    void DeleteExpenseType(ExpenseTypeSM expenseType);
   }
 }

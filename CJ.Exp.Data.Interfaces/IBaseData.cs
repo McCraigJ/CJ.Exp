@@ -9,5 +9,7 @@ namespace CJ.Exp.Data.Interfaces
     void StartTransaction();
 
     void CommitTransaction();
+
+    void RollbackTransaction();
   }
 }

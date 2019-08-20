@@ -1,16 +1,13 @@
 ﻿using System;
-using CJ.Exp.Core;
+using System.Collections.Generic;
 using CJ.Exp.Data.Interfaces;
 using CJ.Exp.DomainInterfaces;
-using CJ.Exp.ServiceModels.Expenses;
-using System.Collections.Generic;
-using System.Linq;
-using AutoMapper;
 using CJ.Exp.ServiceModels;
+using CJ.Exp.ServiceModels.Expenses;
 
 namespace CJ.Exp.BusinessLogic.Expenses
 {
-  public class ExpensesService : IExpensesService
+  public class ExpensesService : ServiceBase, IExpensesService
   {
     private IExpensesData _data;
 
@@ -24,81 +21,113 @@ namespace CJ.Exp.BusinessLogic.Expenses
       return _data.GetExpenseById(id);
     }
 
-    public ServiceResponse<UpdateExpenseSM> AddExpense(UpdateExpenseSM expense)
-    {      
-      if (string.IsNullOrEmpty(expense.NewExpenseType))
+    public void AddExpense(UpdateExpenseSM expense)
+    {
+      var expenseType = _data.GetExpenseTypeById(expense.ExpenseType.Id);
+      if (expenseType == null)
       {
-        expense.ExpenseType = _data.GetExpenseTypeById(expense.ExpenseType.Id);
+        AddBusinessError(BusinessErrorCodes.DataNotFound, "ExpenseTypeNotFound");
       }
-      else {
 
-        if (_data.GetExpenseTypeByName(expense.NewExpenseType) != null)
+      if (BusinessStateValid)
+      {
+        expense.ExpenseType = expenseType;
+        _data.AddExpense(expense);
+      }
+      
+    }
+
+    public void UpdateExpense(UpdateExpenseSM expense)
+    {
+      var exp = GetExpenseById(expense.Id);
+      if (exp == null)
+      {
+        AddBusinessError(BusinessErrorCodes.DataNotFound, "ExpenseNotFound");
+      }
+
+      if (BusinessStateValid)
+      {
+        _data.StartTransaction();
+
+        if (string.IsNullOrEmpty(expense.NewExpenseType))
         {
-          return new ServiceResponse<UpdateExpenseSM>(expense, ServiceResponseCode.DataAlreadyExists);
+          expense.ExpenseType = _data.GetExpenseTypeById(expense.ExpenseType.Id);
+        }
+        else
+        {
+          var expenseType = AddExpenseTypeInternal(new ExpenseTypeSM { ExpenseType = expense.NewExpenseType });
+          expense.ExpenseType = expenseType;
         }
 
-        expense.ExpenseType = new ExpenseTypeSM
+        if (BusinessStateValid)
         {
-          Id = null,
-          ExpenseType = expense.NewExpenseType
-        };
+          _data.UpdateExpense(expense);
+
+          _data.CommitTransaction();
+        } 
       }
-
-      var exp = _data.AddExpense(expense);
-      expense.Id = exp.Id;
-
-      return new ServiceResponse<UpdateExpenseSM>(expense, ServiceResponseCode.Success);
     }
 
-    public ExpenseSM UpdateExpense(UpdateExpenseSM expense)
+    private ExpenseTypeSM AddExpenseTypeInternal(ExpenseTypeSM expenseType)
     {
-      throw new System.NotImplementedException();
-    }
-
-    public ServiceResponse<ExpenseTypeSM> AddExpenseType(ExpenseTypeSM expenseType)
-    {      
       if (_data.GetExpenseTypeByName(expenseType.ExpenseType) != null)
-      {        
-        return new ServiceResponse<ExpenseTypeSM>(expenseType, ServiceResponseCode.DataAlreadyExists);
+      {
+        AddBusinessError(BusinessErrorCodes.DataAlreadyExists, "ExpenseTypeAlreadyExists");
       }
 
-      expenseType = _data.AddExpenseType(expenseType);
-      return new ServiceResponse<ExpenseTypeSM>(expenseType, ServiceResponseCode.Success);
-    }    
+      if (BusinessStateValid)
+      {
+        return _data.AddExpenseType(expenseType);
+      }
 
-    public bool DeleteExpense(ExpenseSM expense)
-    {
-      return _data.DeleteExpense(expense);
+      return null;
     }
 
-    public bool DeleteExpenseType(ExpenseTypeSM expenseType)
+    public void AddExpenseType(ExpenseTypeSM expenseType)
     {
-      return _data.DeleteExpenseType(expenseType);
+      AddExpenseTypeInternal(expenseType);
     }
 
-    // Todo: remove gridRequest
-    public GridResultSM<ExpenseSM> GetExpenses(ExpensesFilterSM filter, GridRequestSM gridRequest)
+    public void DeleteExpense(ExpenseSM expense)
     {
-      // todo: remove
-      gridRequest = filter.GridFilter;
-      if (gridRequest == null)
+      if (_data.GetExpenseById(expense.Id) == null)
+      {
+        AddBusinessError(BusinessErrorCodes.DataNotFound, "ExpenseNotFound");
+      }
+      else
+      {
+        _data.DeleteExpense(expense);
+      }
+        
+    }
+
+    public void DeleteExpenseType(ExpenseTypeSM expenseType)
+    {
+      if (_data.GetExpenseTypeById(expenseType.Id) == null)
+      {
+        AddBusinessError(BusinessErrorCodes.DataNotFound, "ExpenseTypeNotFound");
+      }
+      else
+      {
+        _data.DeleteExpenseType(expenseType);
+      }
+    }
+
+    public GridResultSM<ExpenseSM> GetExpenses(ExpensesFilterSM filter)
+    {
+      if (filter?.GridFilter == null)
       {
         throw new ApplicationException("No Grid Request Data has been supplied");
       }
-      return _data.GetExpenses(filter, gridRequest);
+      return _data.GetExpenses(filter);
     }
 
     public List<ExpenseTypeSM> GetExpenseTypes()
     {
       return _data.GetExpenseTypes();
-    }    
-
-    public ExpenseSM UpdateExpense(ExpenseSM expense)
-    {
-      return _data.UpdateExpense(expense);
     }
 
-    public ServiceResponse<UpdateExpenseTypeSM> UpdateExpenseType(UpdateExpenseTypeSM expenseType)
+    public void UpdateExpenseType(UpdateExpenseTypeSM expenseType)
     {
       _data.StartTransaction();
       _data.UpdateExpenseType(expenseType);
@@ -109,7 +138,6 @@ namespace CJ.Exp.BusinessLogic.Expenses
       }
       _data.CommitTransaction();
 
-      return new ServiceResponse<UpdateExpenseTypeSM>(expenseType, ServiceResponseCode.Success);
     }
   }
 }

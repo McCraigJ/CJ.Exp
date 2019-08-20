@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using CJ.Exp.ServiceModels;
 
 namespace CJ.Exp.BusinessLogic
@@ -7,6 +8,8 @@ namespace CJ.Exp.BusinessLogic
   public class ServiceBase
   {
     public List<BusinessErrorSM> BusinessErrors { get; set; }
+
+    public bool BusinessStateValid => !BusinessErrors.Any();
 
     public ServiceBase()
     {      

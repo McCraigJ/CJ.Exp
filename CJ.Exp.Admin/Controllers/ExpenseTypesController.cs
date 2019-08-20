@@ -5,18 +5,18 @@ using CJ.Exp.ServiceModels.Expenses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
-using CJ.Exp.Core;
 
 namespace CJ.Exp.Admin.Controllers
 {
   [Authorize]
   [Route("[controller]/[action]")]
-  public class ExpenseTypesController : Controller
+  public class ExpenseTypesController : ControllerBase
   {
 
     private readonly IExpensesService _expensesService;
+    private const string ExpenseTypesSuccessMessage = "ExpenseTypesMessageKey";
 
-    public ExpenseTypesController(IExpensesService expensesService)
+    public ExpenseTypesController(IExpensesService expensesService) : base(ExpenseTypesSuccessMessage)
     {
       _expensesService = expensesService;
     }
@@ -42,12 +42,13 @@ namespace CJ.Exp.Admin.Controllers
     {
       if (ModelState.IsValid)
       {
-        var result = _expensesService.AddExpenseType(Mapper.Map<ExpenseTypeSM>(model));
-        if (result.ResponseCode == ServiceResponseCode.Success)
+        _expensesService.AddExpenseType(Mapper.Map<ExpenseTypeSM>(model));
+        if (_expensesService.BusinessStateValid)
         {
+          SetSuccessMessage(SuccessMessageKey, "Expense Type successfully added");
           return RedirectToAction("Index");
         }
-        model.SetErrorMessage(result.ResponseCode, "Expense Type");
+        model.SetErrorMessage(_expensesService.BusinessErrors);
       }
       return View("Add", model);
     }
@@ -83,10 +84,16 @@ namespace CJ.Exp.Admin.Controllers
     {
       if (ModelState.IsValid)
       {
-        var result = _expensesService.UpdateExpenseType(Mapper.Map<UpdateExpenseTypeSM>(model));
-        return RedirectToAction("Index");
+        _expensesService.UpdateExpenseType(Mapper.Map<UpdateExpenseTypeSM>(model));
+        if (_expensesService.BusinessStateValid)
+        {
+          SetSuccessMessage(SuccessMessageKey, "Expense Type successfully updated");
+          return RedirectToAction("Index");
+        }
+
+        model.SetErrorMessage(_expensesService.BusinessErrors);
       }
-      return View(model);      
+      return View("Edit", model);
     }
 
     [HttpPost]
@@ -108,14 +115,16 @@ namespace CJ.Exp.Admin.Controllers
     {
       if (ModelState.IsValid)
       {
-        var deleted = _expensesService.DeleteExpenseType(Mapper.Map<ExpenseTypeSM>(model));
-        if (deleted)
+        _expensesService.DeleteExpenseType(Mapper.Map<ExpenseTypeSM>(model));
+        if (_expensesService.BusinessStateValid)
         {
+          SetSuccessMessage(SuccessMessageKey, "Expense Type successfully deleted");
           return RedirectToAction("Index");
         }
-        model.ErrorMessage = "Expense Type could not be deleted as it is being used";
+        model.SetErrorMessage(_expensesService.BusinessErrors);
+        
       }
-      return View(model);
+      return View("Delete", model);
     }
   }
 }

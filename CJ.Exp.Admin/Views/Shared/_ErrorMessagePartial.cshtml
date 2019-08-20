@@ -1,7 +1,9 @@
-﻿
-@model ViewModelBase
+﻿@model ViewModelBase
 
-@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+@if (Model?.ErrorMessages != null)
 {
-  <p>@Model.ErrorMessage</p>
+  foreach (var errorMessage in Model.ErrorMessages)
+  {
+    <p>@errorMessage</p>  
+  }
 }
