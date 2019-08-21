@@ -7,6 +7,7 @@
     { name: "expenseDate", title: "Date", type: "date", width: 150 },
     { name: "expenseType", nestedName: "expenseType", title: "Expense Type", type: "string", width: 150 },
     { name: "expenseValue", title: "Amount", type: "currency", width: 150 },
+    { name: "user", nestedName: "firstName", title: "User", type: "string", width: 150 },
     { type: "control", hasEdit: true, hasDelete: true }
     ];
 

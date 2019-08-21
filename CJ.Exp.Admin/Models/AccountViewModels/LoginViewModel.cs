@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CJ.Exp.Admin.Models.AccountViewModels
 {
-    public class LoginViewModel
+    public class LoginViewModel : ViewModelBase
     {
         [Required]
         [EmailAddress]
