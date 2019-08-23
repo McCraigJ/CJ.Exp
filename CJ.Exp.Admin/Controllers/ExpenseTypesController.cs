@@ -5,6 +5,7 @@ using CJ.Exp.ServiceModels.Expenses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
+using Microsoft.Extensions.Logging;
 
 namespace CJ.Exp.Admin.Controllers
 {
@@ -12,11 +13,10 @@ namespace CJ.Exp.Admin.Controllers
   [Route("[controller]/[action]")]
   public class ExpenseTypesController : ControllerBase
   {
-
     private readonly IExpensesService _expensesService;
-    private const string ExpenseTypesSuccessMessage = "ExpenseTypesMessageKey";
 
-    public ExpenseTypesController(IExpensesService expensesService) : base(ExpenseTypesSuccessMessage)
+    public ExpenseTypesController(ILoggerFactory loggerFactory, IExpensesService expensesService, ILanguage language) : 
+      base(loggerFactory.CreateLogger<ExpenseTypesController>(), language)
     {
       _expensesService = expensesService;
     }
@@ -45,10 +45,10 @@ namespace CJ.Exp.Admin.Controllers
         _expensesService.AddExpenseType(Mapper.Map<ExpenseTypeSM>(model));
         if (_expensesService.BusinessStateValid)
         {
-          SetSuccessMessage(SuccessMessageKey, "Expense Type successfully added");
+          SetControllerMessage(ControllerMessageType.Success,"Added");
           return RedirectToAction("Index");
         }
-        model.SetErrorMessage(_expensesService.BusinessErrors);
+        model.SetErrorMessage(_expensesService.BusinessErrors, Language);
       }
       return View("Add", model);
     }
@@ -87,11 +87,11 @@ namespace CJ.Exp.Admin.Controllers
         _expensesService.UpdateExpenseType(Mapper.Map<UpdateExpenseTypeSM>(model));
         if (_expensesService.BusinessStateValid)
         {
-          SetSuccessMessage(SuccessMessageKey, "Expense Type successfully updated");
+          SetControllerMessage(ControllerMessageType.Success, "Updated");
           return RedirectToAction("Index");
         }
 
-        model.SetErrorMessage(_expensesService.BusinessErrors);
+        model.SetErrorMessage(_expensesService.BusinessErrors, Language);
       }
       return View("Edit", model);
     }
@@ -118,10 +118,10 @@ namespace CJ.Exp.Admin.Controllers
         _expensesService.DeleteExpenseType(Mapper.Map<ExpenseTypeSM>(model));
         if (_expensesService.BusinessStateValid)
         {
-          SetSuccessMessage(SuccessMessageKey, "Expense Type successfully deleted");
+          SetControllerMessage(ControllerMessageType.Success, "Deleted");
           return RedirectToAction("Index");
         }
-        model.SetErrorMessage(_expensesService.BusinessErrors);
+        model.SetErrorMessage(_expensesService.BusinessErrors, Language);
         
       }
       return View("Delete", model);

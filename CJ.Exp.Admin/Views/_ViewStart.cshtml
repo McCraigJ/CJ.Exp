@@ -1,9 +1,12 @@
-﻿@{
+﻿@using CJ.Exp.Admin.Controllers
+@using ControllerBase = CJ.Exp.Admin.Controllers.ControllerBase
+
+@{
   Layout = "_Layout";
-  var successMessage = (string)ViewData["Message"];
+  var message = (ControllerBase.ControllerMessage)ViewData["controllerMessage"];
 }
 
-@if (!string.IsNullOrEmpty(successMessage))
+@if (message != null)
 {
-  <p>@successMessage</p>
+  <p class="@(message.ControllerMessageType == ControllerMessageType.Success ? "success" : "error")">@message.Message</p>
 }

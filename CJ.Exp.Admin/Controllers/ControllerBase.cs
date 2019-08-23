@@ -1,44 +1,47 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using CJ.Exp.Admin.Extensions;
 using CJ.Exp.Admin.Models;
 using CJ.Exp.BusinessLogic;
+using CJ.Exp.DomainInterfaces;
 using CJ.Exp.ServiceModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Newtonsoft.Json;
+using Microsoft.Extensions.Logging;
 
 namespace CJ.Exp.Admin.Controllers
 {
+  public enum ControllerMessageType
+  {
+    Success = 1,
+    Error = 2
+  }
+
   public class ControllerBase : Controller
   {
-    protected string SuccessMessageKey { get; set; }
-
-    public ControllerBase(string successMessageKey)
+    public ILogger Logger { get; }
+    public ILanguage Language { get; }
+    
+    public ControllerBase(ILogger logger, ILanguage language)
     {
-      SuccessMessageKey = successMessageKey;
+      Logger = logger;
+      Language = language;
     }
 
     [Serializable]
-    private class TempDataMessage
+    public class ControllerMessage
     {
       public string Message { get; set; }
       public DateTime MessageDateTime { get; set; }
+      public ControllerMessageType ControllerMessageType { get; set; }
     }
 
     protected void MergeBusinessErrors(List<BusinessErrorSM> businessErrors)
     {      
       foreach (var err in businessErrors)
       {
-        ModelState.AddModelError("Id", err.ErrorMessage);
+        ModelState.AddModelError("Id", $"BusinessError.{Language.GetText(err.ErrorMessage)}");
       }
-    }
-
-    protected void RemoveTempData(string key)
-    {
-      TempData.Remove(key);
     }
 
     protected void AddTempData<T>(string key, T data) where T : class
@@ -52,42 +55,46 @@ namespace CJ.Exp.Admin.Controllers
 
       if (isRequired && data == null)
       {
-        throw new DomainException("Cannot find data");
+        throw new CjExpInvalidOperationException("Cannot find data");
       }
 
       return data;
     }
 
-    protected void SetSuccessMessage(string key, string message)
+    protected void SetControllerMessage(ControllerMessageType messageType, string message)
     {
-      var msg = new TempDataMessage
+      var msg = new ControllerMessage
       {
-        Message = message,
+        Message = GetControllerText(message),
+        ControllerMessageType = messageType,
         MessageDateTime = DateTime.Now
       };
 
-      AddTempData(key, msg);      
+      AddTempData(controllerMessageKey, msg);
     }
 
-    protected string GetSuccessMessage(string key)
+    protected ControllerMessage GetControllerMessage()
     {
-      var msg = GetTempData<TempDataMessage>(key, false);
+      var msg = GetTempData<ControllerMessage>(controllerMessageKey, false);
 
       if (msg != null)
       {
         var currentTime = DateTime.Now;
         if (currentTime - msg.MessageDateTime < TimeSpan.FromSeconds(30))
         {
-          return msg.Message;
+          return msg;
         }
       }
 
       return null;
     }
 
+    private string controllerMessageKey => $"{ControllerName}ControllerMsg";
+
     public override void OnActionExecuting(ActionExecutingContext context)
     {
-      ViewData["Message"] = GetSuccessMessage(SuccessMessageKey);
+      ViewData["controllerMessage"] = GetControllerMessage();
+      
       base.OnActionExecuting(context);
     }
 
@@ -107,6 +114,14 @@ namespace CJ.Exp.Admin.Controllers
         viewModel.Options.Add(key, value);
       }
     }
+
+    protected string GetControllerText(string action)
+    {
+      return Language.GetText($"{ControllerName}.{action}");
+    }
+
+
+    private string ControllerName => this.ControllerContext.RouteData.Values["controller"].ToString();
 
   }
 }

@@ -28,7 +28,7 @@ namespace CJ.Exp.Data.MongoDb.DataAccess
     {
       if (session != null)
       {
-        throw new DomainException("Transaction session already started");
+        throw new CjExpInvalidOperationException("Transaction session already started");
       }
       session = Client.StartSession();
       session.StartTransaction();
@@ -38,7 +38,7 @@ namespace CJ.Exp.Data.MongoDb.DataAccess
     {
       if (session == null)
       {
-        throw new DomainException("Transaction session not started");
+        throw new CjExpInvalidOperationException("Transaction session not started");
       }
       session.CommitTransaction();
       session = null;

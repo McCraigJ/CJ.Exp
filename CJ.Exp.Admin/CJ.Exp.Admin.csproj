@@ -28,11 +28,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CJ.Exp.Core\CJ.Exp.Core.csproj" />
     <ProjectReference Include="..\CJ.Exp.Data.MongoDb\CJ.Exp.Data.MongoDb.csproj" />
     <ProjectReference Include="..\CJ.Exp.DomainInterfaces\CJ.Exp.DomainInterfaces.csproj" />
     <ProjectReference Include="..\CJ.Exp.BusinessLogic\CJ.Exp.BusinessLogic.csproj" />
     <ProjectReference Include="..\CJ.Exp.CommonStartup\CJ.Exp.CommonStartup.csproj" />
     <ProjectReference Include="..\CJ.Exp.Data.EF\CJ.Exp.Data.EF.csproj" />
+    <ProjectReference Include="..\CJ.Exp.LanguageProvider\CJ.Exp.LanguageProvider.csproj" />
   </ItemGroup>
 
   <ItemGroup>

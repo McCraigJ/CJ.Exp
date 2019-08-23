@@ -14,21 +14,16 @@ using System.Threading.Tasks;
 namespace CJ.Exp.Admin.Controllers
 {
   [Authorize]
-  [Route("[controller]/[action]")]
-  public class AccountController : Controller
+  public class AccountController : ControllerBase
   {
     private readonly IEmailSender _emailSender;
     private readonly ILogger _logger;
     private readonly IAuthService _authService;
-
-    public AccountController(
-        IEmailSender emailSender,
-        ILogger<AccountController> logger,
-        IAuthService authService)
+    
+    public AccountController(ILoggerFactory loggerFactory, IEmailSender emailSender, IAuthService authService, ILanguage language) : 
+      base(loggerFactory.CreateLogger<AccountController>(), language)
     {
-
       _emailSender = emailSender;
-      _logger = logger;
       _authService = authService;
     }
 

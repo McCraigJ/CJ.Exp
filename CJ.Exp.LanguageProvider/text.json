@@ -1,0 +1,7 @@
+{
+  "Expenses.Added": "Expense successfully added",
+  "Expenses.Updated": "Expense successfully updated",
+  "BusinessError.ExpenseTypeNotFound": "Expense Type Not Found",
+  "BusinessError.ExpenseNotFound": "Expense Not Found",
+  "BusinessError.ExpenseTypeAlreadyExists": "Expense Type Already Exists"
+}

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using CJ.Exp.ServiceModels;
 
@@ -12,7 +11,7 @@ namespace CJ.Exp.BusinessLogic
     public bool BusinessStateValid => !BusinessErrors.Any();
 
     public ServiceBase()
-    {      
+    {
       BusinessErrors = new List<BusinessErrorSM>();
     }
 
@@ -25,8 +24,9 @@ namespace CJ.Exp.BusinessLogic
     {
       if (obj == null)
       {
-        throw new Exception("Record not found");
+        throw new CjExpInvalidOperationException("Record not found");
       }
     }
+
   }
 }

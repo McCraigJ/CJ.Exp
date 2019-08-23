@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using CJ.Exp.ServiceModels.Expenses;
 using CJ.Exp.ServiceModels;
 
@@ -10,9 +11,9 @@ namespace CJ.Exp.DomainInterfaces
 
     ExpenseSM GetExpenseById(string id);
 
-    void AddExpense(UpdateExpenseSM expense);
+    Task AddExpense(UpdateExpenseSM expense);
 
-    void UpdateExpense(UpdateExpenseSM expense);
+    Task UpdateExpense(UpdateExpenseSM expense);
 
     void DeleteExpense(ExpenseSM expense);
 

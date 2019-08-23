@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace CJ.Exp.Admin.Controllers
 {
@@ -16,9 +17,9 @@ namespace CJ.Exp.Admin.Controllers
   public class UsersController : ControllerBase
   {
     private readonly IAuthService _authService;
-    private const string MessageKey = "UserMessage";
 
-    public UsersController(IAuthService authService) : base (MessageKey)
+    public UsersController(ILoggerFactory loggerFactory, IAuthService authService, ILanguage language) : 
+      base (loggerFactory.CreateLogger<UsersController>(), language)
     {
       _authService = authService;
     }

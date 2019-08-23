@@ -3,6 +3,7 @@ using AutoMapper;
 using CJ.Exp.Admin.Services;
 using CJ.Exp.BusinessLogic;
 using CJ.Exp.BusinessLogic.Auth;
+using CJ.Exp.Core;
 //using CJ.Exp.Auth.EFIdentity;
 using CJ.Exp.Data.EF;
 using CJ.Exp.Data.EF.DataModels;
@@ -12,6 +13,7 @@ using CJ.Exp.Data.MongoDb.DataModels;
 using CJ.Exp.Data.MongoDb.Interfaces;
 using CJ.Exp.Data.MongoDb.Mongo;
 using CJ.Exp.DomainInterfaces;
+using CJ.Exp.LanguageProvider;
 using CJ.Exp.ServiceModels.Users;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -19,15 +21,19 @@ using Microsoft.AspNetCore.Identity;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 
 
 namespace CJ.Exp.Admin
 {
   public class Startup
   {
-    public Startup(IConfiguration configuration)
+    private readonly IHostingEnvironment _env;
+    public Startup(IConfiguration configuration, IHostingEnvironment env)
     {
       Configuration = configuration;
+      _env = env;
     }
 
     public IConfiguration Configuration { get; }
@@ -35,17 +41,6 @@ namespace CJ.Exp.Admin
     // This method gets called by the runtime. Use this method to add services to the container.
     public void ConfigureServices(IServiceCollection services)
     {
-      //services.AddDbContext<ExpDbContext>(options =>
-      //    options.UseSqlServer(Configuration.GetConnectionString("CJ.Exp.ConnectionString"), b => b.MigrationsAssembly("CJ.Exp.Data")));
-
-      //services.AddIdentity<ApplicationUser, IdentityRole>();
-      //    .AddEntityFrameworkStores<ExpDbContext>()        
-      //    .AddDefaultTokenProviders();
-
-      //services.AddIdentityWithMongoStores("mongodb://localhost/myDB")
-      //  .AddDefaultTokenProviders();
-
-
       IApplicationSettings appSettings = new ApplicationSettings();
 
       appSettings.ConnectionString = Configuration.GetConnectionString("CJ.Exp.ConnectionString.Mongo");
@@ -54,6 +49,11 @@ namespace CJ.Exp.Admin
       services.AddSingleton<IApplicationSettings>(appSettings);
       services.AddSingleton<IAppMongoClient, AppMongoClient>();
 
+      ILanguage languageProvider = new TextCache();
+      languageProvider.Initialise(_env.IsDevelopment());
+
+      services.AddSingleton<ILanguage>(languageProvider);
+
       services.AddIdentity<ApplicationUserMongo, ApplicationRoleMongo>()
         .AddMongoDbStores<ApplicationUserMongo, ApplicationRoleMongo, Guid>
         (
@@ -61,26 +61,18 @@ namespace CJ.Exp.Admin
         )
         .AddDefaultTokenProviders();
 
-      //var mongoSettings = Configuration.GetSection(nameof(MongoDbSettings));
-      //var settings = Configuration.GetSection(nameof(MongoDbSettings)).Get<MongoDbSettings>();
-
-      //services.AddIdentity<MongoDbApplicationUser, IdentityRole>()
-      //  .AddMongoDbStores<MongoDbApplicationUser, IdentityRole<Guid>, Guid>(settings.ConnectionString, settings.DatabaseName)
-      //  //.AddMongoDbStores<MongoDbApplicationUser, IdentityRole, Guid>(settings.ConnectionString, settings.DatabaseName)
-      //  //.AddMongoDbStores<>
-      //  .AddDefaultTokenProviders();
-
       // Add application services.
-      services.AddTransient<IEmailSender, EmailSender>();
+      services.AddScoped<IEmailSender, EmailSender>();
       CommonStartup.AddCommonServices(services);
 
-      services.AddTransient<IAuthService, AuthService<ApplicationUserMongo, ApplicationRoleMongo>>();
+      services.AddScoped<IAuthService, AuthService<ApplicationUserMongo, ApplicationRoleMongo>>();
 
-      services.AddTransient<IExpensesData, ExpensesDataMongo>();
+      services.AddScoped<IExpensesData, ExpensesDataMongo>();
+
+      services.AddScoped<IServiceInfo, ServiceInfo>();
 
       services.AddAutoMapper();
       services.AddMvc();
-      //services.AddSession();
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -100,6 +92,9 @@ namespace CJ.Exp.Admin
       app.UseStaticFiles();
 
       app.UseAuthentication();
+
+      // Middleware to set the claims principal on the IServiceInfo scoped (per request) service so that it can be used in the service layer
+      app.AddServiceInfo();
 
       app.UseMvc(routes =>
       {

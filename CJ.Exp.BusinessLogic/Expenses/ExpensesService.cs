@@ -1,17 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Security.Claims;
+using System.Threading.Tasks;
 using CJ.Exp.Data.Interfaces;
 using CJ.Exp.DomainInterfaces;
 using CJ.Exp.ServiceModels;
 using CJ.Exp.ServiceModels.Expenses;
+using CJ.Exp.ServiceModels.Users;
 
 namespace CJ.Exp.BusinessLogic.Expenses
 {
-  public class ExpensesService : ServiceBase, IExpensesService
+  public class ExpensesService : CjExpService, IExpensesService
   {
-    private IExpensesData _data;
+    private readonly IExpensesData _data;
 
-    public ExpensesService(IExpensesData data)
+    public ExpensesService(IExpensesData data, IAuthService authService, IServiceInfo serviceInfo) : base(authService, serviceInfo)
     {
       _data = data;
     }
@@ -21,7 +24,7 @@ namespace CJ.Exp.BusinessLogic.Expenses
       return _data.GetExpenseById(id);
     }
 
-    public void AddExpense(UpdateExpenseSM expense)
+    public async Task AddExpense(UpdateExpenseSM expense)
     {
       var expenseType = _data.GetExpenseTypeById(expense.ExpenseType.Id);
       if (expenseType == null)
@@ -31,13 +34,15 @@ namespace CJ.Exp.BusinessLogic.Expenses
 
       if (BusinessStateValid)
       {
+        expense.User = await GetCurrentUser();
+
         expense.ExpenseType = expenseType;
         _data.AddExpense(expense);
       }
       
     }
 
-    public void UpdateExpense(UpdateExpenseSM expense)
+    public async Task UpdateExpense(UpdateExpenseSM expense)
     {
       var exp = GetExpenseById(expense.Id);
       if (exp == null)
@@ -49,6 +54,8 @@ namespace CJ.Exp.BusinessLogic.Expenses
       {
         _data.StartTransaction();
 
+        exp.User = await GetCurrentUser();
+        
         if (string.IsNullOrEmpty(expense.NewExpenseType))
         {
           expense.ExpenseType = _data.GetExpenseTypeById(expense.ExpenseType.Id);
@@ -67,6 +74,8 @@ namespace CJ.Exp.BusinessLogic.Expenses
         } 
       }
     }
+
+    
 
     private ExpenseTypeSM AddExpenseTypeInternal(ExpenseTypeSM expenseType)
     {
@@ -117,7 +126,7 @@ namespace CJ.Exp.BusinessLogic.Expenses
     {
       if (filter?.GridFilter == null)
       {
-        throw new ApplicationException("No Grid Request Data has been supplied");
+        throw new CjExpInvalidOperationException("No Grid Request Data has been supplied");
       }
       return _data.GetExpenses(filter);
     }

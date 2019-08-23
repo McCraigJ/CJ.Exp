@@ -9,7 +9,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CJ.Exp.Core\CJ.Exp.Core.csproj" />
     <ProjectReference Include="..\CJ.Exp.ServiceModels\CJ.Exp.ServiceModels.csproj" />
   </ItemGroup>
 

@@ -11,27 +11,33 @@ using CJ.Exp.ServiceModels.Expenses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.Logging;
 
 namespace CJ.Exp.Admin.Controllers
 {
   [Authorize]
-  [Route("[controller]/[action]")]
   public class ExpensesController : ControllerBase
   {
     private const string ExpensesFilterDataKey = "ExpensesFilter";
-    private const string ExpensesSuccessMessage = "ExpenseMessageKey";
 
     private readonly IExpensesService _expensesService;
-    private readonly IAuthService _authService;
 
-    public ExpensesController(IExpensesService expensesService, IAuthService authService) : base(ExpensesSuccessMessage)
+    public ExpensesController(ILoggerFactory loggerFactory, IExpensesService expensesService, ILanguage language) : 
+      base(loggerFactory.CreateLogger<ExpensesController>(), language)
     {
       _expensesService = expensesService;
-      _authService = authService;
     }
 
+    #region Index
+    
     [HttpGet]
     public IActionResult Index()
+    {
+      return IndexInternal();
+    }
+
+    [HttpPost]
+    public IActionResult BackToIndex()
     {
       return IndexInternal();
     }
@@ -41,7 +47,7 @@ namespace CJ.Exp.Admin.Controllers
       var vm = new ExpensesVM();
 
       PopulateExpensesFilterFromTempData(vm);
-      
+
       return View("Index", vm);
     }
 
@@ -56,6 +62,7 @@ namespace CJ.Exp.Admin.Controllers
     }
 
     [HttpGet]
+    [Route("[controller]/[action]")]
     public IActionResult GetExpensesData(GridFilterViewModel filter)
     {
       var searchFilter = TempData.Get<ExpensesFilterSM>(ExpensesFilterDataKey);
@@ -68,7 +75,7 @@ namespace CJ.Exp.Admin.Controllers
       var pageIndex = filter.PageIndex;
       searchFilter.GridFilter.PageNumber = pageIndex >= 0 ? pageIndex : 0;
 
-      var expenses = _expensesService.GetExpenses(searchFilter); // new GridRequestSM {ItemsPerPage = filter.PageSize, PageNumber = filter.PageIndex });
+      var expenses = _expensesService.GetExpenses(searchFilter);
       AddTempData(ExpensesFilterDataKey, searchFilter);
 
       return new JsonResult(expenses);
@@ -105,39 +112,9 @@ namespace CJ.Exp.Admin.Controllers
       };
     }
 
-    //private void PopulateExpensesFilter(ExpensesVM model, ExpensesFilterSM updateFilter = null)
-    //{
+    #endregion
 
-    //  if (updateFilter != null)
-    //  {
-    //    // Update the filter - This has come from the Index
-    //    model.Filter = Mapper.Map<ExpensesFilterVM>(updateFilter);
-    //    model.Filter.IsFiltered = true;
-    //    AddTempData(ExpensesFilterDataKey, updateFilter);
-    //    //model.ExpenseGrid = _expensesService.GetExpenses(updateFilter, new GridRequestSM { ItemsPerPage = 10, PageNumber = 1});
-    //  }
-    //  else
-    //  {
-    //    if (model.Filter == null)
-    //    {
-    //      model.Filter = new ExpensesFilterVM
-    //      {
-    //        StartDate = DateTime.Today,
-    //        EndDate = DateTime.Today,
-    //        IsFiltered = false
-    //      };
-    //    }
-    //    else
-    //    {
-    //      var filterSM = Mapper.Map<ExpensesFilterSM>(model.Filter);          
-    //      AddTempData(ExpensesFilterDataKey, filterSM);
-    //      model.Filter.IsFiltered = true;
-    //      //model.ExpenseGrid = _expensesService.GetExpenses(filterSM, new GridRequestSM { ItemsPerPage = 10, PageNumber = 1 });
-    //    }
-    //  }
-
-    //}
-
+    #region Add
 
     [HttpPost]
     public IActionResult Add()
@@ -151,49 +128,28 @@ namespace CJ.Exp.Admin.Controllers
     }
 
     [HttpPost]
-    public IActionResult BackToIndex()
-    {
-      return IndexInternal();
-    }
-
-    private ExpensesVM GetNewExpensesVM()
-    {
-      return new ExpensesVM
-      {
-        //ExpenseGrid = null, //_expensesService.GetExpenses(),
-        Filter = new ExpensesFilterVM
-        {
-          StartDate = DateTime.Today,
-          EndDate = DateTime.Today,
-          IsFiltered = false
-        }
-      };
-    }
-
-    [HttpPost]
     public async Task<IActionResult> DoAdd(ExpenseVM model)
     {
       if (ModelState.IsValid)
       {
         var exp = Mapper.Map<UpdateExpenseSM>(model);
-        var user = await _authService.GetUserByPrincipalAsync(User);
-        exp.User = user;
         exp.ExpenseType = new ExpenseTypeSM { Id = model.ExpenseTypeId };
-        _expensesService.AddExpense(exp);
+        await _expensesService.AddExpense(exp);
 
         if (_expensesService.BusinessStateValid)
         {
-          SetSuccessMessage(SuccessMessageKey, "Expense successfully added");
+          SetControllerMessage(ControllerMessageType.Success, GetControllerText("Added"));
           return RedirectToAction("Index");
         }
-        // Todo: set error message
-        //model.SetErrorMessage(result.ResponseCode, "Expense");
-        model.SetErrorMessage(_expensesService.BusinessErrors);
-
+        model.SetErrorMessage(_expensesService.BusinessErrors, Language);
       }
       PopulateLists(model);
       return View("Add", model);
     }
+
+    #endregion
+
+    #region Edit
 
     [HttpPost]
     public IActionResult Edit(string editValue, int currentPage)
@@ -212,22 +168,25 @@ namespace CJ.Exp.Admin.Controllers
       if (ModelState.IsValid)
       {
         var exp = Mapper.Map<UpdateExpenseSM>(model);
-        var user = await _authService.GetUserByPrincipalAsync(User);
-        exp.User = user;
         exp.ExpenseType = new ExpenseTypeSM { Id = model.ExpenseTypeId };
-        _expensesService.UpdateExpense(exp);
+        await _expensesService.UpdateExpense(exp);
+
         if (_expensesService.BusinessStateValid)
         {
-          SetSuccessMessage(SuccessMessageKey, "Expense successfully updated");
+          SetControllerMessage(ControllerMessageType.Success, "Updated");
           return RedirectToAction("Index");
         }
 
-        model.SetErrorMessage(_expensesService.BusinessErrors); // result.ResponseCode, "Expense");
+        model.SetErrorMessage(_expensesService.BusinessErrors, Language);
 
       }
       PopulateLists(model);
       return View("Edit", model);
     }
+
+    #endregion
+
+    #region "Delete"
 
     [HttpPost]
     public IActionResult Delete(string editValue)
@@ -250,14 +209,20 @@ namespace CJ.Exp.Admin.Controllers
         _expensesService.DeleteExpense(exp);
         if (_expensesService.BusinessStateValid)
         {
-          SetSuccessMessage(SuccessMessageKey, "Expense successfully deleted");
-          return RedirectToAction("Index");
+          SetControllerMessage(ControllerMessageType.Success, "Deleted");
         }
-        model.SetErrorMessage(_expensesService.BusinessErrors);
+        else
+        {
+          SetControllerMessage(ControllerMessageType.Error, "DeleteError");
+        }
+
+        return RedirectToAction("Index");
       }
       PopulateLists(model);
       return View("Delete", model);
     }
+
+    #endregion
 
     private void PopulateLists(ExpenseVM model)
     {

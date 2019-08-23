@@ -3,7 +3,7 @@
   var $grid;
   var formAccess = {};
   
-  my.Initialise = function (grid, fields, currentPage) {
+  my.Initialise = function (grid, fields, dataUrl, currentPage) {
     $grid = $(grid);
     formAccess = {
       $gridForm: $("#grid-form"),
@@ -78,7 +78,7 @@
             var d = $.Deferred();
 
             $.ajax({
-              url: "GetExpensesData",
+              url: dataUrl,
               data: filter,
               dataType: "json"
             }).done(function(response) {
