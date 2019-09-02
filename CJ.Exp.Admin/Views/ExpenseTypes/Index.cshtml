@@ -3,37 +3,25 @@
   ViewData["Title"] = "Expense Types";
 }
 
-<div class="table-add">
-  <a asp-area="" asp-controller="ExpenseTypes" asp-action="Add">Add</a>
-</div>
+<form method="post" id="control" asp-action="Add">
+  <div class="row">
+    <div class="col-md-4">
+      <button type="submit" class="btn btn-default">Add +</button>
+    </div>
+  </div>
+</form>
 
-<table class="table">
-  <thead>
-    <tr>
-      <th scope="col">Expense Type</th>
-      <th scope="col"></th>
-    </tr>
-  </thead>
-  <tbody>
-    @foreach (var exp in Model.ExpenseTypes)
-    {
-      <tr>
-        <td>
-          @exp.ExpenseType
-        </td>
-        <td class="admin-links">
-          <form method="post">
-            <input type="hidden" id="expenseTypeId" name="expenseTypeId" value="@exp.Id"/>
-            <button type="submit" class="btn btn-default" formaction="Edit">Edit</button>
-            <button type="submit" class="btn" formaction="Delete">Delete</button>
-          </form>
-          
-          @*<a asp-area="" asp-controller="ExpenseTypes" asp-action="Edit" asp-route-id="@exp.Id">Edit</a>
-          <a asp-area="" asp-controller="ExpenseTypes" asp-action="Delete" asp-route-id="@exp.Id">Delete</a>*@
-        </td>
-      </tr>
+@Html.Partial("_GridPartial")
 
-    }
+@section Scripts {
 
-  </tbody>
-</table>
+  @Html.Partial("_GridIncludePartial")
+
+  <environment include="Development">
+    <script src="~/js/ExpenseTypes/Index.js" asp-append-version="true"></script>
+  </environment>
+  <environment exclude="Development">
+    <script src="~/js/ExpenseTypes/Index.min.js" asp-append-version="true"></script>
+  </environment>
+
+}

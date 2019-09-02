@@ -3,7 +3,7 @@
   var $grid;
   var formAccess = {};
   
-  my.Initialise = function (grid, fields, dataUrl, currentPage) {
+  my.Initialise = function (grid, fields, dataUrl, currentPage, folderUrl) {
     $grid = $(grid);
     formAccess = {
       $gridForm: $("#grid-form"),
@@ -31,7 +31,7 @@
         //sorting: true,
         paging: true,
         pageLoading: true,
-        pageSize: 3,
+        pageSize: 20,
         pageIndex: currentPage,
         rowRenderer: function (item, itemIndex) {
           var rowHtml = "<tr class='jsgrid-row' data-id='" + item.id + "'>";
@@ -114,7 +114,12 @@
       formAccess.$currentPageInput.val(pageIndex);
       formAccess.$editValueInput.val(id);
 
-      formAccess.$gridForm.attr("action", formAction);
+      var action = formAction;
+      if (folderUrl !== undefined && folderUrl.length > 0) {
+        action = '/' + folderUrl + '/' + action;
+      }
+
+      formAccess.$gridForm.attr("action", action);
       formAccess.$gridForm.submit();
     }
   };

@@ -17,7 +17,6 @@ namespace CJ.Exp.Admin.Controllers
   public class AccountController : ControllerBase
   {
     private readonly IEmailSender _emailSender;
-    private readonly ILogger _logger;
     private readonly IAuthService _authService;
     
     public AccountController(ILoggerFactory loggerFactory, IEmailSender emailSender, IAuthService authService, ILanguage language) : 
@@ -54,13 +53,13 @@ namespace CJ.Exp.Admin.Controllers
         var result = await _authService.AuthenticateAsync(model.Email, model.Password, model.RememberMe, false);
         if (result.Succeeded)
         {
-          _logger.LogInformation("User logged in.");
+          Logger.LogInformation("User logged in.");
           return RedirectToLocal(returnUrl);
         }
 
         if (result.IsLockedOut)
         {
-          _logger.LogWarning("User account locked out.");
+          Logger.LogWarning("User account locked out.");
           return RedirectToAction(nameof(Lockout));
         }
         else
@@ -103,11 +102,11 @@ namespace CJ.Exp.Admin.Controllers
 
         if (result.Succeeded)
         {
-          _logger.LogInformation("User created a new account with password.");
+          Logger.LogInformation("User created a new account with password.");
 
           await _authService.AuthenticateAsync(user.Email, model.Password, false, false);
 
-          _logger.LogInformation("User created a new account with password.");
+          Logger.LogInformation("User created a new account with password.");
           return RedirectToLocal(returnUrl);
         }
         AddErrors(result);
@@ -122,7 +121,7 @@ namespace CJ.Exp.Admin.Controllers
     public async Task<IActionResult> Logout()
     {
       await _authService.SignOutAsync();
-      _logger.LogInformation("User logged out.");
+      Logger.LogInformation("User logged out.");
       return RedirectToAction(nameof(HomeController.Index), "Home");
     }
 

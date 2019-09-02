@@ -13,5 +13,5 @@
 
   var currentPage = pageOptions.GetPageOption("CurrentPage", "int");
 
-  grid.Initialise($("#jsGrid"), fields, "Expenses/GetExpensesData", currentPage);
+  grid.Initialise($("#jsGrid"), fields, "/Expenses/GetExpensesData", currentPage, "Expenses");
 });

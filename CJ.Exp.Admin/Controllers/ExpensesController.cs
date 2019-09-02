@@ -71,7 +71,7 @@ namespace CJ.Exp.Admin.Controllers
         searchFilter.GridFilter = new GridRequestSM();
       }
 
-      searchFilter.GridFilter.ItemsPerPage = 3;
+      searchFilter.GridFilter.ItemsPerPage = 20;
       var pageIndex = filter.PageIndex;
       searchFilter.GridFilter.PageNumber = pageIndex >= 0 ? pageIndex : 0;
 
@@ -138,7 +138,7 @@ namespace CJ.Exp.Admin.Controllers
 
         if (_expensesService.BusinessStateValid)
         {
-          SetControllerMessage(ControllerMessageType.Success, GetControllerText("Added"));
+          SetControllerMessage(ControllerMessageType.Success, "Added");
           return RedirectToAction("Index");
         }
         model.SetErrorMessage(_expensesService.BusinessErrors, Language);
