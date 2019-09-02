@@ -35,6 +35,7 @@
     <ProjectReference Include="..\CJ.Exp.CommonStartup\CJ.Exp.CommonStartup.csproj" />
     <ProjectReference Include="..\CJ.Exp.Data.EF\CJ.Exp.Data.EF.csproj" />
     <ProjectReference Include="..\CJ.Exp.LanguageProvider\CJ.Exp.LanguageProvider.csproj" />
+    <ProjectReference Include="..\CJ.Exp.Notification\CJ.Exp.Notification.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -77,6 +78,10 @@
     <Content Update="Views\Users\Index.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Services\" />
   </ItemGroup>
 
 </Project>

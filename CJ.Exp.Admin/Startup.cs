@@ -1,6 +1,5 @@
 ﻿using System;
 using AutoMapper;
-using CJ.Exp.Admin.Services;
 using CJ.Exp.BusinessLogic;
 using CJ.Exp.BusinessLogic.Auth;
 using CJ.Exp.Core;
@@ -14,6 +13,7 @@ using CJ.Exp.Data.MongoDb.Interfaces;
 using CJ.Exp.Data.MongoDb.Mongo;
 using CJ.Exp.DomainInterfaces;
 using CJ.Exp.LanguageProvider;
+using CJ.Exp.Notification;
 using CJ.Exp.ServiceModels.Users;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -62,7 +62,7 @@ namespace CJ.Exp.Admin
         .AddDefaultTokenProviders();
 
       // Add application services.
-      services.AddScoped<IEmailSender, EmailSender>();
+      services.AddScoped<INotification, EmailSender>();
       CommonStartup.AddCommonServices(services);
 
       services.AddScoped<IAuthService, AuthService<ApplicationUserMongo, ApplicationRoleMongo>>();

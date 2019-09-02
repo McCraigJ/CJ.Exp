@@ -1,5 +1,4 @@
 ﻿using CJ.Exp.Admin.Models.ManageViewModels;
-using CJ.Exp.Admin.Services;
 using CJ.Exp.DomainInterfaces;
 using CJ.Exp.ServiceModels.Users;
 using Microsoft.AspNetCore.Authorization;
@@ -15,7 +14,7 @@ namespace CJ.Exp.Admin.Controllers
   [Route("[controller]/[action]")]
   public class ManageController : Controller
   {    
-    private readonly IEmailSender _emailSender;
+    private readonly INotification _emailSender;
     private readonly ILogger _logger;
     private readonly IAuthService _authService;
 
@@ -24,8 +23,8 @@ namespace CJ.Exp.Admin.Controllers
     private const string AuthenticatorUriFormat = "otpauth://totp/{0}:{1}?secret={2}&issuer={0}&digits=6";
     private const string RecoveryCodesKey = nameof(RecoveryCodesKey);
 
-    public ManageController(     
-    IEmailSender emailSender,
+    public ManageController(
+      INotification emailSender,
       ILogger<ManageController> logger,
       UrlEncoder urlEncoder,
       IAuthService authService)

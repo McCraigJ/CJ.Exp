@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using CJ.Exp.Admin.Models.AccountViewModels;
-using CJ.Exp.Admin.Services;
 using CJ.Exp.DomainInterfaces;
 using CJ.Exp.ServiceModels.Users;
 using Microsoft.AspNetCore.Authentication;
@@ -16,10 +15,10 @@ namespace CJ.Exp.Admin.Controllers
   [Authorize]
   public class AccountController : ControllerBase
   {
-    private readonly IEmailSender _emailSender;
+    private readonly INotification _emailSender;
     private readonly IAuthService _authService;
     
-    public AccountController(ILoggerFactory loggerFactory, IEmailSender emailSender, IAuthService authService, ILanguage language) : 
+    public AccountController(ILoggerFactory loggerFactory, INotification emailSender, IAuthService authService, ILanguage language) : 
       base(loggerFactory.CreateLogger<AccountController>(), language)
     {
       _emailSender = emailSender;
