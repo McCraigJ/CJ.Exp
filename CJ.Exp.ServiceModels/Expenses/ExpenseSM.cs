@@ -22,11 +22,17 @@ namespace CJ.Exp.ServiceModels.Expenses
   }
 
   [Serializable]
-  public class ExpensesFilterSM
+  public class ExpensesFilterSM : SearchFilterBaseSM
   {
     public DateTime StartDate { get; set; }
     public DateTime EndDate { get; set; }
     public ExpenseTypeSM ExpenseType { get; set; }
+    
+  }
+
+  [Serializable]
+  public class SearchFilterBaseSM
+  {
     public GridRequestSM GridFilter { get; set; }
   }
 }

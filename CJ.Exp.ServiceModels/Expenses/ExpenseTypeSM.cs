@@ -16,8 +16,7 @@ namespace CJ.Exp.ServiceModels.Expenses
   }
 
   [Serializable]
-  public class ExpenseTypesFilterSM
+  public class ExpenseTypesFilterSM : SearchFilterBaseSM
   {
-    public GridRequestSM GridFilter { get; set; }
   }
 }

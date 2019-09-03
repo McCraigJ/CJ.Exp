@@ -44,22 +44,22 @@ namespace CJ.Exp.Admin.Controllers
       }
     }
 
-    protected void AddTempData<T>(string key, T data) where T : class
-    {
-      TempData.Put<T>(key, data);
-    }
+    //protected void AddTempData<T>(string key, T data) where T : class
+    //{
+    //  TempData.Put<T>(key, data);
+    //}
 
-    protected T GetTempData<T>(string key, bool isRequired = true) where T : class
-    {
-      T data = TempData.Get<T>(key);
+    //protected T GetTempData<T>(string key, bool isRequired = true) where T : class
+    //{
+    //  T data = TempData.Get<T>(key);
 
-      if (isRequired && data == null)
-      {
-        throw new CjExpInvalidOperationException("Cannot find data");
-      }
+    //  if (isRequired && data == null)
+    //  {
+    //    throw new CjExpInvalidOperationException("Cannot find data");
+    //  }
 
-      return data;
-    }
+    //  return data;
+    //}
 
     protected void SetControllerMessage(ControllerMessageType messageType, string message)
     {
@@ -70,12 +70,12 @@ namespace CJ.Exp.Admin.Controllers
         MessageDateTime = DateTime.Now
       };
 
-      AddTempData(controllerMessageKey, msg);
+      TempData.AddTempData(controllerMessageKey, msg);
     }
 
     protected ControllerMessage GetControllerMessage()
     {
-      var msg = GetTempData<ControllerMessage>(controllerMessageKey, false);
+      var msg = TempData.GetTempData<ControllerMessage>(controllerMessageKey, false);
 
       if (msg != null)
       {

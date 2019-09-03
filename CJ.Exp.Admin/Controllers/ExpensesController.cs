@@ -6,7 +6,6 @@ using CJ.Exp.Admin.Extensions;
 using CJ.Exp.Admin.Models.ExpensesViewModels;
 using CJ.Exp.Admin.Models.GridViewModels;
 using CJ.Exp.DomainInterfaces;
-using CJ.Exp.ServiceModels;
 using CJ.Exp.ServiceModels.Expenses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -22,14 +21,14 @@ namespace CJ.Exp.Admin.Controllers
 
     private readonly IExpensesService _expensesService;
 
-    public ExpensesController(ILoggerFactory loggerFactory, IExpensesService expensesService, ILanguage language) : 
+    public ExpensesController(ILoggerFactory loggerFactory, IExpensesService expensesService, ILanguage language) :
       base(loggerFactory.CreateLogger<ExpensesController>(), language)
     {
       _expensesService = expensesService;
     }
 
     #region Index
-    
+
     [HttpGet]
     public IActionResult Index()
     {
@@ -52,8 +51,7 @@ namespace CJ.Exp.Admin.Controllers
     [HttpPost]
     public IActionResult Filter(ExpensesFilterVM model)
     {
-      var filterSM = Mapper.Map<ExpensesFilterSM>(model);
-      AddTempData(ExpensesFilterDataKey, filterSM);
+      TempData.AddGridSearchFilter(ExpensesFilterDataKey, Mapper.Map<ExpensesFilterSM>(model));
       model.IsFiltered = true;
 
       return View("Index", model);
@@ -63,44 +61,35 @@ namespace CJ.Exp.Admin.Controllers
     [Route("[controller]/[action]")]
     public IActionResult GetExpensesData(GridFilterViewModel filter)
     {
-      var searchFilter = TempData.Get<ExpensesFilterSM>(ExpensesFilterDataKey);
-      if (searchFilter.GridFilter == null)
-      {
-        searchFilter.GridFilter = new GridRequestSM();
-      }
-
-      searchFilter.GridFilter.ItemsPerPage = 20;
-      var pageIndex = filter.PageIndex;
-      searchFilter.GridFilter.PageNumber = pageIndex >= 0 ? pageIndex : 0;
+      var searchFilter = TempData.GetGridSearchFilter<ExpensesFilterSM>(ExpensesFilterDataKey, filter);
 
       var expenses = _expensesService.GetExpenses(searchFilter);
-      AddTempData(ExpensesFilterDataKey, searchFilter);
 
       return new JsonResult(expenses);
     }
 
+
     private ExpensesFilterVM CreateExpensesFilterFromTempData()
     {
 
-      var filter = TempData.Get<ExpensesFilterSM>(ExpensesFilterDataKey);
+      var filter = TempData.GetGridSearchFilter<ExpensesFilterSM>(ExpensesFilterDataKey);
       if (filter == null)
       {
         return GetNewExpensesFilter();
       }
-      else
+
+      var model = Mapper.Map<ExpensesFilterVM>(filter);
+      model.IsFiltered = true;
+
+      if (filter.GridFilter != null)
       {
-        var model = Mapper.Map<ExpensesFilterVM>(filter);
-        model.IsFiltered = true;
-
-        if (filter.GridFilter != null)
-        {
-          SetPageOption(model, "CurrentPage", filter.GridFilter.PageNumber.ToString());
-        }
-
-        AddTempData(ExpensesFilterDataKey, filter);
-
-        return GetNewExpensesFilter();
+        SetPageOption(model, "CurrentPage", filter.GridFilter.PageNumber.ToString());
       }
+
+      TempData.AddGridSearchFilter(ExpensesFilterDataKey, filter);
+
+      return model;
+
     }
 
     private ExpensesFilterVM GetNewExpensesFilter()

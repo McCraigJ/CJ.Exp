@@ -1,6 +1,10 @@
 {
   "Expenses.Added": "Expense successfully added",
   "Expenses.Updated": "Expense successfully updated",
+  "Expenses.Deleted": "Expense deleted",
+  "ExpenseTypes.Added": "Expense Type successfully added",
+  "ExpenseTypes.Updated": "Expense Type successfully updated",
+  "ExpenseTypes.Deleted": "Expense Type deleted",
   "BusinessError.ExpenseTypeNotFound": "Expense Type Not Found",
   "BusinessError.ExpenseNotFound": "Expense Not Found",
   "BusinessError.ExpenseTypeAlreadyExists": "Expense Type Already Exists"
