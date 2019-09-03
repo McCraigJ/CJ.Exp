@@ -90,10 +90,20 @@ namespace CJ.Exp.Data.EF.DataAccess
         throw new NotImplementedException();
       }
 
+      public GridResultSM<ExpenseTypeSM> GetExpenseTypes(ExpenseTypesFilterSM filter)
+      {
+        throw new NotImplementedException();
+      }
+
       public List<ExpenseTypeSM> GetExpenseTypes()
       {
-        return (from t in _data.ExpenseTypes select t).ProjectTo<ExpenseTypeSM>().ToList();
+        throw new NotImplementedException();
       }
+
+      //public List<ExpenseTypeSM> GetExpenseTypes()
+      //{
+      //  return (from t in _data.ExpenseTypes select t).ProjectTo<ExpenseTypeSM>().ToList();
+      //}
 
       public ExpenseTypeSM GetExpenseTypeById(string id)
       {

@@ -44,19 +44,17 @@ namespace CJ.Exp.Admin.Controllers
 
     private IActionResult IndexInternal()
     {
-      var vm = new ExpensesVM();
-
-      PopulateExpensesFilterFromTempData(vm);
+      var vm = CreateExpensesFilterFromTempData();
 
       return View("Index", vm);
     }
 
     [HttpPost]
-    public IActionResult Filter(ExpensesVM model)
+    public IActionResult Filter(ExpensesFilterVM model)
     {
-      var filterSM = Mapper.Map<ExpensesFilterSM>(model.Filter);
+      var filterSM = Mapper.Map<ExpensesFilterSM>(model);
       AddTempData(ExpensesFilterDataKey, filterSM);
-      model.Filter.IsFiltered = true;
+      model.IsFiltered = true;
 
       return View("Index", model);
     }
@@ -81,17 +79,18 @@ namespace CJ.Exp.Admin.Controllers
       return new JsonResult(expenses);
     }
 
-    private void PopulateExpensesFilterFromTempData(ExpensesVM model)
+    private ExpensesFilterVM CreateExpensesFilterFromTempData()
     {
+
       var filter = TempData.Get<ExpensesFilterSM>(ExpensesFilterDataKey);
       if (filter == null)
       {
-        model.Filter = GetNewExpensesFilter();
+        return GetNewExpensesFilter();
       }
       else
       {
-        model.Filter = Mapper.Map<ExpensesFilterVM>(filter);
-        model.Filter.IsFiltered = true;
+        var model = Mapper.Map<ExpensesFilterVM>(filter);
+        model.IsFiltered = true;
 
         if (filter.GridFilter != null)
         {
@@ -99,6 +98,8 @@ namespace CJ.Exp.Admin.Controllers
         }
 
         AddTempData(ExpensesFilterDataKey, filter);
+
+        return GetNewExpensesFilter();
       }
     }
 
@@ -186,7 +187,7 @@ namespace CJ.Exp.Admin.Controllers
 
     #endregion
 
-    #region "Delete"
+    #region Delete
 
     [HttpPost]
     public IActionResult Delete(string editValue)

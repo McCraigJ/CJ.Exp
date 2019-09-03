@@ -14,4 +14,10 @@ namespace CJ.Exp.ServiceModels.Expenses
   {
     public bool UpdateExpensesWithUpdatedType { get; set; }
   }
+
+  [Serializable]
+  public class ExpenseTypesFilterSM
+  {
+    public GridRequestSM GridFilter { get; set; }
+  }
 }

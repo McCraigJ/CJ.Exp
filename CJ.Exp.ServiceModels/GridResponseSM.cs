@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using Microsoft.EntityFrameworkCore.Storage;
 
 namespace CJ.Exp.ServiceModels
 {
@@ -14,11 +12,11 @@ namespace CJ.Exp.ServiceModels
 
     public int TotalPages => (int) Math.Ceiling(TotalRecordCount / (decimal) RecordsPerPage);
 
-    public decimal GridPageTotal { get;  }
+    public decimal? GridPageTotal { get;  }
     public List<T> GridRows { get; }
 
 
-    public GridResultSM(int currentPageNumber, int totalRecordCount, int recordsPerPage, decimal gridPageTotal, List<T> gridRows)
+    public GridResultSM(int currentPageNumber, int totalRecordCount, int recordsPerPage, decimal? gridPageTotal, List<T> gridRows)
     {
       CurrentPageNumber = currentPageNumber;
       TotalRecordCount = totalRecordCount;

@@ -17,7 +17,11 @@ namespace CJ.Exp.DomainInterfaces
 
     void DeleteExpense(ExpenseSM expense);
 
+    GridResultSM<ExpenseTypeSM> GetExpenseTypes(ExpenseTypesFilterSM filter);
+
     List<ExpenseTypeSM> GetExpenseTypes();
+
+    ExpenseTypeSM GetExpenseTypeById(string id);
 
     void AddExpenseType(ExpenseTypeSM expenseType);
 

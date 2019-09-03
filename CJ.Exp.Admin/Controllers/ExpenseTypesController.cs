@@ -5,6 +5,9 @@ using CJ.Exp.ServiceModels.Expenses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
+using CJ.Exp.Admin.Extensions;
+using CJ.Exp.Admin.Models.GridViewModels;
+using CJ.Exp.ServiceModels;
 using Microsoft.Extensions.Logging;
 
 namespace CJ.Exp.Admin.Controllers
@@ -14,6 +17,7 @@ namespace CJ.Exp.Admin.Controllers
   public class ExpenseTypesController : ControllerBase
   {
     private readonly IExpensesService _expensesService;
+    private const string ExpenseTypesFilterDataKey = "ExpenseTypesFilter";
 
     public ExpenseTypesController(ILoggerFactory loggerFactory, IExpensesService expensesService, ILanguage language) : 
       base(loggerFactory.CreateLogger<ExpenseTypesController>(), language)
@@ -24,11 +28,46 @@ namespace CJ.Exp.Admin.Controllers
     [HttpGet]
     public IActionResult Index()
     {
-      var vm = new ExpenseTypesVM
-      {
-        ExpenseTypes = _expensesService.GetExpenseTypes().ToList()
-      };
+      return IndexInternal();
+    }
+
+    private IActionResult IndexInternal()
+    {
+      var vm = CreateExpenseTypesGridFilterFromTempData();
       return View(vm);
+    }
+
+    private ExpenseTypesVM CreateExpenseTypesGridFilterFromTempData()
+    {
+      var model = new ExpenseTypesVM();
+      var filter = TempData.Get<ExpenseTypesFilterSM>(ExpenseTypesFilterDataKey);
+      if (filter?.GridFilter != null)
+      {
+        SetPageOption(model, "CurrentPage", filter.GridFilter.PageNumber.ToString());
+      }
+
+      return model;
+
+    }
+
+    [HttpGet]
+    [Route("[controller]/[action]")]
+    public IActionResult GetExpenseTypesData(GridFilterViewModel filter)
+    {
+      var searchFilter = TempData.Get<ExpenseTypesFilterSM>(ExpenseTypesFilterDataKey);
+      if (searchFilter.GridFilter == null)
+      {
+        searchFilter.GridFilter = new GridRequestSM();
+      }
+
+      searchFilter.GridFilter.ItemsPerPage = 20;
+      var pageIndex = filter.PageIndex;
+      searchFilter.GridFilter.PageNumber = pageIndex >= 0 ? pageIndex : 0;
+
+      var expenses = _expensesService.GetExpenseTypes(searchFilter);
+      AddTempData(ExpenseTypesFilterDataKey, searchFilter);
+
+      return new JsonResult(expenses);
     }
 
     [HttpGet]
@@ -74,7 +113,7 @@ namespace CJ.Exp.Admin.Controllers
     [HttpPost]
     public IActionResult Edit(string expenseTypeId)
     {
-      var expSm = _expensesService.GetExpenseTypes().SingleOrDefault(x => x.Id == expenseTypeId);
+      var expSm = _expensesService.GetExpenseTypeById(expenseTypeId);
 
       return View(Mapper.Map<ExpenseTypeVM>(expSm));
     }
@@ -99,7 +138,7 @@ namespace CJ.Exp.Admin.Controllers
     [HttpPost]
     public IActionResult Delete(string expenseTypeId)
     {
-      var expSm = _expensesService.GetExpenseTypes().SingleOrDefault(x => x.Id == expenseTypeId);
+      var expSm = _expensesService.GetExpenseTypeById(expenseTypeId);
 
       return View(Mapper.Map<ExpenseTypeVM>(expSm));
     }

@@ -131,9 +131,25 @@ namespace CJ.Exp.BusinessLogic.Expenses
       return _data.GetExpenses(filter);
     }
 
+    public GridResultSM<ExpenseTypeSM> GetExpenseTypes(ExpenseTypesFilterSM filter)
+    {
+      return _data.GetExpenseTypes(filter);
+    }
+
     public List<ExpenseTypeSM> GetExpenseTypes()
     {
       return _data.GetExpenseTypes();
+    }
+
+    public ExpenseTypeSM GetExpenseTypeById(string id)
+    {
+      var expenseType = _data.GetExpenseTypeById(id);
+      if (expenseType == null)
+      {
+        AddBusinessError(BusinessErrorCodes.DataNotFound, "ExpenseTypeNotFound");
+      }
+
+      return expenseType;
     }
 
     public void UpdateExpenseType(UpdateExpenseTypeSM expenseType)

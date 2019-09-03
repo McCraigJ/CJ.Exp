@@ -109,10 +109,30 @@ namespace CJ.Exp.Data.MongoDb.DataAccess
       return Mapper.Map<ExpenseSM>(expense);
     }
 
+    public GridResultSM<ExpenseTypeSM> GetExpenseTypes(ExpenseTypesFilterSM filter)
+    {
+      if (filter?.GridFilter == null)
+      {
+        return null;
+      }
+
+      var query = _expenseTypeCollection.Find(_ => true).SortBy(x => x.ExpenseType);
+
+      var expenseTypes = query.Skip(filter.GridFilter.Skip).Limit(filter.GridFilter.ItemsPerPage).ToList();
+
+      var count = _expenseCollection.CountDocuments(x => true);
+
+      return new GridResultSM<ExpenseTypeSM>(filter?.GridFilter?.PageNumber ?? 0,
+        (int)count,
+        filter?.GridFilter?.ItemsPerPage ?? 0,
+        null,
+        Mapper.Map<List<ExpenseTypeSM>>(expenseTypes));
+    }
+
     public List<ExpenseTypeSM> GetExpenseTypes()
-    {           
-      var types = _expenseTypeCollection.Find(_ => true).SortBy(x => x.ExpenseType).ToList();
-      return Mapper.Map<List<ExpenseTypeSM>>(types);
+    {
+      return Mapper.Map<List<ExpenseTypeSM>>(_expenseTypeCollection.Find(_ => true).SortBy(x => x.ExpenseType).ToList());
+
     }
 
     public ExpenseTypeSM GetExpenseTypeById(string id)

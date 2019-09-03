@@ -20,6 +20,8 @@ namespace CJ.Exp.Data.Interfaces
 
     ExpenseSM GetExpenseById(string id);
 
+    GridResultSM<ExpenseTypeSM> GetExpenseTypes(ExpenseTypesFilterSM filter);
+
     List<ExpenseTypeSM> GetExpenseTypes();
 
     ExpenseTypeSM GetExpenseTypeById(string id);
