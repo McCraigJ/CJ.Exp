@@ -126,6 +126,11 @@ namespace CJ.Exp.BusinessLogic.Auth
       return _usersData.GetUsers();
     }
 
+    public GridResultSM<UserSM> GetUsers(UsersFilterSM filter)
+    {
+      return _usersData.GetUsers(filter);
+    }
+
     public UserSM GetUserById(string id)
     {
       return _usersData.GetUserById(id);

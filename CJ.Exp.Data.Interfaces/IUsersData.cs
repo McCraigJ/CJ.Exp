@@ -10,6 +10,8 @@ namespace CJ.Exp.Data.Interfaces
   {
     List<UserSM> GetUsers();
 
+    GridResultSM<UserSM> GetUsers(UsersFilterSM filter);
+
     UserSM GetUserById(string id);
 
     //IQueryable<string> GetCurrentUserRoles(string userId);

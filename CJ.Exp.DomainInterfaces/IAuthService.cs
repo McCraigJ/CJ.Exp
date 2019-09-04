@@ -4,6 +4,7 @@ using CJ.Exp.ServiceModels.Users;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using CJ.Exp.ServiceModels;
 
 namespace CJ.Exp.DomainInterfaces
 {
@@ -23,6 +24,7 @@ namespace CJ.Exp.DomainInterfaces
     Task<AuthResultSM> UpdateRole(string userName, string role);
     Task<AuthResultSM> SeedData();
     List<UserSM> GetUsers();
+    GridResultSM<UserSM> GetUsers(UsersFilterSM filter);
     UserSM GetUserById(string id);
     Task<UserSM> AddUser(UserSM user, string password);
     Task<UserSM> UpdateUser(UserSM user);

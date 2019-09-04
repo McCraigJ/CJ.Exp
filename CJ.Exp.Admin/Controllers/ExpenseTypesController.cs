@@ -3,7 +3,6 @@ using CJ.Exp.Admin.Extensions;
 using CJ.Exp.Admin.Models.ExpensesViewModels;
 using CJ.Exp.Admin.Models.GridViewModels;
 using CJ.Exp.DomainInterfaces;
-using CJ.Exp.ServiceModels;
 using CJ.Exp.ServiceModels.Expenses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -45,7 +44,7 @@ namespace CJ.Exp.Admin.Controllers
     {
       var model = new ExpenseTypesVM();
 
-      var filter = TempData.GetGridSearchFilter<ExpensesFilterSM>(ExpenseTypesFilterDataKey) ?? new ExpensesFilterSM();
+      var filter = TempData.GetGridSearchFilter<SearchFilterBaseSM>(ExpenseTypesFilterDataKey) ?? new SearchFilterBaseSM();
 
       if (filter?.GridFilter != null)
       {

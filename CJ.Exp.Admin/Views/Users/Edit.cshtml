@@ -8,7 +8,7 @@
 <div class="row">
   <div class="col-md-4">
     <section>
-      <form method="post">
+      <form method="post" asp-action="DoEdit">
         <input asp-for="Id" type="hidden" />
         <h4>Modify User</h4>
         <hr />
@@ -35,6 +35,9 @@
         </div>
         <div class="form-group">
           <button type="submit" class="btn btn-default">Update</button>
+        </div>
+        <div class="form-group">
+          <button formnovalidate="formnovalidate" type="submit" class="btn btn-error" formaction="BackToIndex">Cancel</button>
         </div>
       </form>
     </section>

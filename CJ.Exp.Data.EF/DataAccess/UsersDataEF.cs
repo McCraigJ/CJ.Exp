@@ -3,12 +3,13 @@ using CJ.Exp.Data.Interfaces;
 using CJ.Exp.ServiceModels.Users;
 using System.Collections.Generic;
 using System.Linq;
+using CJ.Exp.ServiceModels;
 
 namespace CJ.Exp.Data.EF.DataAccess
 {
-  public class UsersDataEfEf : DataEfAccessBase, IUsersData
+  public class UsersDataEf : DataEfAccessBase, IUsersData
   {
-    public UsersDataEfEf(ExpDbContext data) : base(data)
+    public UsersDataEf(ExpDbContext data) : base(data)
     {
     }
 
@@ -23,6 +24,11 @@ namespace CJ.Exp.Data.EF.DataAccess
     public List<UserSM> GetUsers()
     {
       return GetUsersAsQueryable().ToList();
+    }
+
+    public GridResultSM<UserSM> GetUsers(UsersFilterSM filter)
+    {
+      throw new System.NotImplementedException();
     }
 
     public UserSM GetUserById(string id)

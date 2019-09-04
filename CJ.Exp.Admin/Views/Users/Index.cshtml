@@ -3,31 +3,25 @@
   ViewData["Title"] = "Users";
 }
 
-<div class="table-add">
-  <a asp-area="" asp-controller="Users" asp-action="Add">Add</a>
-</div>
+<form method="post" id="control" asp-action="Add">
+  <div class="row">
+    <div class="col-md-4">
+      <button type="submit" class="btn btn-default">Add +</button>
+    </div>
+  </div>
+</form>
 
-<table class="table">
-  <thead>
-    <tr>
-      <th scope="col">Email</th>
-      <th scope="col">Name</th>      
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-    @foreach (var user in Model.Users)
-    {
-    <tr>
-      <td>@user.Email</td>
-      <td>@user.FirstName @user.LastName</td>      
-      <td class="admin-links">
-        <a asp-area="" asp-controller="Users" asp-action="Edit" asp-route-id="@user.Id">Edit</a>
-        <a asp-area="" asp-controller="Users" asp-action="Delete" asp-route-id="@user.Id">Delete</a>
-      </td>
-    </tr>
+@Html.Partial("_GridPartial")
 
-    }
+@section Scripts {
 
-  </tbody>
-</table>
+  @Html.Partial("_GridIncludePartial")
+
+  <environment include="Development">
+    <script src="~/js/Users/Index.js" asp-append-version="true"></script>
+  </environment>
+  <environment exclude="Development">
+    <script src="~/js/Users/Index.min.js" asp-append-version="true"></script>
+  </environment>
+
+}

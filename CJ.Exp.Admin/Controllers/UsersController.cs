@@ -1,4 +1,9 @@
-﻿using AutoMapper;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using AutoMapper;
+using CJ.Exp.Admin.Extensions;
+using CJ.Exp.Admin.Models.GridViewModels;
 using CJ.Exp.Admin.Models.UsersViewModels;
 using CJ.Exp.BusinessLogic.Users;
 using CJ.Exp.DomainInterfaces;
@@ -6,9 +11,6 @@ using CJ.Exp.ServiceModels.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 
 namespace CJ.Exp.Admin.Controllers
@@ -16,6 +18,8 @@ namespace CJ.Exp.Admin.Controllers
   [Authorize(Roles = "Admin")]
   public class UsersController : ControllerBase
   {
+    private const string FilterDataKey = "UsersFilter";
+
     private readonly IAuthService _authService;
 
     public UsersController(ILoggerFactory loggerFactory, IAuthService authService, ILanguage language) : 
@@ -23,24 +27,58 @@ namespace CJ.Exp.Admin.Controllers
     {
       _authService = authService;
     }
+
+    [HttpGet]
     public IActionResult Index()
     {
-      var users = _authService.GetUsers().ToList();
-
-      var vm = new UsersVM
-      {
-        Users = Mapper.Map<List<UserVM>>(users)
-      };
-      return View(vm);
+      return IndexInternal();
     }
 
+    [HttpPost]
+    public IActionResult BackToIndex()
+    {
+      return IndexInternal();
+    }
+
+    private IActionResult IndexInternal()
+    {
+      var vm = CreateUsersGridFilterFromTempData();
+      return View("Index", vm);
+    }
+
+    private UsersVM CreateUsersGridFilterFromTempData()
+    {
+      var model = new UsersVM();
+
+      var filter = TempData.GetGridSearchFilter<UsersFilterSM>(FilterDataKey) ?? new UsersFilterSM();
+
+      if (filter?.GridFilter != null)
+      {
+        SetPageOption(model, "CurrentPage", filter.GridFilter.PageNumber.ToString());
+      }
+
+      TempData.AddGridSearchFilter(FilterDataKey, filter);
+
+      return model;
+    }
+
+    [HttpGet]
+    [Route("[controller]/[action]")]
+    public IActionResult GetUsersData(GridFilterViewModel filter)
+    {
+      var searchFilter = TempData.GetGridSearchFilter<UsersFilterSM>(FilterDataKey, filter);
+
+      return new JsonResult(_authService.GetUsers(searchFilter));
+    }
+
+    [HttpPost]
     public IActionResult Add()
     {      
       return GetAddView(new AddUserVM());
     }
 
     [HttpPost]
-    public async Task<IActionResult> Add(AddUserVM addUser)
+    public async Task<IActionResult> DoAdd(AddUserVM addUser)
     {
       if (ModelState.IsValid)
       {
@@ -52,7 +90,7 @@ namespace CJ.Exp.Admin.Controllers
           MergeBusinessErrors(_authService.BusinessErrors);
           return GetAddView(addUser);
         }
-
+        SetControllerMessage(ControllerMessageType.Success, "Added");
         return RedirectToAction("Index");
       }
       
@@ -66,9 +104,10 @@ namespace CJ.Exp.Admin.Controllers
       return View(model);
     }
 
-    public async Task<IActionResult> Edit(string id)
+    [HttpPost]
+    public async Task<IActionResult> Edit(string editValue)
     {
-      var user = _authService.GetUserById(id);
+      var user = _authService.GetUserById(editValue);
       if (user != null)
       {
         var userRole = await _authService.GetUserRole(user);
@@ -82,7 +121,7 @@ namespace CJ.Exp.Admin.Controllers
     }
 
     [HttpPost]
-    public async Task<IActionResult> Edit(EditUserVM updateUser)
+    public async Task<IActionResult> DoEdit(EditUserVM updateUser)
     {
       if (ModelState.IsValid)
       {
@@ -93,12 +132,13 @@ namespace CJ.Exp.Admin.Controllers
         {
           MergeBusinessErrors(_authService.BusinessErrors);
         } else {
+          SetControllerMessage(ControllerMessageType.Success, "Updated");
           return RedirectToAction("Index");
         }
       }
       
       updateUser.Roles = CreateRolesList();
-      return View(updateUser);
+      return View("Edit", updateUser);
     }
     
     private List<SelectListItem> CreateRolesList()

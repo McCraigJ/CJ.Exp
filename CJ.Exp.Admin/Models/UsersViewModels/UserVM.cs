@@ -25,7 +25,6 @@ namespace CJ.Exp.Admin.Models.UsersViewModels
 
   public class UsersVM : ViewModelBase
   {
-    public List<UserVM> Users { get; set; }
   }
 
   public class AddUserVM : UserVM

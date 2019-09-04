@@ -7,6 +7,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using CJ.Exp.Data.MongoDb.DataModels;
+using CJ.Exp.ServiceModels;
+using CJ.Exp.ServiceModels.Expenses;
 using IAppMongoClient = CJ.Exp.Data.MongoDb.Interfaces.IAppMongoClient;
 
 namespace CJ.Exp.Data.MongoDb.DataAccess
@@ -25,6 +27,26 @@ namespace CJ.Exp.Data.MongoDb.DataAccess
     {      
       var users = _collection.Find(_ => true).ToList();
       return Mapper.Map<List<UserSM>>(users);
+    }
+
+    public GridResultSM<UserSM> GetUsers(UsersFilterSM filter)
+    {
+      if (filter?.GridFilter == null)
+      {
+        return null;
+      }
+
+      var query = _collection.Find(_ => true);
+
+      var users = query.Skip(filter.GridFilter.Skip).Limit(filter.GridFilter.ItemsPerPage).ToList();
+
+      var count = _collection.CountDocuments(x => true);
+
+      return new GridResultSM<UserSM>(filter?.GridFilter?.PageNumber ?? 0,
+        (int)count,
+        filter?.GridFilter?.ItemsPerPage ?? 0,
+        null,
+        Mapper.Map<List<UserSM>>(users));
     }
 
     public UserSM GetUserById(string id)

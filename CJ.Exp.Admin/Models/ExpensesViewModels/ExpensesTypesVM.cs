@@ -15,6 +15,5 @@ namespace CJ.Exp.Admin.Models.ExpensesViewModels
 
   public class ExpenseTypesVM : ViewModelBase
   {
-    //public List<ExpenseTypeSM> ExpenseTypes { get; set; }
   }
 }
