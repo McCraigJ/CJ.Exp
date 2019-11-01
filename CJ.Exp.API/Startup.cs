@@ -14,15 +14,29 @@ using Microsoft.IdentityModel.Tokens;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
+using CJ.Exp.API.Middleware;
+using CJ.Exp.BusinessLogic;
 using CJ.Exp.BusinessLogic.Auth;
+using CJ.Exp.Data.Interfaces;
+using CJ.Exp.Data.MongoDb.DataAccess;
 using CJ.Exp.ServiceModels.Users;
+using CJ.Exp.Data.MongoDb.DataModels;
+using CJ.Exp.Data.MongoDb.Interfaces;
+using CJ.Exp.Data.MongoDb.Mongo;
+using CJ.Exp.LanguageProvider;
+using CJ.Exp.Notification;
+using CJ.Exp.Core;
+using StackExchange.Redis;
 
 namespace CJ.Exp.API
 {
   public class Startup
   {
-    public Startup(IConfiguration configuration)
+    private readonly IHostingEnvironment _env;
+
+    public Startup(IConfiguration configuration, IHostingEnvironment env)
     {
+      _env = env;
       Configuration = configuration;
     }
 
@@ -32,23 +46,15 @@ namespace CJ.Exp.API
     public void ConfigureServices(IServiceCollection services)
     {
       services.AddCors();
-      services.AddDbContext<ExpDbContext>(options =>
-          options.UseSqlServer(Configuration.GetConnectionString("CJ.Exp.ConnectionString"), b => b.MigrationsAssembly("CJ.Exp.Data")));
-
-      services.AddIdentity<ApplicationUser, IdentityRole>()
-          .AddEntityFrameworkStores<ExpDbContext>()
-          .AddDefaultTokenProviders();
-
 
       // ===== Add Jwt Authentication ========
       JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear(); // => remove default claims
+
       services
           .AddAuthentication(options =>
           {
             options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-            options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
             options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-
           })
           .AddJwtBearer(cfg =>
           {
@@ -63,25 +69,58 @@ namespace CJ.Exp.API
             };
           });
 
-      //services.AddTransient<IAuthService, AuthService>();
+      IApplicationSettings appSettings = new ApplicationSettings();
+
+      Configuration.Bind(appSettings);
+
+      services.AddSingleton(appSettings);
+      services.AddSingleton<IAppMongoClient, AppMongoClient>();
+
+      //ILanguage languageProvider = new TextCache();
+      //languageProvider.Initialise(_env.IsDevelopment());
+
+      //services.AddSingleton(languageProvider);
+
+      services.AddIdentity<ApplicationUserMongo, ApplicationRoleMongo>()
+        .AddMongoDbStores<ApplicationUserMongo, ApplicationRoleMongo, Guid>
+        (
+          appSettings.ConnectionString, appSettings.DatabaseName
+        )
+        .AddDefaultTokenProviders();
+
+      // Add application services.
+      services.AddScoped<INotification, EmailSender>();
+      CommonStartup.AddCommonServices(services);
+
+      services.AddScoped<IAuthService, AuthService<ApplicationUserMongo, ApplicationRoleMongo>>();
+
+      services.AddScoped<IExpensesData, ExpensesDataMongo>();
+
+      services.AddScoped<IServiceInfo, ServiceInfo>();
 
       services.AddAutoMapper();
+      
       services.AddMvc();
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
     public void Configure(IApplicationBuilder app, IHostingEnvironment env)
     {
-      if (env.IsDevelopment())
-      {
-        app.UseDeveloperExceptionPage();
-      }
+      //if (env.IsDevelopment())
+      //{
+      //  app.UseDeveloperExceptionPage();
+      //}
 
       app.UseStaticFiles();
+
+      app.UseStatusCodePages();
+
+      app.UseMiddleware<ExceptionMiddleware>();
 
       app.UseAuthentication();
 
       app.UseMvc();
+      
     }
   }
 }

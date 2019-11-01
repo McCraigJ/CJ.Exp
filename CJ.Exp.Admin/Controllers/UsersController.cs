@@ -140,7 +140,42 @@ namespace CJ.Exp.Admin.Controllers
       updateUser.Roles = CreateRolesList();
       return View("Edit", updateUser);
     }
-    
+
+    [HttpPost]
+    public IActionResult Delete(string editValue)
+    {
+      var user = _authService.GetUserById(editValue);
+      if (user == null)
+      {
+        SetControllerMessage(ControllerMessageType.Error, "UserNotFound");
+        return RedirectToAction("Index");
+      }
+
+      return View("Delete", Mapper.Map<UserVM>(user));
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> DoDelete(UserVM model)
+    {
+      if (ModelState.IsValid)
+      {
+        var user = Mapper.Map<UserSM>(model);
+        await _authService.DeleteUser(user);
+        if (_authService.BusinessErrors.Any())
+        {
+          MergeBusinessErrors(_authService.BusinessErrors);
+        }
+        else
+        {
+          SetControllerMessage(ControllerMessageType.Success, "Deleted");
+          return RedirectToAction("Index");
+        }
+        
+      }
+
+      return View("Delete", model);
+    }
+
     private List<SelectListItem> CreateRolesList()
     {
       var rolesList = new List<SelectListItem>();      

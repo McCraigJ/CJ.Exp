@@ -11,10 +11,11 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CJ.Exp.API.Controllers
 {
-  [Route("api/users")]
+  [Route("api/users/[action]")]
   public class UsersController : Controller
   {
     private readonly IAuthService _authService;    
@@ -30,13 +31,14 @@ namespace CJ.Exp.API.Controllers
     }
 
     [HttpGet]
+    [Authorize]
     public IEnumerable<string> Test()
     {
       return new string[] { "value1", "value2" };
     }
 
     [HttpPost]
-    public async Task<IActionResult> Login([FromBody] LoginAM model)
+    public async Task<IActionResult> Login([FromForm] LoginAM model)
     {      
       var result = await _authService.AuthenticateAsync(model.Email, model.Password, false, false);
 

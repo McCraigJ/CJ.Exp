@@ -16,7 +16,8 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.0.2" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.0.4" />
+    <PackageReference Include="NLog.Web.AspNetCore" Version="4.8.2" />
   </ItemGroup>
 
   <ItemGroup>
@@ -25,9 +26,14 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CJ.Exp.Auth.EFIdentity\CJ.Exp.Auth.EFIdentity.csproj" />
+    <ProjectReference Include="..\CJ.Exp.CommonStartup\CJ.Exp.CommonStartup.csproj" />
+    <ProjectReference Include="..\CJ.Exp.Core\CJ.Exp.Core.csproj" />
+    <ProjectReference Include="..\CJ.Exp.Data.MongoDb\CJ.Exp.Data.MongoDb.csproj" />
     <ProjectReference Include="..\CJ.Exp.DomainInterfaces\CJ.Exp.DomainInterfaces.csproj" />
     <ProjectReference Include="..\CJ.Exp.BusinessLogic\CJ.Exp.BusinessLogic.csproj" />
     <ProjectReference Include="..\CJ.Exp.Data.EF\CJ.Exp.Data.EF.csproj" />
+    <ProjectReference Include="..\CJ.Exp.LanguageProvider\CJ.Exp.LanguageProvider.csproj" />
+    <ProjectReference Include="..\CJ.Exp.Notification\CJ.Exp.Notification.csproj" />
   </ItemGroup>
 
 </Project>

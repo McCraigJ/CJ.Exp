@@ -16,23 +16,25 @@ namespace CJ.Exp.BusinessLogic.Auth
   public class AuthService<TAppUser, TAppRole> : ServiceBase, IAuthService
     where TAppUser : class, IApplicationUser
     where TAppRole : class, IApplicationRole
-  
+
   {
     private readonly UserManager<TAppUser> _userManager;
     private readonly SignInManager<TAppUser> _signInManager;
     private readonly RoleManager<TAppRole> _roleManager;
     private readonly IUsersData _usersData;
+    private readonly IServiceInfo _serviceInfo;
 
     public AuthService(
       UserManager<TAppUser> userManager,
       SignInManager<TAppUser> signInManager,
       RoleManager<TAppRole> roleManager,
-      IUsersData usersData)
+      IUsersData usersData, IServiceInfo serviceInfo)
     {
       _userManager = userManager;
       _signInManager = signInManager;
       _roleManager = roleManager;
       _usersData = usersData;
+      _serviceInfo = serviceInfo;
     }
 
     public async Task<AuthResultSM> AuthenticateAsync(string userName, string password, bool isPersistent, bool lockoutOnFailure)
@@ -57,7 +59,7 @@ namespace CJ.Exp.BusinessLogic.Auth
     {
       var user = await _userManager.FindByNameAsync(userName);
       if (user != null)
-      {        
+      {
         var currentRole = await GetUserRoleInternalAsync(user);
         if (currentRole != null)
         {
@@ -67,12 +69,10 @@ namespace CJ.Exp.BusinessLogic.Auth
         var addToRoleResult = await _userManager.AddToRoleAsync(user, role);
         return AuthResultFactory.CreateResultFromIdentityResult(addToRoleResult);
       }
-      else
-      {
-        return AuthResultFactory.CreateUserNotFoundResult();
-      }
+      
+      return AuthResultFactory.CreateUserNotFoundResult();
     }
-    
+
     public async Task<AuthResultSM> SeedData()
     {
       try
@@ -82,7 +82,7 @@ namespace CJ.Exp.BusinessLogic.Auth
         {
           var exists = await _roleManager.RoleExistsAsync(appRole);
           if (!exists)
-          {            
+          {
             var role = (TAppRole)Activator.CreateInstance(typeof(TAppRole)); // TAppRole.Create();
             role.Name = appRole;
             await _roleManager.CreateAsync(role);
@@ -120,7 +120,7 @@ namespace CJ.Exp.BusinessLogic.Auth
         return AuthResultFactory.CreateGenericFailResult(ex.Message);
       }
     }
-    
+
     public List<UserSM> GetUsers()
     {
       return _usersData.GetUsers();
@@ -204,19 +204,29 @@ namespace CJ.Exp.BusinessLogic.Auth
 
     public async Task DeleteUser(UserSM user)
     {
-      var currentUser = await _userManager.FindByNameAsync(user.Email);
-      if (currentUser == null)
+      var dbUser = await _userManager.FindByNameAsync(user.Email);
+      if (dbUser == null)
       {
         AddBusinessError(BusinessErrorCodes.DataNotFound, "User cannot be found");
         return;
       }
 
-      var result = await _userManager.DeleteAsync(currentUser);
-      if (result.Succeeded)
+      var currentLoggedInUser = await GetCurrentUser();
+
+      if (dbUser.Email == currentLoggedInUser.Email)
       {
-        return;
+        AddBusinessError(BusinessErrorCodes.CouldNotUpdate, "CannotDeleteCurrentUser");
       }
-      AddBusinessError(BusinessErrorCodes.Generic, "User could not be removed");
+
+      if (BusinessStateValid)
+      {
+        var result = await _userManager.DeleteAsync(dbUser);
+        if (result.Succeeded)
+        {
+          return;
+        }
+        AddBusinessError(BusinessErrorCodes.Generic, "User could not be removed");
+      }
     }
 
 
@@ -232,7 +242,7 @@ namespace CJ.Exp.BusinessLogic.Auth
       {
         await _userManager.RemoveFromRoleAsync(currentUser, currentRole);
       }
-      
+
       await _userManager.AddToRoleAsync(currentUser, role);
     }
 
@@ -347,9 +357,13 @@ namespace CJ.Exp.BusinessLogic.Auth
 
     private async Task<string> GetUserRoleInternalAsync(TAppUser user)
     {
-      //return _usersData.GetCurrentUserRoles(user.ApplicationId).FirstOrDefault();
+      if (user == null)
+      {
+        return null;
+      }
+
       var roles = await _userManager.GetRolesAsync(user);
-      return roles.FirstOrDefault();
+      return roles?.FirstOrDefault();
     }
 
     private async Task<TAppUser> GetUserByPrincipalInternal(ClaimsPrincipal principal)
@@ -361,7 +375,23 @@ namespace CJ.Exp.BusinessLogic.Auth
     {
       var user = await GetUserByPrincipalInternal(principal);
       return await GetUserRoleInternalAsync(user);
-      //return _usersData.GetCurrentUserRoles(user.ApplicationId).FirstOrDefault();
+    }
+
+    private async Task<UserSM> GetCurrentUser()
+    {
+      if (_serviceInfo.CurrentClaimsPrincipal == null)
+      {
+        throw new CjExpInvalidOperationException("Cannot get the logged in User");
+      }
+
+      var user = await GetUserByPrincipalAsync(_serviceInfo.CurrentClaimsPrincipal);
+
+      if (user == null)
+      {
+        throw new CjExpInvalidOperationException("Cannot get the logged in User");
+      }
+
+      return user;
     }
   }
 }

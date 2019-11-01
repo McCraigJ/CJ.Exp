@@ -43,16 +43,15 @@ namespace CJ.Exp.Admin
     {
       IApplicationSettings appSettings = new ApplicationSettings();
 
-      appSettings.ConnectionString = Configuration.GetConnectionString("CJ.Exp.ConnectionString.Mongo");
-      appSettings.DatabaseName = Configuration.GetConnectionString("CJ.Exp.ConnectionString.MongoDatabaseName");
+      Configuration.Bind(appSettings);
 
-      services.AddSingleton<IApplicationSettings>(appSettings);
+      services.AddSingleton(appSettings);
       services.AddSingleton<IAppMongoClient, AppMongoClient>();
 
       ILanguage languageProvider = new TextCache();
       languageProvider.Initialise(_env.IsDevelopment());
 
-      services.AddSingleton<ILanguage>(languageProvider);
+      services.AddSingleton(languageProvider);
 
       services.AddIdentity<ApplicationUserMongo, ApplicationRoleMongo>()
         .AddMongoDbStores<ApplicationUserMongo, ApplicationRoleMongo, Guid>

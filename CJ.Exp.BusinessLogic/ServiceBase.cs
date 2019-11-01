@@ -17,7 +17,7 @@ namespace CJ.Exp.BusinessLogic
 
     public void AddBusinessError(BusinessErrorCodes errorCode, string errorMessage)
     {
-      BusinessErrors.Add(new BusinessErrorSM(errorCode, errorMessage));
+      BusinessErrors.Add(new BusinessErrorSM(errorCode, $"BusinessError.{errorMessage}"));
     }
 
     public void AssertObjectNotNull(object obj)

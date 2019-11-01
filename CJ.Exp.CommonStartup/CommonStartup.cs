@@ -11,11 +11,8 @@ namespace CJ.Exp
   {
     public static void AddCommonServices(IServiceCollection services)
     {
-      //services.AddTransient<IAuthService, AuthService>();
       services.AddScoped<IExpensesService, ExpensesService>();
-
       services.AddScoped<IUsersData, UsersDataMongo>();
-      //services.AddTransient<IExpensesData, ExpensesDataEf>();
 
     }
   }

@@ -8,7 +8,9 @@
   "Users.Added": "User successfully added",
   "Users.Updated": "User successfully updated",
   "Users.Deleted": "User successfully deleted",
+  "Users.UserNotFound": "User not found",
   "BusinessError.ExpenseTypeNotFound": "Expense Type Not Found",
   "BusinessError.ExpenseNotFound": "Expense Not Found",
-  "BusinessError.ExpenseTypeAlreadyExists": "Expense Type Already Exists"
+  "BusinessError.ExpenseTypeAlreadyExists": "Expense Type Already Exists",
+  "BusinessError.CannotDeleteCurrentUser": "Cannot  delete the currently logged in User"
 }

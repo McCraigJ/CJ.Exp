@@ -1,16 +1,24 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace CJ.Exp.API.Controllers
 {
-  [Route("api/[controller]")]
-  [Authorize]
+  [Route("api/values/[action]")]
+  
   public class ValuesController : Controller
   {
     // GET api/values
     [HttpGet]
     public IEnumerable<string> Get()
+    {
+      return new string[] { "value1", "value2" };
+    }
+
+    [HttpGet]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    public IEnumerable<string> GetProtected()
     {
       return new string[] { "value1", "value2" };
     }

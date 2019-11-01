@@ -40,7 +40,7 @@ namespace CJ.Exp.Admin.Controllers
     {      
       foreach (var err in businessErrors)
       {
-        ModelState.AddModelError("Id", $"BusinessError.{Language.GetText(err.ErrorMessage)}");
+        ModelState.AddModelError("Id", $"{Language.GetText(err.ErrorMessage)}");
       }
     }
 

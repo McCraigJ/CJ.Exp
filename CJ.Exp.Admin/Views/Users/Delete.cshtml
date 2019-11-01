@@ -1,0 +1,42 @@
+﻿@model UserVM
+@{
+  ViewData["Title"] = "Delete User";
+}
+
+
+<div class="row">
+  <div class="col-md-4">
+    <section>
+      <form method="post" action="DoDelete">
+        <input type="hidden" asp-for="Id" />
+        <h4>Delete a User</h4>
+        <hr />
+        <div asp-validation-summary="All" class="text-danger"></div>
+
+        <div class="form-group">
+          <label asp-for="Email"></label>
+          <input asp-for="Email" class="form-control" readonly="readonly" type="email" />
+        </div>
+        <div class="form-group">
+          <label asp-for="FirstName"></label>
+          <input asp-for="FirstName" type="text" readonly="readonly" class="form-control" />
+        </div>
+        <div class="form-group">
+          <label asp-for="LastName"></label>
+          <input asp-for="LastName" type="text" readonly="readonly" class="form-control" />
+        </div>
+        <div class="form-group">
+          <button type="submit" class="btn btn-default">Delete</button>
+        </div>
+        <div class="form-group">
+          <button type="submit" class="btn btn-error" formaction="BackToIndex">Cancel</button>
+        </div>
+      </form>
+    </section>
+  </div>
+
+</div>
+
+@section Scripts {
+  @await Html.PartialAsync("_ValidationScriptsPartial")
+}
