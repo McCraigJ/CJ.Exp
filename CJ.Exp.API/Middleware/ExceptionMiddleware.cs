@@ -41,11 +41,12 @@ namespace CJ.Exp.API.Middleware
       context.Response.ContentType = "application/json";
       context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 
-
       return context.Response.WriteAsync(new ErrorDetails
       {
         StatusCode = context.Response.StatusCode,
-        Message = _environment.IsDevelopment() ? exception.Message : "An error occurred processing your request"
+        Message = exception is ExpApiException || _environment.IsDevelopment() 
+          ? exception.Message 
+          : "An error occurred processing your request"
       }.ToString());
     }
 
