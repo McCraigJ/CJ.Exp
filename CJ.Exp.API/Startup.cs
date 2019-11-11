@@ -17,6 +17,7 @@ using System.Text;
 using CJ.Exp.API.Middleware;
 using CJ.Exp.BusinessLogic;
 using CJ.Exp.BusinessLogic.Auth;
+using CJ.Exp.BusinessLogic.Expenses;
 using CJ.Exp.Data.Interfaces;
 using CJ.Exp.Data.MongoDb.DataAccess;
 using CJ.Exp.ServiceModels.Users;
@@ -90,13 +91,22 @@ namespace CJ.Exp.API
 
       // Add application services.
       services.AddScoped<INotification, EmailSender>();
-      CommonStartup.AddCommonServices(services);
+      //CommonStartup.AddCommonServices(services);
+
+      services.AddScoped<IExpensesService, ExpensesService>();
+      services.AddScoped<IUsersData, UsersDataMongo>();
 
       services.AddScoped<IAuthService, AuthService<ApplicationUserMongo, ApplicationRoleMongo>>();
 
       services.AddScoped<IExpensesData, ExpensesDataMongo>();
 
       services.AddScoped<IServiceInfo, ServiceInfo>();
+
+      services.AddScoped<IAuthTokenService, AuthTokenService>();
+
+      services.AddSingleton<IAuthTokenCache, AuthTokenCache>();
+
+      services.AddScoped<IAuthTokensData, AuthTokenDataMongo>();
 
       services.AddAutoMapper();
       
@@ -118,6 +128,8 @@ namespace CJ.Exp.API
       app.UseMiddleware<ExceptionMiddleware>();
 
       app.UseAuthentication();
+
+      app.UseMiddleware<AuthMiddleware>();
 
       app.UseMvc();
       

@@ -11,6 +11,8 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using CJ.Exp.API.Extensions;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 
 namespace CJ.Exp.API.Controllers
@@ -20,14 +22,17 @@ namespace CJ.Exp.API.Controllers
   {
     private readonly IAuthService _authService;    
     private readonly IConfiguration _configuration;
+    private readonly IAuthTokenService _authTokenService;
 
     public UsersController(
         IAuthService authService,
-        IConfiguration configuration
+        IConfiguration configuration,
+        IAuthTokenService authTokenService
         )
     {
       _authService = authService;      
       _configuration = configuration;
+      _authTokenService = authTokenService;
     }
 
     [HttpGet]
@@ -45,7 +50,13 @@ namespace CJ.Exp.API.Controllers
       if (result.Succeeded)
       {
         var user = await _authService.FindByEmailAsync(model.Email);
-        var token = GenerateJwtToken(model.Email, user);
+
+        var token =_authTokenService.GenerateAndRegisterToken(
+          user,
+          _configuration["JwtKey"],
+          Convert.ToInt32(_configuration["JwtExpireDays"]),
+          _configuration["JwtIssuer"]);
+
         return Ok(new
         {
           id = user.Id,
@@ -59,6 +70,20 @@ namespace CJ.Exp.API.Controllers
     }
 
     [HttpPost]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    public async Task<IActionResult> Logout()
+    {
+      //await _authService.SignOutAsync();
+
+      var token = HttpContext.GetAuthorisationToken();
+      if (token != null)
+      {
+        _authTokenService.DeleteAuthToken(token);
+      }
+      return Ok();
+    }
+
+    [HttpPost]
     public async Task<object> Register([FromBody] RegisterAM model)
     {
       var user = Mapper.Map<UserSM>(model);
@@ -67,36 +92,17 @@ namespace CJ.Exp.API.Controllers
 
       if (result.Succeeded)
       {
-        await _authService.SignInAsync(user);
-        return GenerateJwtToken(model.Email, user);
+        //await _authService.SignInAsync(user);
+
+        return _authTokenService.GenerateAndRegisterToken(
+          user,
+          _configuration["JwtKey"],
+          Convert.ToInt32(_configuration["JwtExpireDays"]),
+          _configuration["JwtIssuer"]);
       }
 
       throw new ApplicationException("UNKNOWN_ERROR");
     }
 
-    private string GenerateJwtToken(string email, UserSM user)
-    {
-      var claims = new List<Claim>
-            {
-                new Claim(JwtRegisteredClaimNames.Sub, email),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(ClaimTypes.NameIdentifier, user.Id)
-            };
-
-      var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtKey"]));
-      var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-      var expires = DateTime.Now.AddDays(Convert.ToDouble(_configuration["JwtExpireDays"]));
-
-      var token = new JwtSecurityToken(
-          _configuration["JwtIssuer"],
-          _configuration["JwtIssuer"],
-          claims,
-          expires: expires,
-          signingCredentials: creds
-      );
-
-      return new JwtSecurityTokenHandler().WriteToken(token);
-    }
-    
   }
 }
