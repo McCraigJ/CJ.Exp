@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
-using CJ.Exp.API.Extensions;
+﻿using CJ.Exp.API.Extensions;
 using CJ.Exp.DomainInterfaces;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Primitives;
+using System.Net;
+using System.Threading.Tasks;
 
 namespace CJ.Exp.API.Middleware
 {
@@ -22,30 +20,38 @@ namespace CJ.Exp.API.Middleware
       _next = next;
     }
 
-    public async Task InvokeAsync(HttpContext httpContext, IAuthTokenService authTokenService, IAuthService authService)
+    public async Task InvokeAsync(HttpContext httpContext, IAuthenticationService authenticationService, IAuthTokenService authTokenService)
     {
       var path = httpContext.Request.Path.Value.ToLowerInvariant();
 
-      if (path.Contains("/users/login") || path.Contains("/users/register"))
+      if (path.Contains("/users/login") || path.Contains("/users/register") || path.Contains("/users/refreshtoken"))
       {
         await _next(httpContext);
       }
       else
       {
-        var token = httpContext.GetAuthorisationToken();
-        if (token != null)
+        var result = await authenticationService.AuthenticateAsync(httpContext, JwtBearerDefaults.AuthenticationScheme);
+
+        if (result.Succeeded)
         {
-          if (authTokenService.HasAuthToken(token))
+          var token = httpContext.GetAuthorisationToken();
+          if (token != null)
           {
-            await _next(httpContext);
-          }
-          else
-          {
-            httpContext.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+            if (authTokenService.HasAuthToken(token))
+            {
+              await _next(httpContext);
+            }
+            else
+            {
+              httpContext.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+            }
           }
         }
+        else
+        {
+          httpContext.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+        }
       }
-        
     }
   }
 }

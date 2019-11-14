@@ -13,7 +13,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net;
 using System.Text;
+using System.Threading.Tasks;
+using CJ.Exp.API.Extensions;
 using CJ.Exp.API.Middleware;
 using CJ.Exp.BusinessLogic;
 using CJ.Exp.BusinessLogic.Auth;
@@ -52,23 +55,35 @@ namespace CJ.Exp.API
       JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear(); // => remove default claims
 
       services
-          .AddAuthentication(options =>
+        .AddAuthentication(options =>
+        {
+          options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+          options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        })
+        .AddJwtBearer(cfg =>
+        {
+          cfg.RequireHttpsMetadata = false;
+          cfg.SaveToken = true;
+          cfg.TokenValidationParameters = new TokenValidationParameters
           {
-            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-          })
-          .AddJwtBearer(cfg =>
+            ValidIssuer = Configuration["JwtIssuer"],
+            ValidAudience = Configuration["JwtIssuer"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JwtKey"])),
+            ClockSkew = TimeSpan.Zero // remove delay of token when expire
+          };
+
+          cfg.Events = new JwtBearerEvents
           {
-            cfg.RequireHttpsMetadata = false;
-            cfg.SaveToken = true;
-            cfg.TokenValidationParameters = new TokenValidationParameters
+            OnAuthenticationFailed = (context) =>
             {
-              ValidIssuer = Configuration["JwtIssuer"],
-              ValidAudience = Configuration["JwtIssuer"],
-              IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JwtKey"])),
-              ClockSkew = TimeSpan.Zero // remove delay of token when expire
-            };
-          });
+              if (context.Exception.GetType() == typeof(SecurityTokenExpiredException))
+              {
+                context.Response.Headers.Add("Token-Expired", "true");
+              }
+              return Task.CompletedTask;
+            }
+          };
+        });
 
       IApplicationSettings appSettings = new ApplicationSettings();
 
@@ -91,7 +106,6 @@ namespace CJ.Exp.API
 
       // Add application services.
       services.AddScoped<INotification, EmailSender>();
-      //CommonStartup.AddCommonServices(services);
 
       services.AddScoped<IExpensesService, ExpensesService>();
       services.AddScoped<IUsersData, UsersDataMongo>();
@@ -126,8 +140,6 @@ namespace CJ.Exp.API
       app.UseStatusCodePages();
 
       app.UseMiddleware<ExceptionMiddleware>();
-
-      app.UseAuthentication();
 
       app.UseMiddleware<AuthMiddleware>();
 

@@ -51,17 +51,19 @@ namespace CJ.Exp.API.Controllers
       {
         var user = await _authService.FindByEmailAsync(model.Email);
 
-        var token =_authTokenService.GenerateAndRegisterToken(
+        var tokens =_authTokenService.GenerateAndRegisterAccessAndRefreshTokens(
           user,
           _configuration["JwtKey"],
-          Convert.ToInt32(_configuration["JwtExpireDays"]),
-          _configuration["JwtIssuer"]);
+          Convert.ToInt32(_configuration["JwtExpireHours"]),
+          _configuration["JwtIssuer"],
+          Convert.ToInt32(_configuration["RefreshTokenExpireHours"]));
 
         return Ok(new
         {
           id = user.Id,
           email = user.Email,          
-          token = token
+          token = tokens.Item1,
+          refreshToken = tokens.Item2
         });
 
       }
@@ -70,39 +72,31 @@ namespace CJ.Exp.API.Controllers
     }
 
     [HttpPost]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public async Task<IActionResult> Logout()
+    public async Task<IActionResult> RefreshToken([FromForm] RefreshTokenAM model)
     {
-      //await _authService.SignOutAsync();
 
-      var token = HttpContext.GetAuthorisationToken();
-      if (token != null)
+      var refreshedTokens = await _authTokenService.RefreshAndRegisterTokensAsync(model.CurrentToken, model.RefreshToken, _configuration["JwtKey"],
+        Convert.ToInt32(_configuration["JwtExpireHours"]),
+        _configuration["JwtIssuer"],
+        Convert.ToInt32(_configuration["RefreshTokenExpireHours"]));
+
+      return Ok(refreshedTokens != null ? new
       {
-        _authTokenService.DeleteAuthToken(token);
-      }
-      return Ok();
+        token = refreshedTokens.Item1,
+        refreshToken = refreshedTokens.Item2
+      } : null);
     }
 
     [HttpPost]
-    public async Task<object> Register([FromBody] RegisterAM model)
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    public async Task<IActionResult> Logout()
     {
-      var user = Mapper.Map<UserSM>(model);
-
-      var result = await _authService.RegisterUserAsync(user, model.Password);      
-
-      if (result.Succeeded)
+      var token = HttpContext.GetAuthorisationToken();
+      if (token != null)
       {
-        //await _authService.SignInAsync(user);
-
-        return _authTokenService.GenerateAndRegisterToken(
-          user,
-          _configuration["JwtKey"],
-          Convert.ToInt32(_configuration["JwtExpireDays"]),
-          _configuration["JwtIssuer"]);
+        await _authTokenService.DeleteAuthAndRefreshTokensAsync(token, _configuration["JwtKey"]);
       }
-
-      throw new ApplicationException("UNKNOWN_ERROR");
+      return Ok();
     }
-
   }
 }
