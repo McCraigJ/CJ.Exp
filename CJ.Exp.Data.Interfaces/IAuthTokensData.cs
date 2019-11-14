@@ -12,5 +12,11 @@ namespace CJ.Exp.Data.Interfaces
     void AddAuthToken(AuthTokenSM authToken);
 
     void DeleteAuthToken(string token);
+
+    RefreshTokenSM GetRefreshTokenForUserId(string userId);
+
+    void AddRefreshToken(RefreshTokenSM refreshToken);
+
+    void DeleteRefreshTokenForUser(string userId);
   }
 }

@@ -9,6 +9,7 @@ using System.Linq;
 using CJ.Exp.Data.MongoDb.DataModels;
 using CJ.Exp.ServiceModels;
 using CJ.Exp.ServiceModels.Expenses;
+using MongoDB.Bson;
 using IAppMongoClient = CJ.Exp.Data.MongoDb.Interfaces.IAppMongoClient;
 
 namespace CJ.Exp.Data.MongoDb.DataAccess

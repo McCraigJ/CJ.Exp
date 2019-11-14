@@ -13,7 +13,7 @@ namespace CJ.Exp.Data.Interfaces
     GridResultSM<UserSM> GetUsers(UsersFilterSM filter);
 
     UserSM GetUserById(string id);
-
+    
     //IQueryable<string> GetCurrentUserRoles(string userId);
   }
 }
