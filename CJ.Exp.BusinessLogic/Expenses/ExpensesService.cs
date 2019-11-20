@@ -1,22 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using CJ.Exp.Data.Interfaces;
+﻿using CJ.Exp.Data.Interfaces;
 using CJ.Exp.DomainInterfaces;
 using CJ.Exp.ServiceModels;
 using CJ.Exp.ServiceModels.Expenses;
-using CJ.Exp.ServiceModels.Users;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace CJ.Exp.BusinessLogic.Expenses
 {
-  public class ExpensesService : CjExpService, IExpensesService
+  public class ExpensesService : ServiceBase, IExpensesService
   {
     private readonly IExpensesData _data;
+    private readonly ISessionInfo _sessionInfo;
 
-    public ExpensesService(IExpensesData data, IAuthService authService, IServiceInfo serviceInfo) : base(authService, serviceInfo)
+    public ExpensesService(IExpensesData data, ISessionInfo sessionInfo)
     {
       _data = data;
+      _sessionInfo = sessionInfo;
     }
 
     public ExpenseSM GetExpenseById(string id)
@@ -26,17 +25,28 @@ namespace CJ.Exp.BusinessLogic.Expenses
 
     public async Task AddExpense(UpdateExpenseSM expense)
     {
-      var expenseType = _data.GetExpenseTypeById(expense.ExpenseType.Id);
-      if (expenseType == null)
+
+      if (string.IsNullOrEmpty(expense.NewExpenseType))
       {
-        AddBusinessError(BusinessErrorCodes.DataNotFound, "ExpenseTypeNotFound");
+        var expenseType = expense.ExpenseType == null ? null : _data.GetExpenseTypeById(expense.ExpenseType.Id);
+        if (expenseType == null)
+        {
+          AddBusinessError(BusinessErrorCodes.DataNotFound, "ExpenseTypeNotFound");
+        }
+        else
+        {
+          expense.ExpenseType = _data.GetExpenseTypeById(expense.ExpenseType.Id);
+        }
+      }
+      else
+      {
+        expense.ExpenseType = AddExpenseTypeInternal(new ExpenseTypeSM { ExpenseType = expense.NewExpenseType }); ;
       }
 
       if (BusinessStateValid)
       {
-        expense.User = await GetCurrentUser();
+        expense.User = _sessionInfo.User;
 
-        expense.ExpenseType = expenseType;
         _data.AddExpense(expense);
       }
       
@@ -54,8 +64,8 @@ namespace CJ.Exp.BusinessLogic.Expenses
       {
         _data.StartTransaction();
 
-        exp.User = await GetCurrentUser();
-        
+        exp.User = _sessionInfo.User;
+
         if (string.IsNullOrEmpty(expense.NewExpenseType))
         {
           expense.ExpenseType = _data.GetExpenseTypeById(expense.ExpenseType.Id);

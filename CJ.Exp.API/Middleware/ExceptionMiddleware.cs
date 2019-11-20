@@ -44,7 +44,7 @@ namespace CJ.Exp.API.Middleware
       return context.Response.WriteAsync(new ErrorDetails
       {
         StatusCode = context.Response.StatusCode,
-        Message = exception is ExpApiException || _environment.IsDevelopment() 
+        Message = _environment.IsDevelopment() 
           ? exception.Message 
           : "An error occurred processing your request"
       }.ToString());

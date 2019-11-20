@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using System.Net;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 
 namespace CJ.Exp.API.Middleware
 {
@@ -20,7 +21,7 @@ namespace CJ.Exp.API.Middleware
       _next = next;
     }
 
-    public async Task InvokeAsync(HttpContext httpContext, IAuthenticationService authenticationService, IAuthTokenService authTokenService)
+    public async Task InvokeAsync(HttpContext httpContext, IAuthenticationService authenticationService, IAuthTokenService authTokenService, ISessionInfo sessionInfo, IConfiguration configuration)
     {
       var path = httpContext.Request.Path.Value.ToLowerInvariant();
 
@@ -39,6 +40,9 @@ namespace CJ.Exp.API.Middleware
           {
             if (authTokenService.HasAuthToken(token))
             {
+
+              sessionInfo.User = await authTokenService.GetUserFromTokenAsync(token, configuration["JwtKey"]);
+
               await _next(httpContext);
             }
             else

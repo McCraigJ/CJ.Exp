@@ -17,6 +17,7 @@ using CJ.Exp.Notification;
 using CJ.Exp.ServiceModels.Users;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 
 using Microsoft.Extensions.Configuration;
@@ -68,7 +69,16 @@ namespace CJ.Exp.Admin
 
       services.AddScoped<IExpensesData, ExpensesDataMongo>();
 
-      services.AddScoped<IServiceInfo, ServiceInfo>();
+      services.AddScoped<ISessionInfo, SessionInfo>();
+
+      services.AddSession(options =>
+      {
+        // Set a short timeout for easy testing.
+        //options.IdleTimeout = TimeSpan.FromSeconds(10);
+        options.Cookie.HttpOnly = true;
+        // Make the session cookie essential
+        options.Cookie.IsEssential = true;
+      });
 
       services.AddAutoMapper();
       services.AddMvc();
@@ -90,10 +100,11 @@ namespace CJ.Exp.Admin
 
       app.UseStaticFiles();
 
+      app.UseSession();
+
       app.UseAuthentication();
 
-      // Middleware to set the claims principal on the IServiceInfo scoped (per request) service so that it can be used in the service layer
-      app.AddServiceInfo();
+      app.UseMiddleware<SessionInfoMiddleware>();
 
       app.UseMvc(routes =>
       {

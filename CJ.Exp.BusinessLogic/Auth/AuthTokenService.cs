@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
+using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Data.Edm.Library.Expressions;
@@ -103,10 +104,10 @@ namespace CJ.Exp.BusinessLogic.Auth
     {
       var principal = GetPrincipalFromToken(currentToken, securityKey, false);
 
-      if (principal.Identity is ClaimsIdentity identity)
-      {
-        var email = identity.FindFirst("sub").Value;
+      var email = GetSubClaimValueFromIdentity(principal.Identity);
 
+      if (email != null)
+      {
         var user = await _authService.FindByEmailAsync(email);
 
         if (user != null)
@@ -124,6 +125,16 @@ namespace CJ.Exp.BusinessLogic.Auth
       return null;
     }
 
+    public string GetSubClaimValueFromIdentity(IIdentity identity)
+    {
+      if (identity is ClaimsIdentity claimsIdentity)
+      {
+        return claimsIdentity.FindFirst("sub").Value;
+      }
+
+      return null;
+    }
+
     private ClaimsPrincipal GetPrincipalFromToken(string token, string securityKey, bool validateLifetime)
     {
       var tokenValidationParameters = new TokenValidationParameters
@@ -132,7 +143,7 @@ namespace CJ.Exp.BusinessLogic.Auth
         ValidateIssuer = false,
         ValidateIssuerSigningKey = true,
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(securityKey)),
-        ValidateLifetime = false //here we are saying that we don't care about the token's expiration date
+        ValidateLifetime = validateLifetime //here we are saying that we don't care about the token's expiration date
       };
 
       var tokenHandler = new JwtSecurityTokenHandler();
@@ -166,7 +177,19 @@ namespace CJ.Exp.BusinessLogic.Auth
 
       return new Tuple<string, string>(authToken.Token, refreshToken.RefreshToken);
     }
-    
+
+    public async Task<UserSM> GetUserFromTokenAsync(string token, string securityKey)
+    {
+      var claimsPrincipal = GetPrincipalFromToken(token, securityKey, true);
+
+      if (claimsPrincipal != null)
+      {
+        return await _authService.GetUserByPrincipalAsync(claimsPrincipal);
+      }
+
+      return null;
+    }
+
     public void AddAuthToken(AuthTokenSM authToken)
     {
       _authTokensData.AddAuthToken(authToken);

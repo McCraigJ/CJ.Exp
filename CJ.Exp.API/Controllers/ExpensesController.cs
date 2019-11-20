@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using CJ.Exp.API.ApiModels;
 using CJ.Exp.DomainInterfaces;
 using CJ.Exp.ServiceModels;
@@ -9,11 +10,12 @@ using CJ.Exp.ServiceModels.Expenses;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Azure.KeyVault.Models;
 
 namespace CJ.Exp.API.Controllers
 {
   [Route("api/[controller]/[action]")]
-  public class ExpensesController : Controller
+  public class ExpensesController : ControllerBase
   {
     private readonly IExpensesService _expensesService;
 
@@ -42,6 +44,22 @@ namespace CJ.Exp.API.Controllers
       {
         expenses = expenses.GridRows
       });
+
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Add(AddExpenseAM model)
+    {
+      var expense = Mapper.Map<UpdateExpenseSM>(model);
+      expense.ExpenseType = new ExpenseTypeSM { Id = model.ExpenseTypeId };
+      await _expensesService.AddExpense(expense);
+
+      if (_expensesService.BusinessStateValid)
+      {
+        return SuccessResponse();
+      }
+
+      return BusinessErrorResponse(_expensesService.BusinessErrors);
 
     }
   }

@@ -22,19 +22,19 @@ namespace CJ.Exp.BusinessLogic.Auth
     private readonly SignInManager<TAppUser> _signInManager;
     private readonly RoleManager<TAppRole> _roleManager;
     private readonly IUsersData _usersData;
-    private readonly IServiceInfo _serviceInfo;
+    private readonly ISessionInfo _sessionInfo;
 
     public AuthService(
       UserManager<TAppUser> userManager,
       SignInManager<TAppUser> signInManager,
       RoleManager<TAppRole> roleManager,
-      IUsersData usersData, IServiceInfo serviceInfo)
+      IUsersData usersData, ISessionInfo sessionInfo)
     {
       _userManager = userManager;
       _signInManager = signInManager;
       _roleManager = roleManager;
       _usersData = usersData;
-      _serviceInfo = serviceInfo;
+      _sessionInfo = sessionInfo;
     }
 
     public async Task<AuthResultSM> AuthenticateAsync(string userName, string password, bool isPersistent, bool lockoutOnFailure)
@@ -211,9 +211,7 @@ namespace CJ.Exp.BusinessLogic.Auth
         return;
       }
 
-      var currentLoggedInUser = await GetCurrentUser();
-
-      if (dbUser.Email == currentLoggedInUser.Email)
+      if (dbUser.Email == _sessionInfo.User?.Email)
       {
         AddBusinessError(BusinessErrorCodes.CouldNotUpdate, "CannotDeleteCurrentUser");
       }
@@ -377,21 +375,5 @@ namespace CJ.Exp.BusinessLogic.Auth
       return await GetUserRoleInternalAsync(user);
     }
 
-    private async Task<UserSM> GetCurrentUser()
-    {
-      if (_serviceInfo.CurrentClaimsPrincipal == null)
-      {
-        throw new CjExpInvalidOperationException("Cannot get the logged in User");
-      }
-
-      var user = await GetUserByPrincipalAsync(_serviceInfo.CurrentClaimsPrincipal);
-
-      if (user == null)
-      {
-        throw new CjExpInvalidOperationException("Cannot get the logged in User");
-      }
-
-      return user;
-    }
   }
 }

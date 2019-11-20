@@ -30,6 +30,7 @@ using CJ.Exp.Data.MongoDb.Mongo;
 using CJ.Exp.LanguageProvider;
 using CJ.Exp.Notification;
 using CJ.Exp.Core;
+using Microsoft.AspNetCore.Http;
 using StackExchange.Redis;
 
 namespace CJ.Exp.API
@@ -114,13 +115,14 @@ namespace CJ.Exp.API
 
       services.AddScoped<IExpensesData, ExpensesDataMongo>();
 
-      services.AddScoped<IServiceInfo, ServiceInfo>();
+      services.AddScoped<ISessionInfo, SessionInfo>();
 
       services.AddScoped<IAuthTokenService, AuthTokenService>();
 
       services.AddSingleton<IAuthTokenCache, AuthTokenCache>();
 
       services.AddScoped<IAuthTokensData, AuthTokenDataMongo>();
+
 
       services.AddAutoMapper();
       

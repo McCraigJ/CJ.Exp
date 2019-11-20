@@ -18,7 +18,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace CJ.Exp.API.Controllers
 {
   [Route("api/users/[action]")]
-  public class UsersController : Controller
+  public class UsersController : ControllerBase
   {
     private readonly IAuthService _authService;    
     private readonly IConfiguration _configuration;
@@ -34,13 +34,7 @@ namespace CJ.Exp.API.Controllers
       _configuration = configuration;
       _authTokenService = authTokenService;
     }
-
-    [HttpGet]
-    [Authorize]
-    public IEnumerable<string> Test()
-    {
-      return new string[] { "value1", "value2" };
-    }
+    
 
     [HttpPost]
     public async Task<IActionResult> Login([FromForm] LoginAM model)
@@ -58,7 +52,7 @@ namespace CJ.Exp.API.Controllers
           _configuration["JwtIssuer"],
           Convert.ToInt32(_configuration["RefreshTokenExpireHours"]));
 
-        return Ok(new
+        return SuccessResponse(new
         {
           id = user.Id,
           email = user.Email,          
@@ -68,7 +62,7 @@ namespace CJ.Exp.API.Controllers
 
       }
 
-      throw new ApplicationException("INVALID_LOGIN_ATTEMPT");
+      return BusinessErrorResponse("INVALID_LOGIN_ATTEMPT");
     }
 
     [HttpPost]
@@ -80,11 +74,13 @@ namespace CJ.Exp.API.Controllers
         _configuration["JwtIssuer"],
         Convert.ToInt32(_configuration["RefreshTokenExpireHours"]));
 
-      return Ok(refreshedTokens != null ? new
-      {
-        token = refreshedTokens.Item1,
-        refreshToken = refreshedTokens.Item2
-      } : null);
+      return SuccessResponse(refreshedTokens != null
+        ? new
+        {
+          token = refreshedTokens.Item1,
+          refreshToken = refreshedTokens.Item2
+        }
+        : null);
     }
 
     [HttpPost]
@@ -96,7 +92,8 @@ namespace CJ.Exp.API.Controllers
       {
         await _authTokenService.DeleteAuthAndRefreshTokensAsync(token, _configuration["JwtKey"]);
       }
-      return Ok();
+
+      return SuccessResponse();
     }
   }
 }
