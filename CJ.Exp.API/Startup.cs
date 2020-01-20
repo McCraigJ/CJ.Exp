@@ -123,9 +123,10 @@ namespace CJ.Exp.API
 
       services.AddScoped<IAuthTokensData, AuthTokenDataMongo>();
 
-
       services.AddAutoMapper();
-      
+
+      services.AddCors();
+
       services.AddMvc();
     }
 
@@ -144,6 +145,12 @@ namespace CJ.Exp.API
       app.UseMiddleware<ExceptionMiddleware>();
 
       app.UseMiddleware<AuthMiddleware>();
+
+      app.UseCors(builder => builder
+        .AllowAnyOrigin()
+        .AllowAnyMethod()
+        .AllowAnyHeader()
+        .AllowCredentials());
 
       app.UseMvc();
       

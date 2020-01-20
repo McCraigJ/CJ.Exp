@@ -37,7 +37,7 @@ namespace CJ.Exp.API.Controllers
     
 
     [HttpPost]
-    public async Task<IActionResult> Login([FromForm] LoginAM model)
+    public async Task<IActionResult> Login([FromBody] LoginAM model)
     {      
       var result = await _authService.AuthenticateAsync(model.Email, model.Password, false, false);
 
