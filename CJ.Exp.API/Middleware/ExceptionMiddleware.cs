@@ -1,22 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using System;
+using System.Net;
+using System.Threading.Tasks;
 
 namespace CJ.Exp.API.Middleware
 {
   public class ExceptionMiddleware
   {
     private readonly RequestDelegate _next;
-    private readonly IHostingEnvironment _environment;
+    private readonly IWebHostEnvironment _environment;
     private readonly ILogger _logger;
 
-    public ExceptionMiddleware(RequestDelegate next, ILoggerFactory logger, IHostingEnvironment environment)
+    public ExceptionMiddleware(RequestDelegate next, ILoggerFactory logger, IWebHostEnvironment environment)
     {
       _logger = logger.CreateLogger("Api");
       _next = next;

@@ -1,15 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using CJ.Exp.BusinessLogic.Users;
 using CJ.Exp.Data.Interfaces;
 using CJ.Exp.DomainInterfaces;
 using CJ.Exp.ServiceModels;
 using CJ.Exp.ServiceModels.Users;
 using Microsoft.AspNetCore.Identity;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace CJ.Exp.BusinessLogic.Auth
 {
@@ -24,10 +24,8 @@ namespace CJ.Exp.BusinessLogic.Auth
     private readonly IUsersData _usersData;
     private readonly ISessionInfo _sessionInfo;
 
-    public AuthService(
-      UserManager<TAppUser> userManager,
-      SignInManager<TAppUser> signInManager,
-      RoleManager<TAppRole> roleManager,
+    public AuthService(UserManager<TAppUser> userManager,
+      SignInManager<TAppUser> signInManager, RoleManager<TAppRole> roleManager,
       IUsersData usersData, ISessionInfo sessionInfo)
     {
       _userManager = userManager;
@@ -55,7 +53,7 @@ namespace CJ.Exp.BusinessLogic.Auth
       return AuthResultFactory.CreateResultFromIdentityResult(changePasswordResult);
     }
 
-    public async Task<AuthResultSM> UpdateRole(string userName, string role)
+    public async Task<AuthResultSM> UpdateRoleAsync(string userName, string role)
     {
       var user = await _userManager.FindByNameAsync(userName);
       if (user != null)
@@ -121,22 +119,22 @@ namespace CJ.Exp.BusinessLogic.Auth
       }
     }
 
-    public List<UserSM> GetUsers()
+    public async Task<List<UserSM>> GetUsersAsync()
     {
-      return _usersData.GetUsers();
+      return await _usersData.GetUsersAsync();
     }
 
-    public GridResultSM<UserSM> GetUsers(UsersFilterSM filter)
+    public async Task<GridResultSM<UserSM>> GetUsersAsync(UsersFilterSM filter)
     {
-      return _usersData.GetUsers(filter);
+      return await _usersData.GetUsersAsync(filter);
     }
 
-    public UserSM GetUserById(string id)
+    public async Task<UserSM> GetUserByIdAsync(string id)
     {
-      return _usersData.GetUserById(id);
+      return await _usersData.GetUserByIdAsync(id);
     }
 
-    public async Task<UserSM> AddUser(UserSM user, string password)
+    public async Task<UserSM> AddUserAsync(UserSM user, string password)
     {
       var currentUser = await _userManager.FindByNameAsync(user.Email);
       if (currentUser != null)
@@ -162,7 +160,7 @@ namespace CJ.Exp.BusinessLogic.Auth
       return null;
     }
 
-    public async Task<UserSM> UpdateUser(UserSM user)
+    public async Task<UserSM> UpdateUserAsync(UserSM user)
     {
       var currentUser = await _userManager.FindByNameAsync(user.Email);
       if (currentUser == null)
@@ -182,7 +180,7 @@ namespace CJ.Exp.BusinessLogic.Auth
       return null;
     }
 
-    public async Task<bool> UpdatePassword(UserSM user, string oldPassword, string newPassword)
+    public async Task<bool> UpdatePasswordAsync(UserSM user, string oldPassword, string newPassword)
     {
       var currentUser = await _userManager.FindByNameAsync(user.Email);
       if (currentUser != null)
@@ -202,7 +200,7 @@ namespace CJ.Exp.BusinessLogic.Auth
       return false;
     }
 
-    public async Task DeleteUser(UserSM user)
+    public async Task DeleteUserAsync(UserSM user)
     {
       var dbUser = await _userManager.FindByNameAsync(user.Email);
       if (dbUser == null)
@@ -229,7 +227,7 @@ namespace CJ.Exp.BusinessLogic.Auth
 
 
 
-    public async Task UpdateUserRoles(UserSM user, string role)
+    public async Task UpdateUserRolesAsync(UserSM user, string role)
     {
       var currentUser = await GetUserByEmail(user.Email);
 
@@ -244,7 +242,7 @@ namespace CJ.Exp.BusinessLogic.Auth
       await _userManager.AddToRoleAsync(currentUser, role);
     }
 
-    public async Task<string> GetUserRole(UserSM user)
+    public async Task<string> GetUserRoleAsync(UserSM user)
     {
       var currentUser = await GetUserByEmail(user.Email);
 
@@ -369,7 +367,7 @@ namespace CJ.Exp.BusinessLogic.Auth
       return await _userManager.GetUserAsync(principal);
     }
 
-    public async Task<string> GetUserRoleForLoggedInUser(ClaimsPrincipal principal)
+    public async Task<string> GetUserRoleForLoggedInUserAsync(ClaimsPrincipal principal)
     {
       var user = await GetUserByPrincipalInternal(principal);
       return await GetUserRoleInternalAsync(user);

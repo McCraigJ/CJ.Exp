@@ -64,11 +64,11 @@ namespace CJ.Exp.Admin.Controllers
 
     [HttpGet]
     [Route("[controller]/[action]")]
-    public IActionResult GetUsersData(GridFilterViewModel filter)
+    public async Task<IActionResult> GetUsersData(GridFilterViewModel filter)
     {
       var searchFilter = TempData.GetGridSearchFilter<UsersFilterSM>(FilterDataKey, filter);
 
-      return new JsonResult(_authService.GetUsers(searchFilter));
+      return new JsonResult(await _authService.GetUsersAsync(searchFilter));
     }
 
     [HttpPost]
@@ -83,8 +83,8 @@ namespace CJ.Exp.Admin.Controllers
       if (ModelState.IsValid)
       {
         var user = Mapper.Map<UserSM>(addUser);
-        await _authService.AddUser(user, addUser.Password);
-        await _authService.UpdateRole(user.Email, addUser.Role);
+        await _authService.AddUserAsync(user, addUser.Password);
+        await _authService.UpdateRoleAsync(user.Email, addUser.Role);
         if (_authService.BusinessErrors.Any())
         {
           MergeBusinessErrors(_authService.BusinessErrors);
@@ -107,10 +107,10 @@ namespace CJ.Exp.Admin.Controllers
     [HttpPost]
     public async Task<IActionResult> Edit(string editValue)
     {
-      var user = _authService.GetUserById(editValue);
+      var user = await _authService.GetUserByIdAsync(editValue);
       if (user != null)
       {
-        var userRole = await _authService.GetUserRole(user);
+        var userRole = await _authService.GetUserRoleAsync(user);
         var editUserVm = Mapper.Map<EditUserVM>(user);
         editUserVm.Roles = CreateRolesList();
         editUserVm.Role = userRole;
@@ -126,8 +126,8 @@ namespace CJ.Exp.Admin.Controllers
       if (ModelState.IsValid)
       {
         var user = Mapper.Map<UserSM>(updateUser);
-        await _authService.UpdateUser(user);
-        await _authService.UpdateRole(user.Email, updateUser.Role);
+        await _authService.UpdateUserAsync(user);
+        await _authService.UpdateRoleAsync(user.Email, updateUser.Role);
         if (_authService.BusinessErrors.Any())
         {
           MergeBusinessErrors(_authService.BusinessErrors);
@@ -142,9 +142,9 @@ namespace CJ.Exp.Admin.Controllers
     }
 
     [HttpPost]
-    public IActionResult Delete(string editValue)
+    public async Task<IActionResult> Delete(string editValue)
     {
-      var user = _authService.GetUserById(editValue);
+      var user = await _authService.GetUserByIdAsync(editValue);
       if (user == null)
       {
         SetControllerMessage(ControllerMessageType.Error, "UserNotFound");
@@ -160,7 +160,7 @@ namespace CJ.Exp.Admin.Controllers
       if (ModelState.IsValid)
       {
         var user = Mapper.Map<UserSM>(model);
-        await _authService.DeleteUser(user);
+        await _authService.DeleteUserAsync(user);
         if (_authService.BusinessErrors.Any())
         {
           MergeBusinessErrors(_authService.BusinessErrors);

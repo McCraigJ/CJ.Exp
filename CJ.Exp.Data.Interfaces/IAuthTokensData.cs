@@ -1,22 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using CJ.Exp.ServiceModels.AuthTokens;
 
 namespace CJ.Exp.Data.Interfaces
 {
   public interface IAuthTokensData
   {
-    AuthTokenSM GetAuthToken(string token);
+    Task<AuthTokenSM> GetAuthTokenAsync(string token);
 
-    void AddAuthToken(AuthTokenSM authToken);
+    Task AddAuthTokenAsync(AuthTokenSM authToken);
 
-    void DeleteAuthToken(string token);
+    Task DeleteAuthTokenAsync(string token);
 
-    RefreshTokenSM GetRefreshTokenForUserId(string userId);
+    Task<RefreshTokenSM> GetRefreshTokenForUserIdAsync(string userId);
 
-    void AddRefreshToken(RefreshTokenSM refreshToken);
+    Task AddRefreshTokenAsync(RefreshTokenSM refreshToken);
 
-    void DeleteRefreshTokenForUser(string userId);
+    Task DeleteRefreshTokenForUserAsync(string userId);
   }
 }

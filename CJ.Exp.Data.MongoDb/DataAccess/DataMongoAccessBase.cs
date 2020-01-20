@@ -1,18 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using CJ.Exp.BusinessLogic;
+﻿using CJ.Exp.BusinessLogic;
+using CJ.Exp.Data.MongoDb.Interfaces;
 using CJ.Exp.DomainInterfaces;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using MongoDB.Driver;
-using IAppMongoClient = CJ.Exp.Data.MongoDb.Interfaces.IAppMongoClient;
 
 namespace CJ.Exp.Data.MongoDb.DataAccess
 {
   public class DataMongoAccessBase
   {    
     protected MongoClient Client { get; }
-    private IClientSessionHandle session;
+    private IClientSessionHandle _mongoClientSession;
     protected IMongoDatabase Database { get; }
 
     public DataMongoAccessBase(IAppMongoClient mongoClient, IApplicationSettings applicationSettings)
@@ -26,27 +22,27 @@ namespace CJ.Exp.Data.MongoDb.DataAccess
     /// </summary>
     public void StartTransaction()
     {
-      if (session != null)
+      if (_mongoClientSession != null)
       {
-        throw new CjExpInvalidOperationException("Transaction session already started");
+        throw new CjExpInvalidOperationException("Transaction Session already started");
       }
-      session = Client.StartSession();
-      session.StartTransaction();
+      _mongoClientSession = Client.StartSession();
+      _mongoClientSession.StartTransaction();
     }
 
     public void CommitTransaction()
     {
-      if (session == null)
+      if (_mongoClientSession == null)
       {
-        throw new CjExpInvalidOperationException("Transaction session not started");
+        throw new CjExpInvalidOperationException("Transaction Session not started");
       }
-      session.CommitTransaction();
-      session = null;
+      _mongoClientSession.CommitTransaction();
+      _mongoClientSession = null;
     }
 
     public void RollbackTransaction()
     {
-      session?.AbortTransaction();
+      _mongoClientSession?.AbortTransaction();
     }
   }
 }

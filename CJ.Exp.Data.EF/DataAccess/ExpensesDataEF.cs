@@ -2,7 +2,9 @@
 using AutoMapper.QueryableExtensions;
 using CJ.Exp.ServiceModels.Expenses;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using CJ.Exp.ServiceModels;
+using Microsoft.EntityFrameworkCore;
 
 namespace CJ.Exp.Data.EF.DataAccess
 {
@@ -18,132 +20,117 @@ namespace CJ.Exp.Data.EF.DataAccess
     {
       public ExpensesDataEf(ExpDbContext data) : base(data) { }
 
-      public ExpenseSM AddExpense(ExpenseSM expense)
+      public async Task<ExpenseSM> AddExpenseAsync(ExpenseSM expense)
       {
         var exp = Mapper.Map<ExpenseDM>(expense);
-        exp.ExpenseType = _data.ExpenseTypes.SingleOrDefault(x => x.Id == Convert.ToInt32(expense.ExpenseType.Id));
+        exp.ExpenseType = await _data.ExpenseTypes.SingleOrDefaultAsync(x => x.Id == Convert.ToInt32(expense.ExpenseType.Id));
         _data.Expenses.Add(exp);
-        _data.SaveChanges();
+        await _data.SaveChangesAsync();
         expense.Id = exp.Id;
         return expense;
       }
 
-      public ExpenseTypeSM AddExpenseType(ExpenseTypeSM expenseType)
+      public async Task<ExpenseTypeSM> AddExpenseTypeAsync(ExpenseTypeSM expenseType)
       {
         var exp = Mapper.Map<ExpenseTypeDM>(expenseType);
         _data.ExpenseTypes.Add(exp);
-        _data.SaveChanges();
+        await _data.SaveChangesAsync();
         expenseType.Id = exp.Id.ToString();
         return expenseType;
       }
 
-      public bool DeleteExpense(ExpenseSM expense)
+      public async Task<bool> DeleteExpenseAsync(ExpenseSM expense)
       {
-
-        var exp = _data.Expenses.SingleOrDefault(x => x.Id == expense.Id);
+        var exp = await _data.Expenses.SingleOrDefaultAsync(x => x.Id == expense.Id);
         if (exp == null)
         {
           return false;
         }
         _data.Remove(exp);
-        _data.SaveChanges();
+        await _data.SaveChangesAsync();
 
         return true;
 
       }
 
-      public bool DeleteExpenseType(ExpenseTypeSM expenseType)
+      public async Task<bool> DeleteExpenseTypeAsync(ExpenseTypeSM expenseType)
       {
-        var exp = _data.ExpenseTypes.SingleOrDefault(x => x.Id == Convert.ToInt32(expenseType.Id));
+        var exp = await _data.ExpenseTypes.SingleOrDefaultAsync(x => x.Id == Convert.ToInt32(expenseType.Id));
         if (exp == null)
         {
           return false;
         }
         _data.Remove(exp);
-        _data.SaveChanges();
+        await _data.SaveChangesAsync();
 
         return true;
 
       }
 
-      public GridResultSM<ExpenseSM> GetExpenses(ExpensesFilterSM filter)
+      public Task<GridResultSM<ExpenseSM>> GetExpensesAsync(ExpensesFilterSM filter)
       {
         throw new NotImplementedException();
       }
 
-      public GridResultSM<ExpenseSM> GetExpenses(ExpensesFilterSM filter, GridRequestSM gridRequest)
+      public Task<GridResultSM<ExpenseSM>> GetExpensesAsync(ExpensesFilterSM filter, GridRequestSM gridRequest)
       {
         throw new NotImplementedException();
       }
 
-      //public ExpenseSummarySM GetExpenses(ExpensesFilterSM filter, GridRequestSM gridRequest)
-      //{
-      //  return new ExpenseSummarySM
-      //  {
-      //    Expenses = (from e in _data.Expenses select e).ProjectTo<ExpenseSM>().ToList(),
-      //    Total = 0m
-      //  };
-      //}
-
-      public ExpenseSM GetExpenseById(string id)
+      public Task<ExpenseSM> GetExpenseByIdAsync(string id)
       {
         throw new NotImplementedException();
       }
 
-      public GridResultSM<ExpenseTypeSM> GetExpenseTypes(ExpenseTypesFilterSM filter)
+      public Task<GridResultSM<ExpenseTypeSM>> GetExpenseTypesAsync(ExpenseTypesFilterSM filter)
       {
         throw new NotImplementedException();
       }
 
-      public List<ExpenseTypeSM> GetExpenseTypes()
+      public Task<List<ExpenseTypeSM>> GetExpenseTypesAsync()
       {
         throw new NotImplementedException();
       }
 
-      //public List<ExpenseTypeSM> GetExpenseTypes()
-      //{
-      //  return (from t in _data.ExpenseTypes select t).ProjectTo<ExpenseTypeSM>().ToList();
-      //}
-
-      public ExpenseTypeSM GetExpenseTypeById(string id)
+      public Task<ExpenseTypeSM> GetExpenseTypeByIdAsync(string id)
       {
         throw new NotImplementedException();
       }
 
-      public ExpenseTypeSM GetExpenseTypeByName(string expenseTypeName)
+      public Task<ExpenseTypeSM> GetExpenseTypeByNameAsync(string expenseTypeName)
       {
         throw new NotImplementedException();
       }
 
-      public ExpenseSM UpdateExpense(ExpenseSM expense)
+      public async Task<ExpenseSM> UpdateExpenseAsync(ExpenseSM expense)
       {
-        var exp = _data.Expenses.SingleOrDefault(x => x.Id == expense.Id);
+        var exp = await _data.Expenses.SingleOrDefaultAsync(x => x.Id == expense.Id);
         AssertObjectNotNull(exp);
 
-        exp.ExpenseType = _data.ExpenseTypes.SingleOrDefault(x => x.Id == Convert.ToInt32(expense.ExpenseType.Id));
+        exp.ExpenseType = await _data.ExpenseTypes.SingleOrDefaultAsync(x => x.Id == Convert.ToInt32(expense.ExpenseType.Id));
         exp.ExpenseValue = expense.ExpenseValue;
         exp.ExpenseDate = expense.ExpenseDate;
 
-        _data.SaveChanges();
+        await _data.SaveChangesAsync();
 
         return expense;
       }
 
-      public ExpenseTypeSM UpdateExpenseType(ExpenseTypeSM expenseType)
+      public async Task<ExpenseTypeSM> UpdateExpenseTypeAsync(ExpenseTypeSM expenseType)
       {
-        var exp = _data.ExpenseTypes.SingleOrDefault(x => x.Id == Convert.ToInt32(expenseType.Id));
+        var exp = await _data.ExpenseTypes.SingleOrDefaultAsync(x => x.Id == Convert.ToInt32(expenseType.Id));
         if (exp == null)
         {
           return null;
         }
         exp.ExpenseType = expenseType.ExpenseType;
-        _data.SaveChanges();
+        await _data.SaveChangesAsync();
 
         return expenseType;
 
       }
 
-      public bool UpdateExpenseWithUpdatedExpenseType(ExpenseTypeSM expenseType)
+      public Task<bool> UpdateExpenseWithUpdatedExpenseTypeAsync(ExpenseTypeSM expenseType)
       {
         throw new NotImplementedException();
       }

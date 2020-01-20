@@ -59,11 +59,11 @@ namespace CJ.Exp.Admin.Controllers
 
     [HttpGet]
     [Route("[controller]/[action]")]
-    public IActionResult GetExpensesData(GridFilterViewModel filter)
+    public async Task<IActionResult> GetExpensesDataAsync(GridFilterViewModel filter)
     {
       var searchFilter = TempData.GetGridSearchFilter<ExpensesFilterSM>(ExpensesFilterDataKey, filter);
 
-      var expenses = _expensesService.GetExpenses(searchFilter);
+      var expenses = await _expensesService.GetExpensesAsync(searchFilter);
 
       return new JsonResult(expenses);
     }
@@ -107,13 +107,13 @@ namespace CJ.Exp.Admin.Controllers
     #region Add
 
     [HttpPost]
-    public IActionResult Add()
+    public async Task<IActionResult> Add()
     {
       var vm = new ExpenseVM
       {
         ExpenseDate = DateTime.Today
       };
-      PopulateLists(vm);
+      await PopulateListsAsync(vm);
       return View("Add", vm);
     }
 
@@ -124,7 +124,7 @@ namespace CJ.Exp.Admin.Controllers
       {
         var exp = Mapper.Map<UpdateExpenseSM>(model);
         exp.ExpenseType = new ExpenseTypeSM { Id = model.ExpenseTypeId };
-        await _expensesService.AddExpense(exp);
+        await _expensesService.AddExpenseAsync(exp);
 
         if (_expensesService.BusinessStateValid)
         {
@@ -133,7 +133,7 @@ namespace CJ.Exp.Admin.Controllers
         }
         model.SetErrorMessage(_expensesService.BusinessErrors, Language);
       }
-      PopulateLists(model);
+      await PopulateListsAsync(model);
       return View("Add", model);
     }
 
@@ -142,13 +142,13 @@ namespace CJ.Exp.Admin.Controllers
     #region Edit
 
     [HttpPost]
-    public IActionResult Edit(string editValue, int currentPage)
+    public async Task<IActionResult> Edit(string editValue, int currentPage)
     {
-      var expSm = _expensesService.GetExpenseById(editValue);
+      var expSm = await _expensesService.GetExpenseByIdAsync(editValue);
 
       var vm = Mapper.Map<ExpenseVM>(expSm);
 
-      PopulateLists(vm);
+      await PopulateListsAsync(vm);
       return View("Edit", vm);
     }
 
@@ -159,7 +159,7 @@ namespace CJ.Exp.Admin.Controllers
       {
         var exp = Mapper.Map<UpdateExpenseSM>(model);
         exp.ExpenseType = new ExpenseTypeSM { Id = model.ExpenseTypeId };
-        await _expensesService.UpdateExpense(exp);
+        await _expensesService.UpdateExpenseAsync(exp);
 
         if (_expensesService.BusinessStateValid)
         {
@@ -170,7 +170,7 @@ namespace CJ.Exp.Admin.Controllers
         model.SetErrorMessage(_expensesService.BusinessErrors, Language);
 
       }
-      PopulateLists(model);
+      await PopulateListsAsync(model);
       return View("Edit", model);
     }
 
@@ -179,24 +179,24 @@ namespace CJ.Exp.Admin.Controllers
     #region Delete
 
     [HttpPost]
-    public IActionResult Delete(string editValue)
+    public async Task<IActionResult> Delete(string editValue)
     {
-      var expSm = _expensesService.GetExpenseById(editValue);
+      var expSm = await _expensesService.GetExpenseByIdAsync(editValue);
 
       var vm = Mapper.Map<ExpenseVM>(expSm);
 
-      PopulateLists(vm);
+      await PopulateListsAsync(vm);
       return View("Delete", vm);
     }
 
     [HttpPost]
-    public IActionResult DoDelete(ExpenseVM model)
+    public async Task<IActionResult> DoDelete(ExpenseVM model)
     {
       if (ModelState.IsValid)
       {
         var exp = Mapper.Map<ExpenseSM>(model);
 
-        _expensesService.DeleteExpense(exp);
+        await _expensesService.DeleteExpenseAsync(exp);
         if (_expensesService.BusinessStateValid)
         {
           SetControllerMessage(ControllerMessageType.Success, "Deleted");
@@ -208,21 +208,22 @@ namespace CJ.Exp.Admin.Controllers
 
         return RedirectToAction("Index");
       }
-      PopulateLists(model);
+      await PopulateListsAsync(model);
       return View("Delete", model);
     }
 
     #endregion
 
-    private void PopulateLists(ExpenseVM model)
+    private async Task PopulateListsAsync(ExpenseVM model)
     {
-      var list = _expensesService.GetExpenseTypes().Select(x =>
-         new SelectListItem
-         {
-           Text = x.ExpenseType,
-           Value = x.Id.ToString()
-         }).ToList();
-      model.ExpenseTypes = list;
+      var list = await _expensesService.GetExpenseTypesAsync();
+        
+      model.ExpenseTypes = list.Select(x =>
+        new SelectListItem
+        {
+          Text = x.ExpenseType,
+          Value = x.Id.ToString()
+        }).ToList();
     }
 
   }

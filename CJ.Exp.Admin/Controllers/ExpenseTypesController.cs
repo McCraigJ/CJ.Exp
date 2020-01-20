@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Threading.Tasks;
+using AutoMapper;
 using CJ.Exp.Admin.Extensions;
 using CJ.Exp.Admin.Models.ExpensesViewModels;
 using CJ.Exp.Admin.Models.GridViewModels;
@@ -59,11 +60,11 @@ namespace CJ.Exp.Admin.Controllers
     
     [HttpGet]
     [Route("[controller]/[action]")]
-    public IActionResult GetExpenseTypesData(GridFilterViewModel filter)
+    public async Task<IActionResult> GetExpenseTypesData(GridFilterViewModel filter)
     {
       var searchFilter = TempData.GetGridSearchFilter<ExpenseTypesFilterSM>(ExpenseTypesFilterDataKey, filter);
 
-      var expenseTypes = _expensesService.GetExpenseTypes(searchFilter);
+      var expenseTypes = await _expensesService.GetExpenseTypesAsync(searchFilter);
 
       return new JsonResult(expenseTypes);
     }
@@ -75,11 +76,11 @@ namespace CJ.Exp.Admin.Controllers
     }
 
     [HttpPost]
-    public IActionResult DoAdd(ExpenseTypeVM model)
+    public async Task<IActionResult> DoAdd(ExpenseTypeVM model)
     {
       if (ModelState.IsValid)
       {
-        _expensesService.AddExpenseType(Mapper.Map<ExpenseTypeSM>(model));
+        await _expensesService.AddExpenseTypeAsync(Mapper.Map<ExpenseTypeSM>(model));
         if (_expensesService.BusinessStateValid)
         {
           SetControllerMessage(ControllerMessageType.Success,"Added");
@@ -103,19 +104,19 @@ namespace CJ.Exp.Admin.Controllers
     }
 
     [HttpPost]
-    public IActionResult Edit(string editValue)
+    public async Task<IActionResult> Edit(string editValue)
     {
-      var expSm = _expensesService.GetExpenseTypeById(editValue);
+      var expSm = await _expensesService.GetExpenseTypeByIdAsync(editValue);
 
       return View("Edit", Mapper.Map<ExpenseTypeVM>(expSm));
     }
 
     [HttpPost]
-    public IActionResult DoEdit(ExpenseTypeVM model)
+    public async Task<IActionResult> DoEdit(ExpenseTypeVM model)
     {
       if (ModelState.IsValid)
       {
-        _expensesService.UpdateExpenseType(Mapper.Map<UpdateExpenseTypeSM>(model));
+        await _expensesService.UpdateExpenseTypeAsync(Mapper.Map<UpdateExpenseTypeSM>(model));
         if (_expensesService.BusinessStateValid)
         {
           SetControllerMessage(ControllerMessageType.Success, "Updated");
@@ -128,9 +129,9 @@ namespace CJ.Exp.Admin.Controllers
     }
 
     [HttpPost]
-    public IActionResult Delete(string editValue)
+    public async Task<IActionResult> Delete(string editValue)
     {
-      var expSm = _expensesService.GetExpenseTypeById(editValue);
+      var expSm = await _expensesService.GetExpenseTypeByIdAsync(editValue);
 
       return View("Delete", Mapper.Map<ExpenseTypeVM>(expSm));
     }
@@ -142,11 +143,11 @@ namespace CJ.Exp.Admin.Controllers
     }
 
     [HttpPost]
-    public IActionResult DoDelete(ExpenseTypeVM model)
+    public async Task<IActionResult> DoDelete(ExpenseTypeVM model)
     {
       if (ModelState.IsValid)
       {
-        _expensesService.DeleteExpenseType(Mapper.Map<ExpenseTypeSM>(model));
+        await _expensesService.DeleteExpenseTypeAsync(Mapper.Map<ExpenseTypeSM>(model));
         if (_expensesService.BusinessStateValid)
         {
           SetControllerMessage(ControllerMessageType.Success, "Deleted");

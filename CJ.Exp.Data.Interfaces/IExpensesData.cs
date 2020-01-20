@@ -1,38 +1,37 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using CJ.Exp.ServiceModels;
+﻿using CJ.Exp.ServiceModels;
 using CJ.Exp.ServiceModels.Expenses;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace CJ.Exp.Data.Interfaces
 {
   public interface IExpensesData : IBaseData
   {
-    ExpenseSM AddExpense(ExpenseSM expense);
+    Task<ExpenseSM> AddExpenseAsync(ExpenseSM expense);
 
-    ExpenseTypeSM AddExpenseType(ExpenseTypeSM expenseType);
+    Task<ExpenseTypeSM> AddExpenseTypeAsync(ExpenseTypeSM expenseType);
 
-    bool DeleteExpense(ExpenseSM expense);
+    Task<bool> DeleteExpenseAsync(ExpenseSM expense);
 
-    bool DeleteExpenseType(ExpenseTypeSM expenseType);
+    Task<bool> DeleteExpenseTypeAsync(ExpenseTypeSM expenseType);
 
-    GridResultSM<ExpenseSM> GetExpenses(ExpensesFilterSM filter);
+    Task<GridResultSM<ExpenseSM>> GetExpensesAsync(ExpensesFilterSM filter);
 
-    ExpenseSM GetExpenseById(string id);
+    Task<ExpenseSM> GetExpenseByIdAsync(string id);
 
-    GridResultSM<ExpenseTypeSM> GetExpenseTypes(ExpenseTypesFilterSM filter);
+    Task<GridResultSM<ExpenseTypeSM>> GetExpenseTypesAsync(ExpenseTypesFilterSM filter);
 
-    List<ExpenseTypeSM> GetExpenseTypes();
+    Task<List<ExpenseTypeSM>> GetExpenseTypesAsync();
 
-    ExpenseTypeSM GetExpenseTypeById(string id);
+    Task<ExpenseTypeSM> GetExpenseTypeByIdAsync(string id);
 
-    ExpenseTypeSM GetExpenseTypeByName(string expenseTypeName);
+    Task<ExpenseTypeSM> GetExpenseTypeByNameAsync(string expenseTypeName);
 
-    ExpenseSM UpdateExpense(ExpenseSM expense);
+    Task<ExpenseSM> UpdateExpenseAsync(ExpenseSM expense);
 
-    ExpenseTypeSM UpdateExpenseType(ExpenseTypeSM expenseType);
+    Task<ExpenseTypeSM> UpdateExpenseTypeAsync(ExpenseTypeSM expenseType);
 
-    bool UpdateExpenseWithUpdatedExpenseType(ExpenseTypeSM expenseType);
+    Task<bool> UpdateExpenseWithUpdatedExpenseTypeAsync(ExpenseTypeSM expenseType);
 
   }
 }

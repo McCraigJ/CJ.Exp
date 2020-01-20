@@ -45,7 +45,7 @@ namespace CJ.Exp.API.Controllers
       {
         var user = await _authService.FindByEmailAsync(model.Email);
 
-        var tokens =_authTokenService.GenerateAndRegisterAccessAndRefreshTokens(
+        var tokens = await _authTokenService.GenerateAndRegisterAccessAndRefreshTokensAsync(
           user,
           _configuration["JwtKey"],
           Convert.ToInt32(_configuration["JwtExpireHours"]),

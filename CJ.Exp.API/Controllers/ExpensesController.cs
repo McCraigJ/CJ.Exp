@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using CJ.Exp.API.ApiModels;
 using CJ.Exp.DomainInterfaces;
 using CJ.Exp.ServiceModels;
 using CJ.Exp.ServiceModels.Expenses;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.KeyVault.Models;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace CJ.Exp.API.Controllers
 {
@@ -26,7 +22,7 @@ namespace CJ.Exp.API.Controllers
 
     [HttpPost]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public IActionResult GetExpenses(ExpensesFilterAM model)
+    public async Task<IActionResult> GetExpenses(ExpensesFilterAM model)
     {
       var filter = new ExpensesFilterSM
       {
@@ -38,7 +34,7 @@ namespace CJ.Exp.API.Controllers
           PageNumber = model.PageNumber
         }
       };
-      var expenses = _expensesService.GetExpenses(filter);
+      var expenses = await _expensesService.GetExpensesAsync(filter);
 
       return Ok(new
       {
@@ -52,7 +48,7 @@ namespace CJ.Exp.API.Controllers
     {
       var expense = Mapper.Map<UpdateExpenseSM>(model);
       expense.ExpenseType = new ExpenseTypeSM { Id = model.ExpenseTypeId };
-      await _expensesService.AddExpense(expense);
+      await _expensesService.AddExpenseAsync(expense);
 
       if (_expensesService.BusinessStateValid)
       {

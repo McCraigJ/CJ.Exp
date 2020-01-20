@@ -3,7 +3,6 @@ using CJ.Exp.DomainInterfaces;
 using CJ.Exp.ServiceModels;
 using CJ.Exp.ServiceModels.AuthTokens;
 using CJ.Exp.ServiceModels.Users;
-using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
@@ -12,7 +11,7 @@ using System.Security.Cryptography;
 using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.Data.Edm.Library.Expressions;
+using Microsoft.IdentityModel.Tokens;
 
 namespace CJ.Exp.BusinessLogic.Auth
 {
@@ -31,19 +30,19 @@ namespace CJ.Exp.BusinessLogic.Auth
       _authService = authService;
     }
 
-    public bool HasAuthToken(string token)
+    public async Task<bool> HasAuthTokenAsync(string token)
     {
       if (_authTokenCache.HasAuthToken(token))
       {
         return true;
       }
 
-      var authToken = _authTokensData.GetAuthToken(token);
+      var authToken = await _authTokensData.GetAuthTokenAsync(token);
       if (authToken != null)
       {
         if (authToken.Expiry < DateTime.Now)
         {
-          _authTokensData.DeleteAuthToken(token);
+          await _authTokensData.DeleteAuthTokenAsync(token);
         }
         else
         {
@@ -112,11 +111,11 @@ namespace CJ.Exp.BusinessLogic.Auth
 
         if (user != null)
         {
-          var savedRefreshToken = _authTokensData.GetRefreshTokenForUserId(user.Id);
+          var savedRefreshToken = await _authTokensData.GetRefreshTokenForUserIdAsync(user.Id);
 
           if (savedRefreshToken.RefreshToken == refreshToken)
           {
-            return GenerateAndRegisterAccessAndRefreshTokens(user, securityKey, expiryHours, issuer, refreshTokenHours);
+            return await GenerateAndRegisterAccessAndRefreshTokensAsync(user, securityKey, expiryHours, issuer, refreshTokenHours);
           }
         }
 
@@ -156,15 +155,15 @@ namespace CJ.Exp.BusinessLogic.Auth
     }
 
 
-    public Tuple<string, string> GenerateAndRegisterAccessAndRefreshTokens(UserSM user, string securityKey, int expiryHours, string issuer, int refreshTokenHours)
+    public async Task<Tuple<string, string>> GenerateAndRegisterAccessAndRefreshTokensAsync(UserSM user, string securityKey, int expiryHours, string issuer, int refreshTokenHours)
     {
       var authToken = GenerateAccessToken(user, securityKey, expiryHours, issuer);
 
       _authTokenCache.AddAuthToken(authToken);
-      _authTokensData.AddAuthToken(authToken);
+      await _authTokensData.AddAuthTokenAsync(authToken);
 
       
-      _authTokensData.DeleteRefreshTokenForUser(user.Id);
+      await _authTokensData.DeleteRefreshTokenForUserAsync(user.Id);
 
       var refreshToken = new RefreshTokenSM
       {
@@ -173,7 +172,7 @@ namespace CJ.Exp.BusinessLogic.Auth
         UserId = user.Id
       };
 
-      _authTokensData.AddRefreshToken(refreshToken);
+      await _authTokensData.AddRefreshTokenAsync(refreshToken);
 
       return new Tuple<string, string>(authToken.Token, refreshToken.RefreshToken);
     }
@@ -190,15 +189,15 @@ namespace CJ.Exp.BusinessLogic.Auth
       return null;
     }
 
-    public void AddAuthToken(AuthTokenSM authToken)
+    public async Task AddAuthTokenAsync(AuthTokenSM authToken)
     {
-      _authTokensData.AddAuthToken(authToken);
+      await _authTokensData.AddAuthTokenAsync(authToken);
       _authTokenCache.AddAuthToken(authToken);
     }
 
     public async Task DeleteAuthAndRefreshTokensAsync(string token, string securityKey)
     {
-      _authTokensData.DeleteAuthToken(token);
+      await _authTokensData.DeleteAuthTokenAsync(token);
       _authTokenCache.RemoveAuthToken(token);
 
       var principal = GetPrincipalFromToken(token, securityKey, true);
@@ -207,7 +206,7 @@ namespace CJ.Exp.BusinessLogic.Auth
       {
         var user = await _authService.GetUserByPrincipalAsync(principal);
 
-        _authTokensData.DeleteRefreshTokenForUser(user.Id);
+        await _authTokensData.DeleteRefreshTokenForUserAsync(user.Id);
       }
     }
   }

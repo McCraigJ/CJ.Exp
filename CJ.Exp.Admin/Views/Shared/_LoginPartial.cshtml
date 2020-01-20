@@ -9,7 +9,7 @@
   var userName = (await AuthService.GetUserByPrincipalAsync(User))?.Email;
   <form asp-area="" asp-controller="Account" asp-action="Logout" method="post" id="logoutForm" class="navbar-right">
     <ul class="nav navbar-nav navbar-right">
-      @if (await AuthService.GetUserRoleForLoggedInUser(User) == "Admin")
+      @if (await AuthService.GetUserRoleForLoggedInUserAsync(User) == "Admin")
       {
         <li>
           <a asp-area="" asp-controller="Users" asp-action="Index" title="Manage Users">Manage Users</a>

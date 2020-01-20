@@ -18,43 +18,43 @@ namespace CJ.Exp.BusinessLogic.Expenses
       _sessionInfo = sessionInfo;
     }
 
-    public ExpenseSM GetExpenseById(string id)
+    public async Task<ExpenseSM> GetExpenseByIdAsync(string id)
     {
-      return _data.GetExpenseById(id);
+      return await _data.GetExpenseByIdAsync(id);
     }
 
-    public async Task AddExpense(UpdateExpenseSM expense)
+    public async Task AddExpenseAsync(UpdateExpenseSM expense)
     {
 
       if (string.IsNullOrEmpty(expense.NewExpenseType))
       {
-        var expenseType = expense.ExpenseType == null ? null : _data.GetExpenseTypeById(expense.ExpenseType.Id);
+        var expenseType = expense.ExpenseType == null ? null : await _data.GetExpenseTypeByIdAsync(expense.ExpenseType.Id);
         if (expenseType == null)
         {
           AddBusinessError(BusinessErrorCodes.DataNotFound, "ExpenseTypeNotFound");
         }
         else
         {
-          expense.ExpenseType = _data.GetExpenseTypeById(expense.ExpenseType.Id);
+          expense.ExpenseType = await _data.GetExpenseTypeByIdAsync(expense.ExpenseType.Id);
         }
       }
       else
       {
-        expense.ExpenseType = AddExpenseTypeInternal(new ExpenseTypeSM { ExpenseType = expense.NewExpenseType }); ;
+        expense.ExpenseType = await AddExpenseTypeInternalAsync(new ExpenseTypeSM { ExpenseType = expense.NewExpenseType }); ;
       }
 
       if (BusinessStateValid)
       {
         expense.User = _sessionInfo.User;
 
-        _data.AddExpense(expense);
+        await _data.AddExpenseAsync(expense);
       }
       
     }
 
-    public async Task UpdateExpense(UpdateExpenseSM expense)
+    public async Task UpdateExpenseAsync(UpdateExpenseSM expense)
     {
-      var exp = GetExpenseById(expense.Id);
+      var exp = await GetExpenseByIdAsync(expense.Id);
       if (exp == null)
       {
         AddBusinessError(BusinessErrorCodes.DataNotFound, "ExpenseNotFound");
@@ -68,17 +68,17 @@ namespace CJ.Exp.BusinessLogic.Expenses
 
         if (string.IsNullOrEmpty(expense.NewExpenseType))
         {
-          expense.ExpenseType = _data.GetExpenseTypeById(expense.ExpenseType.Id);
+          expense.ExpenseType = await _data.GetExpenseTypeByIdAsync(expense.ExpenseType.Id);
         }
         else
         {
-          var expenseType = AddExpenseTypeInternal(new ExpenseTypeSM { ExpenseType = expense.NewExpenseType });
+          var expenseType = await AddExpenseTypeInternalAsync(new ExpenseTypeSM { ExpenseType = expense.NewExpenseType });
           expense.ExpenseType = expenseType;
         }
 
         if (BusinessStateValid)
         {
-          _data.UpdateExpense(expense);
+          await _data.UpdateExpenseAsync(expense);
 
           _data.CommitTransaction();
         } 
@@ -87,73 +87,73 @@ namespace CJ.Exp.BusinessLogic.Expenses
 
     
 
-    private ExpenseTypeSM AddExpenseTypeInternal(ExpenseTypeSM expenseType)
+    private async Task<ExpenseTypeSM> AddExpenseTypeInternalAsync(ExpenseTypeSM expenseType)
     {
-      if (_data.GetExpenseTypeByName(expenseType.ExpenseType) != null)
+      if (await _data.GetExpenseTypeByNameAsync(expenseType.ExpenseType) != null)
       {
         AddBusinessError(BusinessErrorCodes.DataAlreadyExists, "ExpenseTypeAlreadyExists");
       }
 
       if (BusinessStateValid)
       {
-        return _data.AddExpenseType(expenseType);
+        return await _data.AddExpenseTypeAsync(expenseType);
       }
 
       return null;
     }
 
-    public void AddExpenseType(ExpenseTypeSM expenseType)
+    public async Task AddExpenseTypeAsync(ExpenseTypeSM expenseType)
     {
-      AddExpenseTypeInternal(expenseType);
+      await AddExpenseTypeInternalAsync(expenseType);
     }
 
-    public void DeleteExpense(ExpenseSM expense)
+    public async Task DeleteExpenseAsync(ExpenseSM expense)
     {
-      if (_data.GetExpenseById(expense.Id) == null)
+      if (await _data.GetExpenseByIdAsync(expense.Id) == null)
       {
         AddBusinessError(BusinessErrorCodes.DataNotFound, "ExpenseNotFound");
       }
       else
       {
-        _data.DeleteExpense(expense);
+        await _data.DeleteExpenseAsync(expense);
       }
         
     }
 
-    public void DeleteExpenseType(ExpenseTypeSM expenseType)
+    public async Task DeleteExpenseTypeAsync(ExpenseTypeSM expenseType)
     {
-      if (_data.GetExpenseTypeById(expenseType.Id) == null)
+      if (await _data.GetExpenseTypeByIdAsync(expenseType.Id) == null)
       {
         AddBusinessError(BusinessErrorCodes.DataNotFound, "ExpenseTypeNotFound");
       }
       else
       {
-        _data.DeleteExpenseType(expenseType);
+        await _data.DeleteExpenseTypeAsync(expenseType);
       }
     }
 
-    public GridResultSM<ExpenseSM> GetExpenses(ExpensesFilterSM filter)
+    public async Task<GridResultSM<ExpenseSM>> GetExpensesAsync(ExpensesFilterSM filter)
     {
       if (filter?.GridFilter == null)
       {
         throw new CjExpInvalidOperationException("No Grid Request Data has been supplied");
       }
-      return _data.GetExpenses(filter);
+      return await _data.GetExpensesAsync(filter);
     }
 
-    public GridResultSM<ExpenseTypeSM> GetExpenseTypes(ExpenseTypesFilterSM filter)
+    public async Task<GridResultSM<ExpenseTypeSM>> GetExpenseTypesAsync(ExpenseTypesFilterSM filter)
     {
-      return _data.GetExpenseTypes(filter);
+      return await _data.GetExpenseTypesAsync(filter);
     }
 
-    public List<ExpenseTypeSM> GetExpenseTypes()
+    public async Task<List<ExpenseTypeSM>> GetExpenseTypesAsync()
     {
-      return _data.GetExpenseTypes();
+      return await _data.GetExpenseTypesAsync();
     }
 
-    public ExpenseTypeSM GetExpenseTypeById(string id)
+    public async Task<ExpenseTypeSM> GetExpenseTypeByIdAsync(string id)
     {
-      var expenseType = _data.GetExpenseTypeById(id);
+      var expenseType = await _data.GetExpenseTypeByIdAsync(id);
       if (expenseType == null)
       {
         AddBusinessError(BusinessErrorCodes.DataNotFound, "ExpenseTypeNotFound");
@@ -162,14 +162,14 @@ namespace CJ.Exp.BusinessLogic.Expenses
       return expenseType;
     }
 
-    public void UpdateExpenseType(UpdateExpenseTypeSM expenseType)
+    public async Task UpdateExpenseTypeAsync(UpdateExpenseTypeSM expenseType)
     {
       _data.StartTransaction();
-      _data.UpdateExpenseType(expenseType);
+      await _data.UpdateExpenseTypeAsync(expenseType);
 
       if (expenseType.UpdateExpensesWithUpdatedType)
       {
-        _data.UpdateExpenseWithUpdatedExpenseType(expenseType);
+        await _data.UpdateExpenseWithUpdatedExpenseTypeAsync(expenseType);
       }
       _data.CommitTransaction();
 

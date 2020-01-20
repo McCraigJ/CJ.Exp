@@ -1,19 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using AutoMapper;
+﻿using AutoMapper;
 using CJ.Exp.Data.Interfaces;
 using CJ.Exp.Data.MongoDb.DataModels;
 using CJ.Exp.Data.MongoDb.Interfaces;
 using CJ.Exp.DomainInterfaces;
 using CJ.Exp.ServiceModels.AuthTokens;
 using MongoDB.Driver;
+using System;
+using System.Threading.Tasks;
 
 namespace CJ.Exp.Data.MongoDb.DataAccess
 {
   public class AuthTokenDataMongo : DataMongoAccessBase, IAuthTokensData
   {
-
     private readonly IMongoCollection<AuthTokenDM> _authTokenCollection;
     private readonly IMongoCollection<RefreshTokenDM> _refreshTokenCollection;
 
@@ -21,48 +19,49 @@ namespace CJ.Exp.Data.MongoDb.DataAccess
     {
       _authTokenCollection = Database.GetCollection<AuthTokenDM>("authtokens");
       _refreshTokenCollection = Database.GetCollection<RefreshTokenDM>("refreshtokens");
+
+      var indexBuilder = Builders<AuthTokenDM>.IndexKeys;
+      var tokenIndexModel = new CreateIndexModel<AuthTokenDM>(indexBuilder.Text(x => x.Token));
+      _authTokenCollection.Indexes.CreateOne(tokenIndexModel);
+
+      var refreshTokenIndexBuilder = Builders<RefreshTokenDM>.IndexKeys;
+      var userIdIndexModel = new CreateIndexModel<RefreshTokenDM>(refreshTokenIndexBuilder.Text(x => x.UserId), new CreateIndexOptions { Unique = true });
+      _refreshTokenCollection.Indexes.CreateOne(userIdIndexModel);
+
     }
 
-    public AuthTokenSM GetAuthToken(string token)
+    public async Task<AuthTokenSM> GetAuthTokenAsync(string token)
     {
-      var authToken = _authTokenCollection.Find(x => x.Token == token).SingleOrDefault();
+      var authToken = await _authTokenCollection.Find(x => x.Token == token).SingleOrDefaultAsync();
       return Mapper.Map<AuthTokenSM>(authToken);
     }
 
-    public void AddAuthToken(AuthTokenSM authToken)
+    public async Task AddAuthTokenAsync(AuthTokenSM authToken)
     {
-      var tokenCollectionIndexBuilder = Builders<AuthTokenDM>.IndexKeys;
-      var indexModel = new CreateIndexModel<AuthTokenDM>(tokenCollectionIndexBuilder.Text(x => x.Token));
-      _authTokenCollection.Indexes.CreateOne(indexModel); //.ConfigureAwait(false);
-
       var authTokenDm = Mapper.Map<AuthTokenDM>(authToken);
-      _authTokenCollection.InsertOne(authTokenDm);
+      await _authTokenCollection.InsertOneAsync(authTokenDm);
     }
 
-    public void DeleteAuthToken(string token)
+    public async Task DeleteAuthTokenAsync(string token)
     {
-      _authTokenCollection.FindOneAndDelete<AuthTokenDM>(Builders<AuthTokenDM>.Filter.Eq("Token", token));
+      await _authTokenCollection.FindOneAndDeleteAsync<AuthTokenDM>(Builders<AuthTokenDM>.Filter.Eq("Token", token));
     }
 
-    public RefreshTokenSM GetRefreshTokenForUserId(string userId)
+    public async Task<RefreshTokenSM> GetRefreshTokenForUserIdAsync(string userId)
     {
-      var refreshToken = _refreshTokenCollection.Find(x => x.UserId == new Guid(userId)).SingleOrDefault();
+      var refreshToken = await _refreshTokenCollection.Find(x => x.UserId == new Guid(userId)).SingleOrDefaultAsync();
       return Mapper.Map<RefreshTokenSM>(refreshToken);
     }
 
-    public void AddRefreshToken(RefreshTokenSM refreshToken)
+    public async Task AddRefreshTokenAsync(RefreshTokenSM refreshToken)
     {
-      var tokenCollectionIndexBuilder = Builders<RefreshTokenDM>.IndexKeys;
-      var indexModel = new CreateIndexModel<RefreshTokenDM>(tokenCollectionIndexBuilder.Text(x => x.UserId), new CreateIndexOptions { Unique = true});
-      _refreshTokenCollection.Indexes.CreateOne(indexModel); //.ConfigureAwait(false);
-
       var refreshTokenDm = Mapper.Map<RefreshTokenDM>(refreshToken);
-      _refreshTokenCollection.InsertOne(refreshTokenDm);
+      await _refreshTokenCollection.InsertOneAsync(refreshTokenDm);
     }
 
-    public void DeleteRefreshTokenForUser(string userId)
+    public async Task DeleteRefreshTokenForUserAsync(string userId)
     {
-      _refreshTokenCollection.FindOneAndDelete<RefreshTokenDM>(Builders<RefreshTokenDM>.Filter.Eq("UserId", new Guid(userId)));
+      await _refreshTokenCollection.FindOneAndDeleteAsync<RefreshTokenDM>(Builders<RefreshTokenDM>.Filter.Eq("UserId", new Guid(userId)));
     }
   }
 }

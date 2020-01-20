@@ -1,45 +1,35 @@
 ﻿using AutoMapper;
-using CJ.Exp.Auth.EFIdentity;
-using CJ.Exp.Data.EF;
-using CJ.Exp.Data.EF.DataModels;
+using CJ.Exp.API.Middleware;
+using CJ.Exp.BusinessLogic;
+using CJ.Exp.BusinessLogic.Auth;
+using CJ.Exp.BusinessLogic.Expenses;
+using CJ.Exp.Core;
+using CJ.Exp.Data.Interfaces;
+using CJ.Exp.Data.MongoDb.DataAccess;
+using CJ.Exp.Data.MongoDb.DataModels;
+using CJ.Exp.Data.MongoDb.Interfaces;
+using CJ.Exp.Data.MongoDb.Mongo;
 using CJ.Exp.DomainInterfaces;
+using CJ.Exp.Notification;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.IdentityModel.Tokens.Jwt;
-using System.Net;
 using System.Text;
 using System.Threading.Tasks;
-using CJ.Exp.API.Extensions;
-using CJ.Exp.API.Middleware;
-using CJ.Exp.BusinessLogic;
-using CJ.Exp.BusinessLogic.Auth;
-using CJ.Exp.BusinessLogic.Expenses;
-using CJ.Exp.Data.Interfaces;
-using CJ.Exp.Data.MongoDb.DataAccess;
-using CJ.Exp.ServiceModels.Users;
-using CJ.Exp.Data.MongoDb.DataModels;
-using CJ.Exp.Data.MongoDb.Interfaces;
-using CJ.Exp.Data.MongoDb.Mongo;
-using CJ.Exp.LanguageProvider;
-using CJ.Exp.Notification;
-using CJ.Exp.Core;
-using Microsoft.AspNetCore.Http;
-using StackExchange.Redis;
 
 namespace CJ.Exp.API
 {
   public class Startup
   {
-    private readonly IHostingEnvironment _env;
+    private readonly IWebHostEnvironment _env;
 
-    public Startup(IConfiguration configuration, IHostingEnvironment env)
+    public Startup(IConfiguration configuration, IWebHostEnvironment env)
     {
       _env = env;
       Configuration = configuration;
@@ -127,16 +117,12 @@ namespace CJ.Exp.API
 
       services.AddCors();
 
-      services.AddMvc();
+      services.AddMvc(opt => opt.EnableEndpointRouting = false);
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-    public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
-      //if (env.IsDevelopment())
-      //{
-      //  app.UseDeveloperExceptionPage();
-      //}
 
       app.UseStaticFiles();
 

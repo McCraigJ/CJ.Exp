@@ -36,22 +36,23 @@
           <li><a asp-area="" asp-controller="ExpenseTypes" asp-action="Index">Expense Types</a></li>
           <li><a asp-area="" asp-controller="Home" asp-action="Contact">Contact</a></li>
         </ul>
-        @await Html.PartialAsync("_LoginPartial")
+
+        <partial name="_LoginPartial" />
       </div>
     </div>
   </nav>
   <div class="container body-content">
 
-    @Html.Partial("_ErrorMessagePartial", Model)
+    <partial name="_ErrorMessagePartial" model="@Model" />
 
     @RenderBody()
     <hr />
     <footer>
-      <p>&copy; 2018 - CJ.Exp.Admin</p>
+      <p>&copy; 2020 - CJ.Exp.Admin</p>
     </footer>
   </div>
 
-  @Html.Partial("_PageOptionsPartial")
+  <partial name="_PageOptionsPartial" />
 
   <environment include="Development">
     <script src="~/lib/jquery/dist/jquery.js"></script>

@@ -1,5 +1,4 @@
 ﻿using CJ.Exp.Data.EF.DataModels;
-using CJ.Exp.ServiceModels.Users;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 

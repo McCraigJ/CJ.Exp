@@ -3,7 +3,7 @@
   ViewData["Title"] = "Delete Expense Type";
 }
 
-@Html.Partial("_UserMessage", Model.ErrorMessages.FirstOrDefault())
+<partial name="_UserMessage" model="@Model.ErrorMessages.FirstOrDefault()" />
 @if (Model.ErrorMessages != null)
 {
 <div class="error-message">
@@ -37,5 +37,5 @@
 </div>
 
 @section Scripts {
-  @await Html.PartialAsync("_ValidationScriptsPartial")
+  <partial name="_ValidationScriptsPartial"/>
 }

@@ -11,11 +11,11 @@
   </div>
 </form>
 
-@Html.Partial("_GridPartial")
+<partial name="_GridPartial" />
 
 @section Scripts {
 
-  @Html.Partial("_GridIncludePartial")
+  <partial name="_GridIncludePartial" />
 
   <environment include="Development">
     <script src="~/js/Users/Index.js" asp-append-version="true"></script>

@@ -1,11 +1,7 @@
-﻿using System;
-using AutoMapper;
+﻿using AutoMapper;
 using CJ.Exp.BusinessLogic;
 using CJ.Exp.BusinessLogic.Auth;
 using CJ.Exp.Core;
-//using CJ.Exp.Auth.EFIdentity;
-using CJ.Exp.Data.EF;
-using CJ.Exp.Data.EF.DataModels;
 using CJ.Exp.Data.Interfaces;
 using CJ.Exp.Data.MongoDb.DataAccess;
 using CJ.Exp.Data.MongoDb.DataModels;
@@ -14,24 +10,20 @@ using CJ.Exp.Data.MongoDb.Mongo;
 using CJ.Exp.DomainInterfaces;
 using CJ.Exp.LanguageProvider;
 using CJ.Exp.Notification;
-using CJ.Exp.ServiceModels.Users;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
-
+using System;
 
 namespace CJ.Exp.Admin
 {
   public class Startup
   {
-    private readonly IHostingEnvironment _env;
-    public Startup(IConfiguration configuration, IHostingEnvironment env)
+    private readonly IWebHostEnvironment _env;
+    public Startup(IConfiguration configuration, IWebHostEnvironment env)
     {
       Configuration = configuration;
       _env = env;
@@ -81,17 +73,15 @@ namespace CJ.Exp.Admin
       });
 
       services.AddAutoMapper();
-      services.AddMvc();
+      services.AddMvc(opt => opt.EnableEndpointRouting = false);
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-    public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
       if (env.IsDevelopment())
       {
-        app.UseBrowserLink();
         app.UseDeveloperExceptionPage();
-        app.UseDatabaseErrorPage();
       }
       else
       {

@@ -38,7 +38,7 @@ namespace CJ.Exp.API.Middleware
           var token = httpContext.GetAuthorisationToken();
           if (token != null)
           {
-            if (authTokenService.HasAuthToken(token))
+            if (await authTokenService.HasAuthTokenAsync(token))
             {
 
               sessionInfo.User = await authTokenService.GetUserFromTokenAsync(token, configuration["JwtKey"]);

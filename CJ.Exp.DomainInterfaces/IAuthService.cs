@@ -21,18 +21,18 @@ namespace CJ.Exp.DomainInterfaces
     Task<UserSM> GetUserByPrincipalAsync(ClaimsPrincipal principal);
     Task<AuthResultSM> UpdateCurrentUser(ClaimsPrincipal principal, UserSM user);
     Task<AuthResultSM> ChangePasswordAsync(ClaimsPrincipal principal, string oldPassword, string newPassword);    
-    Task<AuthResultSM> UpdateRole(string userName, string role);
+    Task<AuthResultSM> UpdateRoleAsync(string userName, string role);
     Task<AuthResultSM> SeedData();
-    List<UserSM> GetUsers();
-    GridResultSM<UserSM> GetUsers(UsersFilterSM filter);
-    UserSM GetUserById(string id);
-    Task<UserSM> AddUser(UserSM user, string password);
-    Task<UserSM> UpdateUser(UserSM user);
-    Task<bool> UpdatePassword(UserSM user, string oldPassword, string newPassword);
-    Task DeleteUser(UserSM user);
-    Task UpdateUserRoles(UserSM user, string role);
-    Task<string> GetUserRole(UserSM user);
-    Task<string> GetUserRoleForLoggedInUser(ClaimsPrincipal principal);
+    Task<List<UserSM>> GetUsersAsync();
+    Task<GridResultSM<UserSM>> GetUsersAsync(UsersFilterSM filter);
+    Task<UserSM> GetUserByIdAsync(string id);
+    Task<UserSM> AddUserAsync(UserSM user, string password);
+    Task<UserSM> UpdateUserAsync(UserSM user);
+    Task<bool> UpdatePasswordAsync(UserSM user, string oldPassword, string newPassword);
+    Task DeleteUserAsync(UserSM user);
+    Task UpdateUserRolesAsync(UserSM user, string role);
+    Task<string> GetUserRoleAsync(UserSM user);
+    Task<string> GetUserRoleForLoggedInUserAsync(ClaimsPrincipal principal);
 
   }
 }

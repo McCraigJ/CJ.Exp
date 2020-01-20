@@ -1,5 +1,4 @@
-﻿@using Microsoft.AspNetCore.Mvc.Rendering
-@model ExpensesFilterVM
+﻿@model ExpensesFilterVM
 @{
   ViewData["Title"] = "Expenses Summary";
 }
@@ -42,12 +41,12 @@
 
 @if (Model.IsFiltered)
 {
-  @Html.Partial("_GridPartial")
+  <partial name="_GridPartial"/>
 }
 
 @section Scripts {
 
-  @Html.Partial("_GridIncludePartial")
+  <partial name="_GridIncludePartial"/>
 
   <environment include="Development">
     <script src="~/js/Expenses/Index.js" asp-append-version="true"></script>

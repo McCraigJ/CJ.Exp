@@ -1,16 +1,15 @@
 ﻿using AutoMapper;
 using CJ.Exp.Data.Interfaces;
+using CJ.Exp.Data.MongoDb.DataModels;
 using CJ.Exp.DomainInterfaces;
+using CJ.Exp.ServiceModels;
 using CJ.Exp.ServiceModels.Users;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using CJ.Exp.Data.MongoDb.DataModels;
-using CJ.Exp.ServiceModels;
-using CJ.Exp.ServiceModels.Expenses;
-using MongoDB.Bson;
-using IAppMongoClient = CJ.Exp.Data.MongoDb.Interfaces.IAppMongoClient;
+using System.Threading.Tasks;
+using CJ.Exp.Data.MongoDb.Interfaces;
 
 namespace CJ.Exp.Data.MongoDb.DataAccess
 {
@@ -24,13 +23,13 @@ namespace CJ.Exp.Data.MongoDb.DataAccess
       _collection = Database.GetCollection<ApplicationUserMongo>("applicationUserMongos");
     }
 
-    public List<UserSM> GetUsers()
+    public async Task<List<UserSM>> GetUsersAsync()
     {      
-      var users = _collection.Find(_ => true).ToList();
+      var users = await _collection.Find(_ => true).ToListAsync();
       return Mapper.Map<List<UserSM>>(users);
     }
 
-    public GridResultSM<UserSM> GetUsers(UsersFilterSM filter)
+    public async Task<GridResultSM<UserSM>> GetUsersAsync(UsersFilterSM filter)
     {
       if (filter?.GridFilter == null)
       {
@@ -39,9 +38,9 @@ namespace CJ.Exp.Data.MongoDb.DataAccess
 
       var query = _collection.Find(_ => true);
 
-      var users = query.Skip(filter.GridFilter.Skip).Limit(filter.GridFilter.ItemsPerPage).ToList();
+      var users = await query.Skip(filter.GridFilter.Skip).Limit(filter.GridFilter.ItemsPerPage).ToListAsync();
 
-      var count = _collection.CountDocuments(x => true);
+      var count = await _collection.CountDocumentsAsync(x => true);
 
       return new GridResultSM<UserSM>(filter?.GridFilter?.PageNumber ?? 0,
         (int)count,
@@ -50,15 +49,10 @@ namespace CJ.Exp.Data.MongoDb.DataAccess
         Mapper.Map<List<UserSM>>(users));
     }
 
-    public UserSM GetUserById(string id)
+    public async Task<UserSM> GetUserByIdAsync(string id)
     {
-      var user = _collection.Find(x => x.Id == new Guid(id)).SingleOrDefault();
+      var user = await _collection.Find(x => x.Id == new Guid(id)).SingleOrDefaultAsync();
       return Mapper.Map<UserSM>(user);
     }
-
-    //public IQueryable<string> GetCurrentUserRoles(string userId)
-    //{
-    //  throw new NotImplementedException();
-    //}
   }
 }

@@ -7,26 +7,26 @@ namespace CJ.Exp.DomainInterfaces
 {
   public interface IExpensesService : IBusinessErrors
   {
-    GridResultSM<ExpenseSM> GetExpenses(ExpensesFilterSM filter);
+    Task<GridResultSM<ExpenseSM>> GetExpensesAsync(ExpensesFilterSM filter);
 
-    ExpenseSM GetExpenseById(string id);
+    Task<ExpenseSM> GetExpenseByIdAsync(string id);
 
-    Task AddExpense(UpdateExpenseSM expense);
+    Task AddExpenseAsync(UpdateExpenseSM expense);
 
-    Task UpdateExpense(UpdateExpenseSM expense);
+    Task UpdateExpenseAsync(UpdateExpenseSM expense);
 
-    void DeleteExpense(ExpenseSM expense);
+    Task DeleteExpenseAsync(ExpenseSM expense);
 
-    GridResultSM<ExpenseTypeSM> GetExpenseTypes(ExpenseTypesFilterSM filter);
+    Task<GridResultSM<ExpenseTypeSM>> GetExpenseTypesAsync(ExpenseTypesFilterSM filter);
 
-    List<ExpenseTypeSM> GetExpenseTypes();
+    Task<List<ExpenseTypeSM>> GetExpenseTypesAsync();
 
-    ExpenseTypeSM GetExpenseTypeById(string id);
+    Task<ExpenseTypeSM> GetExpenseTypeByIdAsync(string id);
 
-    void AddExpenseType(ExpenseTypeSM expenseType);
+    Task AddExpenseTypeAsync(ExpenseTypeSM expenseType);
 
-    void UpdateExpenseType(UpdateExpenseTypeSM expenseType);
+    Task UpdateExpenseTypeAsync(UpdateExpenseTypeSM expenseType);
 
-    void DeleteExpenseType(ExpenseTypeSM expenseType);
+    Task DeleteExpenseTypeAsync(ExpenseTypeSM expenseType);
   }
 }
