@@ -1,12 +1,12 @@
 ﻿using AutoMapper;
-using CJ.Exp.API.ApiModels;
+using CJ.Exp.ApiModels;
 using CJ.Exp.DomainInterfaces;
 using CJ.Exp.ServiceModels;
 using CJ.Exp.ServiceModels.Expenses;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace CJ.Exp.API.Controllers
 {

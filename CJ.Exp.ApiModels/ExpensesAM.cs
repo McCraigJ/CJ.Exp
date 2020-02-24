@@ -1,7 +1,6 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
 
-namespace CJ.Exp.API.ApiModels
+namespace CJ.Exp.ApiModels
 {
   public class ExpensesFilterAM
   {
@@ -17,9 +16,7 @@ namespace CJ.Exp.API.ApiModels
   {
     public string ExpenseTypeId { get; set; }
     public string NewExpenseType { get; set; }
-    [Required]
     public DateTime ExpenseDate { get; set; }
-    [Required]
     public decimal ExpenseValue { get; set; }
   }
 }

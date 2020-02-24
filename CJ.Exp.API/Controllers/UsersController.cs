@@ -1,26 +1,19 @@
-﻿using AutoMapper;
-using CJ.Exp.API.ApiModels;
+﻿using CJ.Exp.API.Extensions;
+using CJ.Exp.ApiModels;
 using CJ.Exp.DomainInterfaces;
-using CJ.Exp.ServiceModels.Users;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
-using CJ.Exp.API.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using System;
+using System.Threading.Tasks;
 
 namespace CJ.Exp.API.Controllers
 {
   [Route("api/users/[action]")]
   public class UsersController : ControllerBase
   {
-    private readonly IAuthService _authService;    
+    private readonly IAuthService _authService;
     private readonly IConfiguration _configuration;
     private readonly IAuthTokenService _authTokenService;
 
@@ -30,15 +23,15 @@ namespace CJ.Exp.API.Controllers
         IAuthTokenService authTokenService
         )
     {
-      _authService = authService;      
+      _authService = authService;
       _configuration = configuration;
       _authTokenService = authTokenService;
     }
-    
+
 
     [HttpPost]
     public async Task<IActionResult> Login([FromBody] LoginAM model)
-    {      
+    {
       var result = await _authService.AuthenticateAsync(model.Email, model.Password, false, false);
 
       if (result.Succeeded)
@@ -52,12 +45,12 @@ namespace CJ.Exp.API.Controllers
           _configuration["JwtIssuer"],
           Convert.ToInt32(_configuration["RefreshTokenExpireHours"]));
 
-        return SuccessResponse(new
+        return SuccessResponse(new LoginResponseAM
         {
-          id = user.Id,
-          email = user.Email,          
-          token = tokens.Item1,
-          refreshToken = tokens.Item2
+          Id = user.Id,
+          Email = user.Email,
+          Token = tokens.Item1,
+          RefreshToken = tokens.Item2
         });
 
       }
@@ -74,13 +67,17 @@ namespace CJ.Exp.API.Controllers
         _configuration["JwtIssuer"],
         Convert.ToInt32(_configuration["RefreshTokenExpireHours"]));
 
-      return SuccessResponse(refreshedTokens != null
-        ? new
+      if (refreshedTokens == null)
+      {
+        return BusinessErrorResponse("CannotRefreshToken");
+      }
+
+      return SuccessResponse(
+        new RefreshTokenResponseAM
         {
-          token = refreshedTokens.Item1,
-          refreshToken = refreshedTokens.Item2
-        }
-        : null);
+          Token = refreshedTokens.Item1,
+          RefreshToken = refreshedTokens.Item2
+        });
     }
 
     [HttpPost]

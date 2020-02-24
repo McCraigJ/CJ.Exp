@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
-using CJ.Exp.API.ApiModels;
+using CJ.Exp.ApiModels;
+using CJ.Exp.ServiceModels;
 using CJ.Exp.ServiceModels.Expenses;
 using CJ.Exp.ServiceModels.Users;
 
@@ -12,6 +13,8 @@ namespace CJ.Exp.API
       CreateMap<RegisterAM, UserSM>();
 
       CreateMap<AddExpenseAM, UpdateExpenseSM>();
+
+      CreateMap<BusinessErrorSM, BusinessErrorAM>();
     }
   }
 }

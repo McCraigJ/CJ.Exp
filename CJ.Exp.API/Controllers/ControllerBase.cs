@@ -1,43 +1,39 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net;
-using CJ.Exp.API.ApiModels;
+﻿using AutoMapper;
+using CJ.Exp.ApiModels;
 using CJ.Exp.ServiceModels;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace CJ.Exp.API.Controllers
 {
   public class ControllerBase : Controller
   {
-    public IActionResult SuccessResponse(object data)
+    public IActionResult SuccessResponse<T>(T data) where T : ApiResponseModelBase
     {
-      var response = new ApiResponseAM
+      var response = new ApiResponseAM<T>
       {
         Success = true,
         BusinessErrors = null,
         Data = data
       };
 
-      return CreateResponse(response);
+      return Ok(response);
     }
 
     public IActionResult SuccessResponse()
     {
-      return SuccessResponse(null);
+      return Ok(null);
     }
 
     public IActionResult BusinessErrorResponse(string errorMessage)
     {
-      var businessErrors = new List<BusinessErrorSM>();
-      businessErrors.Add(new BusinessErrorSM(BusinessErrorCodes.Generic, errorMessage));
+      var businessErrors = new List<BusinessErrorAM>();
+      businessErrors.Add(new BusinessErrorAM(ApiBusinessErrorCodes.Generic, errorMessage));
 
       var response = new ApiResponseAM
       {
         Success = false,
-        BusinessErrors = businessErrors,
-        Data = null
+        BusinessErrors = businessErrors
       };
 
       return CreateResponse(response);
@@ -45,11 +41,12 @@ namespace CJ.Exp.API.Controllers
 
     public IActionResult BusinessErrorResponse(List<BusinessErrorSM> errors)
     {
+      var apiErrors = Mapper.Map<List<BusinessErrorAM>>(errors);
+
       var response = new ApiResponseAM
       {
         Success = false,
-        BusinessErrors = errors,
-        Data = null
+        BusinessErrors = apiErrors
       };
 
       return CreateResponse(response);

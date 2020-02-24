@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
@@ -25,8 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CJ.Exp.Auth.EFIdentity\CJ.Exp.Auth.EFIdentity.csproj" />
-    <ProjectReference Include="..\CJ.Exp.CommonStartup\CJ.Exp.CommonStartup.csproj" />
+    <ProjectReference Include="..\CJ.Exp.ApiModels\CJ.Exp.ApiModels.csproj" />
     <ProjectReference Include="..\CJ.Exp.Core\CJ.Exp.Core.csproj" />
     <ProjectReference Include="..\CJ.Exp.Data.MongoDb\CJ.Exp.Data.MongoDb.csproj" />
     <ProjectReference Include="..\CJ.Exp.DomainInterfaces\CJ.Exp.DomainInterfaces.csproj" />

@@ -1,6 +1,6 @@
 ﻿@page "/login"
 @using CJ.App.Blazor.Services
-@using CJ.App.Blazor.ApiModels
+@using CJ.Exp.ApiModels
 @inject IAuthService AuthService
 @inject NavigationManager NavigationManager
 
@@ -37,25 +37,25 @@
 
 @code {
 
-  private LoginAM loginModel = new LoginAM();
-  private bool ShowErrors;
-  private string Error = "";
+private LoginAM loginModel = new LoginAM();
+private bool ShowErrors;
+private string Error = "";
 
-  private async Task HandleLogin()
-  {
-    ShowErrors = false;
+private async Task HandleLogin()
+{
+ShowErrors = false;
 
-    var result = await AuthService.Login(loginModel);
+var result = await AuthService.Login(loginModel);
 
-    if (result.Success)
-    {
-      NavigationManager.NavigateTo("/");
-    }
-    else
-    {
-      Error = result.BusinessErrors?.FirstOrDefault()?.ErrorMessage;
-      ShowErrors = true;
-    }
-  }
+if (result.Success)
+{
+NavigationManager.NavigateTo("/");
+}
+else
+{
+Error = result.BusinessErrors?.FirstOrDefault()?.ErrorMessage;
+ShowErrors = true;
+}
+}
 
 }

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.Authorization;
 
-namespace CJ.App.Blazor
+namespace CJ.App.Blazor.Services
 {
   public class ApiAuthenticationStateProvider : AuthenticationStateProvider
   {
