@@ -6,19 +6,25 @@ import { AppComponent } from '../app/app.component';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { AngularMaterialModule } from './app.material.module';
 import { HomeComponent } from '../home';
-import { TestComponent } from '../test';
+import { LoginComponent } from '../login';
+import { HttpClientModule } from '@angular/common/http';
+import { ReactiveFormsModule } from '@angular/forms';
+import { PageHeaderComponent } from '../_components/pageheader.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
-    TestComponent
+    LoginComponent,
+    PageHeaderComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     NoopAnimationsModule,
-    AngularMaterialModule
+    AngularMaterialModule,
+    HttpClientModule,
+    ReactiveFormsModule,
   ],
   providers: [],
   bootstrap: [AppComponent],

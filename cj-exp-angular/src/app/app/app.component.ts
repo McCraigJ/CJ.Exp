@@ -1,5 +1,8 @@
 import { Component, ViewChild, HostListener, OnInit } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
+import { AuthenticationService } from '../_services';
+import { Router } from '@angular/router';
+import { User } from '../_models/user';
 
 @Component({
   selector: 'app-root',
@@ -9,6 +12,13 @@ import { MatSidenav } from '@angular/material/sidenav';
 export class AppComponent implements OnInit {
   opened = true;
   title = "CJ Expenses";
+
+  currentUser: User;
+
+  constructor(private authenticationService: AuthenticationService, private router: Router) {
+    this.authenticationService.currentUser.subscribe(x => this.currentUser = x);
+  }
+
   @ViewChild('sidenav', { static: true }) sidenav: MatSidenav;
 
   ngOnInit() {
@@ -40,6 +50,11 @@ export class AppComponent implements OnInit {
     } else {
       return false;
     }
+  }
+
+  logout() {
+    this.authenticationService.logout();
+    this.router.navigate(['/login']);
   }
 
 }

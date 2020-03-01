@@ -136,7 +136,8 @@ namespace CJ.Exp.API
         .AllowAnyOrigin()
         .AllowAnyMethod()
         .AllowAnyHeader()
-        .AllowCredentials());
+        //.AllowCredentials()
+        );
 
       app.UseMvc();
       
