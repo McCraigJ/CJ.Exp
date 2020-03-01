@@ -1,7 +1,8 @@
 import { Component, OnInit} from '@angular/core';
 
-@Component({ templateUrl: 'home.component.html' })
-export class HomeComponent implements OnInit {
+
+@Component({ templateUrl: 'test.component.html' })
+export class TestComponent implements OnInit {
 
   loaded: boolean;
 
@@ -14,4 +15,3 @@ export class HomeComponent implements OnInit {
   }
 
 }
- 

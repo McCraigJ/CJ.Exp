@@ -1,8 +1,7 @@
 <!-- Toolbar -->
 
-<!-- <app-navigation></app-navigation> -->
 <mat-toolbar color="primary" class="header">
-    <div>Material Theme</div>
+    <div>{{title}}</div>
     <span class="nav-tool-items">
       <mat-icon (click)="sidenav.toggle()" class="hamburger">menu</mat-icon>
     </span>
@@ -30,20 +29,9 @@
         <h1>Heading Goes Here</h1>
         <mat-divider></mat-divider>
       </section>
-  
-      <!-- Angular material cards -->
-      <div class="productCards">
-        <mat-grid-list cols="4" rowHeight="200px">
-          <mat-grid-tile [colspan]="3" [rowspan]="1"> 
-              <router-outlet></router-outlet>
-          </mat-grid-tile>
-          <mat-grid-tile [colspan]="1" [rowspan]="2">2
-          </mat-grid-tile>
-          <mat-grid-tile [colspan]="1" [rowspan]="1">3
-          </mat-grid-tile>
-          <mat-grid-tile [colspan]="2" [rowspan]="1">4
-          </mat-grid-tile>
-        </mat-grid-list>
+        
+      <div class="productCards123">
+        <router-outlet></router-outlet>        
       </div>
   
     </mat-sidenav-content>
