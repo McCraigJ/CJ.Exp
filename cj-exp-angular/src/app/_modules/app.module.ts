@@ -3,25 +3,27 @@ import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
 import { AppRoutingModule } from '../app-routing.module';
 import { AppComponent } from '../app/app.component';
-import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AngularMaterialModule } from './app.material.module';
 import { HomeComponent } from '../home';
 import { LoginComponent } from '../login';
 import { HttpClientModule } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
-import { PageHeaderComponent } from '../_components/pageheader.component';
+import {  PageHeaderComponent } from '../_components';
+import { AddExpenseComponent } from '../addexpense';
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
     LoginComponent,
-    PageHeaderComponent
+    PageHeaderComponent,
+    AddExpenseComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
-    NoopAnimationsModule,
+    BrowserAnimationsModule,
     AngularMaterialModule,
     HttpClientModule,
     ReactiveFormsModule,

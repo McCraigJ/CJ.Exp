@@ -50,7 +50,8 @@ namespace CJ.Exp.API.Controllers
           Id = user.Id,
           Email = user.Email,
           Token = tokens.Item1,
-          RefreshToken = tokens.Item2
+          RefreshToken = tokens.Item2,
+          FirstName = user.FirstName
         });
 
       }

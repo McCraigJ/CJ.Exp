@@ -6,6 +6,7 @@ using CJ.Exp.ServiceModels.Expenses;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace CJ.Exp.API.Controllers
@@ -57,6 +58,16 @@ namespace CJ.Exp.API.Controllers
 
       return BusinessErrorResponse(_expensesService.BusinessErrors);
 
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetExpenseTypes()
+    {
+      var expenses = await _expensesService.GetExpenseTypesAsync();
+
+      var expensesAM = Mapper.Map<ICollection<ExpenseTypeAM>>(expenses);
+
+      return Ok(expensesAM);
     }
   }
 }

@@ -15,6 +15,10 @@ namespace CJ.Exp.API
       CreateMap<AddExpenseAM, UpdateExpenseSM>();
 
       CreateMap<BusinessErrorSM, BusinessErrorAM>();
+
+      CreateMap<ExpenseTypeSM, ExpenseTypeAM>()
+        .ForMember(dst => dst.Id, opt => opt.MapFrom(src => src.Id))
+        .ForMember(dst => dst.Name, opt => opt.MapFrom(src => src.ExpenseType));
     }
   }
 }

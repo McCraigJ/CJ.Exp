@@ -6,7 +6,8 @@ import { User } from '../_models/user';
 
 @Component({
   selector: 'app-root',
-  templateUrl: './app.component.html'
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.less']
 })
 
 export class AppComponent implements OnInit {

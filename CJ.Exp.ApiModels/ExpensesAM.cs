@@ -19,4 +19,10 @@ namespace CJ.Exp.ApiModels
     public DateTime ExpenseDate { get; set; }
     public decimal ExpenseValue { get; set; }
   }
+
+  public class ExpenseTypeAM
+  {
+    public string Id { get; set; }
+    public string Name { get; set; }
+  }
 }

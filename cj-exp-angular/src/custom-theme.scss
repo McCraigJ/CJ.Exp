@@ -14,6 +14,9 @@
 // hue. Available color palettes: https://material.io/design/color/
 $cj-exp-angular-primary: mat-palette($mat-indigo);
 $cj-exp-angular-accent: mat-palette($mat-blue, A200, A100, A400);
+$font-color-default: #ffffff;
+$snack-success-background: rgb(0, 185, 9);
+$snack-error-background: rgb(204, 14, 52);
 
 // The warn palette is optional (defaults to red).
 $cj-exp-angular-warn: mat-palette($mat-red);
@@ -26,3 +29,32 @@ $cj-exp-angular-theme: mat-dark-theme($cj-exp-angular-primary, $cj-exp-angular-a
 // that you are using.
 @include angular-material-theme($cj-exp-angular-theme);
 
+@mixin snack-theme($theme) {
+    // Extract whichever individual palettes you need from the theme.
+    $primary: map-get($theme, primary);
+    $accent: map-get($theme, accent);
+    $warn: map-get($theme, warn);
+    
+    .mat-snack-bar-container.snack-success {
+        background-color: $snack-success-background !important;
+        color: $font-color-default;
+    }
+    .mat-snack-bar-container.snack-error {
+        background-color: $snack-error-background !important;
+        color: $font-color-default;
+    }
+    //Added with panelClass property
+    .snack-error {
+        button {
+            color: $font-color-default
+        }
+    }
+    //Added with panelClass property
+    .snack-success {
+        button {
+            color: $font-color-default
+        }
+    }
+}
+
+@include snack-theme($cj-exp-angular-theme);

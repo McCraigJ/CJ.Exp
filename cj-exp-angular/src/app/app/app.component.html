@@ -1,7 +1,8 @@
 <!-- Toolbar -->
 
 <mat-toolbar color="primary" class="header">
-    <div>{{title}}</div>
+    <div>{{title}} <span class="welcome" *ngIf="currentUser">Welcome, {{currentUser.firstName}}!</span></div>
+    
     <span class="nav-tool-items">
       <mat-icon (click)="sidenav.toggle()" class="hamburger">menu</mat-icon>
     </span>
@@ -18,6 +19,9 @@
         <a mat-list-item routerLink="/login" *ngIf="!currentUser">
           <mat-icon>person</mat-icon> Login
         </a>
+        <a mat-list-item routerLink="/addexpense" *ngIf="currentUser">
+          <mat-icon>person</mat-icon> Add Expense
+        </a>
         <a mat-list-item (click)="logout()" *ngIf="currentUser">
           <mat-icon>person</mat-icon> Logout
         </a>
@@ -26,7 +30,7 @@
   
     <!-- Main content -->
     <mat-sidenav-content>
-  
+      <app-alert></app-alert>
       <router-outlet></router-outlet>   
       <!-- Applying the mat-tyography class adds styles for native elements. -->
       
