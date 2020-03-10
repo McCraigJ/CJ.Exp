@@ -2,7 +2,7 @@ import { Component, ViewChild, HostListener, OnInit } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
 import { AuthenticationService } from '../_services';
 import { Router } from '@angular/router';
-import { User } from '../_models/user';
+import { User } from '../_models/user.models';
 
 @Component({
   selector: 'app-root',
@@ -12,7 +12,7 @@ import { User } from '../_models/user';
 
 export class AppComponent implements OnInit {
   opened = true;
-  title = "CJ Expenses";
+  title = 'CJ Expenses';
 
   currentUser: User;
 

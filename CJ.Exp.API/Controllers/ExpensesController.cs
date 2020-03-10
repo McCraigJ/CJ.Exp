@@ -67,7 +67,7 @@ namespace CJ.Exp.API.Controllers
 
       var expensesAM = Mapper.Map<ICollection<ExpenseTypeAM>>(expenses);
 
-      return Ok(expensesAM);
+      return SuccessResponse<ICollection<ExpenseTypeAM>>(expensesAM);
     }
   }
 }

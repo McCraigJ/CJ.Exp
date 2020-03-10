@@ -5,8 +5,3 @@ export class User {
     refreshToken: string;
     firstName: string;
 }
-
-export class ExpenseType {
-    id: string;
-    name: string;
-}

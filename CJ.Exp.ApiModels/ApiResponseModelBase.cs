@@ -1,6 +1,6 @@
-﻿namespace CJ.Exp.ApiModels
-{
-  public class ApiResponseModelBase
-  {
-  }
-}
+﻿//namespace CJ.Exp.ApiModels
+//{
+//  public class ApiResponseModelBase
+//  {
+//  }
+//}

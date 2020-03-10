@@ -8,7 +8,7 @@ namespace CJ.Exp.API.Controllers
 {
   public class ControllerBase : Controller
   {
-    public IActionResult SuccessResponse<T>(T data) where T : ApiResponseModelBase
+    public IActionResult SuccessResponse<T>(T data)
     {
       var response = new ApiResponseAM<T>
       {

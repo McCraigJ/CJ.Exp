@@ -23,7 +23,6 @@ namespace CJ.Exp.ApiModels
   }
 
   public class ApiResponseAM<T> : ApiResponseAM
-    where T : ApiResponseModelBase
   {
     public T Data { get; set; }
 

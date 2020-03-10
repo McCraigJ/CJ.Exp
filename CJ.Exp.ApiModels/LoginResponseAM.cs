@@ -1,6 +1,6 @@
 ﻿namespace CJ.Exp.ApiModels
 {
-  public class LoginResponseAM : ApiResponseModelBase
+  public class LoginResponseAM
   {
     public string Id { get; set; }
     public string Email { get; set; }
