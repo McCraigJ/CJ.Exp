@@ -54,8 +54,10 @@ export class AppComponent implements OnInit {
   }
 
   logout() {
-    this.authenticationService.logout();
-    this.router.navigate(['/login']);
+    this.authenticationService.logout().subscribe(data => {
+      this.authenticationService.clearCurrentUser();
+      this.router.navigate(['/login']);
+    });
   }
 
 }

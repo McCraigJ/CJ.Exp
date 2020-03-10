@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { map } from 'rxjs/operators';
+import { map, first } from 'rxjs/operators';
 import { User } from '../_models/user';
 import { environment } from '../../environments/environment';
 import { ApiResponse } from '../_models/apiResponse';
 
-@Injectable({providedIn: 'root'})
+@Injectable({ providedIn: 'root' })
 export class AuthenticationService {
     private currentUserSubject: BehaviorSubject<User>;
     public currentUser: Observable<User>;
@@ -22,18 +22,21 @@ export class AuthenticationService {
 
     login(username, password) {
         return this.http.post<ApiResponse>(`${environment.apiUrl}users/Login`, { email: username, password })
-        .pipe(map(apiResponse  => {
-            if (apiResponse.success) {
-                const user: User = apiResponse.data;
-                localStorage.setItem('currentUser', JSON.stringify(user));
-                this.currentUserSubject.next(user);
-                return user;
-            }
-        }));
+            .pipe(map(apiResponse => {
+                if (apiResponse.success) {
+                    const user: User = apiResponse.data;
+                    localStorage.setItem('currentUser', JSON.stringify(user));
+                    this.currentUserSubject.next(user);
+                    return user;
+                }
+            }));
     }
 
-    logout() {
-        // remove user from local storage and set current user to null
+    logout(): Observable<any> {
+        return this.http.post<ApiResponse>(`${environment.apiUrl}users/Logout`, '').pipe(first());
+    }
+
+    clearCurrentUser() {
         localStorage.removeItem('currentUser');
         this.currentUserSubject.next(null);
     }
