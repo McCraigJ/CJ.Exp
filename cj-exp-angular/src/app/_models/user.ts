@@ -6,3 +6,7 @@ export class User {
     firstName: string;
 }
 
+export class ExpenseType {
+    id: string;
+    name: string;
+}

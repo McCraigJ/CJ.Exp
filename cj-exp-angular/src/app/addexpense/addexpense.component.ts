@@ -1,14 +1,27 @@
-import { OnInit, Component } from '@angular/core';
+import { OnInit, Component, OnDestroy } from '@angular/core';
+import { ExpensesService } from '../_services/expenses.service';
+import { Subscription } from 'rxjs';
+import { ExpenseType } from '../_models/user';
 
 @Component({templateUrl: 'addexpense.component.html'})
-export class AddExpenseComponent implements OnInit {
-    constructor() {}
+export class AddExpenseComponent implements OnInit, OnDestroy {
+    constructor(
+        private expensesService: ExpensesService
+    ) {}
 
-    loading:Boolean = false;
-    submitted:Boolean = false;
+    loading = false;
+    submitted = false;
+    private expenseTypesSubscription: Subscription;
+    expenseTypes: ExpenseType[];
 
     ngOnInit() {
-        
+        this.expenseTypesSubscription = this.expensesService.getExpenseTypes()
+            .subscribe(expenseTypes => {
+                this.expenseTypes = expenseTypes;
+            });
+    }
 
+    ngOnDestroy() {
+        this.expenseTypesSubscription.unsubscribe();
     }
 }

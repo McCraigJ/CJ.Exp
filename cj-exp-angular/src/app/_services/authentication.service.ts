@@ -4,7 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
 import { User } from '../_models/user';
 import { environment } from '../../environments/environment';
-import { apiResponse } from '../_models/apiResponse';
+import { ApiResponse } from '../_models/apiResponse';
 
 @Injectable({providedIn: 'root'})
 export class AuthenticationService {
@@ -20,16 +20,15 @@ export class AuthenticationService {
         return this.currentUserSubject.value;
     }
 
-    login(username, password) {        
-        return this.http.post<apiResponse>(`${environment.apiUrl}users/Login`, { email: username, password })
+    login(username, password) {
+        return this.http.post<ApiResponse>(`${environment.apiUrl}users/Login`, { email: username, password })
         .pipe(map(apiResponse  => {
             if (apiResponse.success) {
-                let user:User = apiResponse.data;
+                const user: User = apiResponse.data;
                 localStorage.setItem('currentUser', JSON.stringify(user));
                 this.currentUserSubject.next(user);
                 return user;
             }
-            
         }));
     }
 
@@ -38,4 +37,4 @@ export class AuthenticationService {
         localStorage.removeItem('currentUser');
         this.currentUserSubject.next(null);
     }
-} 
+}

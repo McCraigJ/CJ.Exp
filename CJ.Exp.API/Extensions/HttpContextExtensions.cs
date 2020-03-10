@@ -12,7 +12,7 @@ namespace CJ.Exp.API.Extensions
 
       if (httpContext.Request.Headers.TryGetValue("authorization", out StringValues authHeaderValues))
       {
-        token = authHeaderValues.FirstOrDefault()?.Replace("bearer ", "");
+        token = authHeaderValues.FirstOrDefault()?.Replace("bearer ", "").Replace("Bearer ", "");
       }
 
       return token;

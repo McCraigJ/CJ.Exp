@@ -52,14 +52,14 @@ export class LoginComponent implements OnInit {
             .subscribe(
                 data => {
                     if (data === undefined) {
-                        this.alertService.error("Invalid login details");
+                        this.alertService.error('Invalid login details');
                         this.loading = false;
                     } else {
                         this.router.navigate([this.returnUrl]);
-                    }                    
+                    }
                 },
                 error => {
-                    this.alertService.error(error);                  
+                    this.alertService.error('Error communicating with server');
                     this.loading = false;
                 });
     }

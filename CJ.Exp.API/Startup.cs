@@ -36,11 +36,22 @@ namespace CJ.Exp.API
     }
 
     public IConfiguration Configuration { get; }
+    private readonly string _corsPolicyKey = "corsPolicy";
 
     // This method gets called by the runtime. Use this method to add services to the container.
     public void ConfigureServices(IServiceCollection services)
     {
-      services.AddCors();
+      services.AddCors(options =>
+      {
+        options.AddPolicy(_corsPolicyKey,
+          builder =>
+          {
+            builder.WithOrigins("http://localhost:4200");
+            builder.AllowAnyMethod();
+            builder.AllowCredentials();
+            builder.AllowAnyHeader();
+          });
+      });
 
       // ===== Add Jwt Authentication ========
       JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear(); // => remove default claims
@@ -123,21 +134,18 @@ namespace CJ.Exp.API
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
-
       app.UseStaticFiles();
-
+      app.UseMiddleware<ExceptionMiddleware>();
+      app.UseCors(_corsPolicyKey);
+      app.UseMiddleware<AuthMiddleware>();
       app.UseStatusCodePages();
 
-      app.UseMiddleware<ExceptionMiddleware>();
-
-      app.UseMiddleware<AuthMiddleware>();
-
-      app.UseCors(builder => builder
-        .AllowAnyOrigin()
-        .AllowAnyMethod()
-        .AllowAnyHeader()
-        //.AllowCredentials()
-        );
+      //app.UseCors(builder => builder
+      //  //.AllowAnyOrigin()
+      //  .AllowAnyMethod()
+      //  .AllowAnyHeader()
+      //  .AllowCredentials()
+      //  );
 
       app.UseMvc();
       

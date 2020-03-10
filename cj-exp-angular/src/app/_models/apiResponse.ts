@@ -1,10 +1,10 @@
-export class apiResponse {
-    success:boolean;
+export class ApiResponse {
+    success: boolean;
     data: any;
-    businessErrors: apiBusinessErrorCodes[]
+    businessErrors: ApiBusinessErrorCodes[];
 }
 
-export class apiBusinessErrorCodes {
-    errorCode: Number;
+export class ApiBusinessErrorCodes {
+    errorCode: number;
     errorMessage: string;
 }
