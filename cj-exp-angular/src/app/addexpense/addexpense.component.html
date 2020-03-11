@@ -1,6 +1,23 @@
-<page-header pageTitle="Add Expense"></page-header> 
+<page-header pageTitle="Add Expense"></page-header>
 
-<div>
-  <p *ngFor="let expenseType of expenseTypes">{{expenseType.name}}</p>
-</div>
+<form [formGroup]="addExpenseForm" (ngSubmit)="onSubmit()">
+  <mat-form-field appearance="fill">
+    <mat-label>Expense Type</mat-label>
+    <mat-select formControlName="expenseType" [ngClass]="{ 'is-invalid': submitted && f.expenseType.errors }">
+      <mat-option *ngFor="let type of expenseTypes" [value]="type.id">
+          {{type.name}} 
+      </mat-option>
+    </mat-select>
 
+    <mat-error *ngIf="submitted && f.expenseType.errors">
+      <div *ngIf="f.expenseType.errors.required">Expense Type is required</div>
+    </mat-error>
+  </mat-form-field>
+
+  <button mat-raised-button color="primary" [disabled]="loading">
+      Save
+      <div class="button-spinner">
+          <mat-progress-spinner *ngIf="loading" class="button-spinner" color="accent" mode='indeterminate' diameter="20"></mat-progress-spinner>
+      </div>        
+  </button>
+</form> 

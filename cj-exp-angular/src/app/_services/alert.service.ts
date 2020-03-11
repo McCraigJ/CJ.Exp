@@ -23,7 +23,7 @@ export class AlertService {
         this.clear();
 
         this.snackBarRef = this.snackBar.open(message, action, {
-            duration: duration,
+            duration,
             panelClass: cssClass
         });
     };
