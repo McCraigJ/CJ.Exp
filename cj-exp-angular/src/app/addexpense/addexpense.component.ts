@@ -3,17 +3,19 @@ import { ExpensesService } from '../_services/expenses.service';
 import { Subscription } from 'rxjs';
 import { ExpenseType } from '../_models/expense.models';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormStatus } from '../_models/form.models';
 
-@Component({templateUrl: 'addexpense.component.html'})
+@Component({ templateUrl: 'addexpense.component.html' })
 export class AddExpenseComponent implements OnInit, OnDestroy {
     constructor(
         private formBuilder: FormBuilder,
         private expensesService: ExpensesService
-    ) {}
+    ) {
+        this.formStatus = new FormStatus();
+    }
 
     addExpenseForm: FormGroup;
-    loading = false;
-    submitted = false;
+    formStatus: FormStatus;
     expenseTypesSubscription: Subscription;
     expenseTypes: ExpenseType[];
 
@@ -22,13 +24,21 @@ export class AddExpenseComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
 
+        this.formStatus.loading = true;
         this.addExpenseForm = this.formBuilder.group({
             expenseType: ['', Validators.required]
         });
 
         this.expenseTypesSubscription = this.expensesService.getExpenseTypes()
             .subscribe(expenseTypes => {
+                const otherExpenseType: ExpenseType = { id: '-1', name: 'Other' };
+                expenseTypes.push(otherExpenseType);
                 this.expenseTypes = expenseTypes;
+                this.formStatus.loading = false;
+                this.formStatus.loadError = false;
+            }, error => {
+                this.formStatus.loading = false;
+                this.formStatus.loadError = true;
             });
     }
 
@@ -37,12 +47,14 @@ export class AddExpenseComponent implements OnInit, OnDestroy {
     }
 
     onSubmit() {
-        this.submitted = true;
+        this.formStatus.submitted = true;
 
         // stop here if form is invalid
         if (this.addExpenseForm.invalid) {
             return;
         }
+
+        this.formStatus.submitting = true;
 
         // this.loading = true;
         // this.authenticationService.login(this.f.username.value, this.f.password.value)

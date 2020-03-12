@@ -1,23 +1,24 @@
 <page-header pageTitle="Add Expense"></page-header>
 
-<form [formGroup]="addExpenseForm" (ngSubmit)="onSubmit()">
+<mat-progress-spinner *ngIf="formStatus.loading" class="button-spinner" color="accent" mode='indeterminate' diameter="20"></mat-progress-spinner>
+<form [formGroup]="addExpenseForm" (ngSubmit)="onSubmit()" *ngIf="!formStatus.loading && !formStatus.loadError">
   <mat-form-field appearance="fill">
     <mat-label>Expense Type</mat-label>
-    <mat-select formControlName="expenseType" [ngClass]="{ 'is-invalid': submitted && f.expenseType.errors }">
+    <mat-select formControlName="expenseType" [ngClass]="{ 'is-invalid': formStatus.submitted && f.expenseType.errors }">
       <mat-option *ngFor="let type of expenseTypes" [value]="type.id">
           {{type.name}} 
       </mat-option>
     </mat-select>
 
-    <mat-error *ngIf="submitted && f.expenseType.errors">
+    <mat-error *ngIf="formStatus.submitted && f.expenseType.errors">
       <div *ngIf="f.expenseType.errors.required">Expense Type is required</div>
     </mat-error>
   </mat-form-field>
 
-  <button mat-raised-button color="primary" [disabled]="loading">
+  <button mat-raised-button color="primary" [disabled]="formStatus.submitting">
       Save
       <div class="button-spinner">
-          <mat-progress-spinner *ngIf="loading" class="button-spinner" color="accent" mode='indeterminate' diameter="20"></mat-progress-spinner>
+          <mat-progress-spinner *ngIf="formStatus.submitting" class="button-spinner" color="accent" mode='indeterminate' diameter="20"></mat-progress-spinner>
       </div>        
   </button>
 </form> 

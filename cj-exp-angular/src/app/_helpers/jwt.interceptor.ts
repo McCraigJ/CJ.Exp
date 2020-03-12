@@ -4,6 +4,7 @@ import { AuthenticationService } from '../_services';
 import { Observable, throwError } from 'rxjs';
 import { catchError, retry } from 'rxjs/operators';
 import { Router } from '@angular/router';
+import { AlertService } from '../_services/alert.service';
 
 // Intercepts any HTTP Request and adds the JWT bearer header if it is available
 
@@ -11,6 +12,7 @@ import { Router } from '@angular/router';
 export class JwtInterceptor implements HttpInterceptor {
     constructor(
         private authenticationService: AuthenticationService,
+        private alertService: AlertService,
         private router: Router
     ) { }
 
@@ -31,6 +33,7 @@ export class JwtInterceptor implements HttpInterceptor {
                 this.router.navigate(['/login'], {queryParams: { returnUrl: this.router.routerState.snapshot.url}});
             } else {
                 const error = err.error.message || err.statusText;
+                this.alertService.error('Error communicating with server');
                 return throwError(error);
             }
         }));
