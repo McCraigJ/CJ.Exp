@@ -1,12 +1,15 @@
 <page-header pageTitle="Add Expense"></page-header>
 
-<mat-progress-spinner *ngIf="formStatus.loading" class="button-spinner" color="accent" mode='indeterminate' diameter="20"></mat-progress-spinner>
+<mat-progress-spinner *ngIf="formStatus.loading" class="button-spinner" color="accent" mode='indeterminate'
+  diameter="20"></mat-progress-spinner>
 <form [formGroup]="addExpenseForm" (ngSubmit)="onSubmit()" *ngIf="!formStatus.loading && !formStatus.loadError">
-  <mat-form-field appearance="fill">
+  
+  <mat-form-field>
     <mat-label>Expense Type</mat-label>
-    <mat-select formControlName="expenseType" [ngClass]="{ 'is-invalid': formStatus.submitted && f.expenseType.errors }">
+    <mat-select formControlName="expenseType"
+      [ngClass]="{ 'is-invalid': formStatus.submitted && f.expenseType.errors }">
       <mat-option *ngFor="let type of expenseTypes" [value]="type.id">
-          {{type.name}} 
+        {{type.name}}
       </mat-option>
     </mat-select>
 
@@ -15,10 +18,44 @@
     </mat-error>
   </mat-form-field>
 
-  <button mat-raised-button color="primary" [disabled]="formStatus.submitting">
-      Save
-      <div class="button-spinner">
-          <mat-progress-spinner *ngIf="formStatus.submitting" class="button-spinner" color="accent" mode='indeterminate' diameter="20"></mat-progress-spinner>
-      </div>        
+  <mat-form-field *ngIf="showNewExpenseType">
+    <mat-label>New Expense Type</mat-label>
+    <input matInput formControlName="newExpenseType" [ngClass]="{ 'is-invalid': formStatus.submitted && f.newExpenseType.errors }">
+    <mat-error *ngIf="formStatus.submitted && f.newExpenseType.errors">
+      <div *ngIf="f.newExpenseType.errors.required">New Expense Type is required</div>
+    </mat-error>
+  </mat-form-field>
+ 
+  <mat-form-field>
+    <mat-label>Date</mat-label>
+    <input matInput [matDatepicker]="picker1"  [formControl]="f.expenseDate">
+    <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+    <mat-datepicker #picker1></mat-datepicker>
+    <mat-error *ngIf="formStatus.submitted && f.expenseDate.errors">
+      <div *ngIf="f.expenseDate.errors.required">Expense Date is required</div>
+    </mat-error>
+  </mat-form-field> 
+
+  <mat-form-field >
+    <mat-label>Expense Value</mat-label>
+    <input matInput formControlName="expenseValue" type="number" [ngClass]="{ 'is-invalid': formStatus.submitted && f.expenseValue.errors }">
+    <mat-error *ngIf="formStatus.submitted && f.expenseValue.errors">
+      <div *ngIf="f.expenseValue.errors.required">Expense Value is required</div>
+      <div *ngIf="f.expenseValue.errors.currencyInvalid">Expense Value must be greater than 0</div>
+    </mat-error>
+  </mat-form-field>
+
+  <!-- <mat-form-field>
+    <input matInput [matDatepicker]="picker1" placeholder="From Date" [formControl]="date1">
+    <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+    <mat-datepicker  #picker1></mat-datepicker>
+</mat-form-field> -->
+
+  <button mat-raised-button color="primary" [disabled]="formStatus.submitExecuting">
+    Save
+    <div class="button-spinner">
+      <mat-progress-spinner *ngIf="formStatus.submitExecuting" class="button-spinner" color="accent" mode='indeterminate'
+        diameter="20"></mat-progress-spinner>
+    </div>
   </button>
 </form> 
