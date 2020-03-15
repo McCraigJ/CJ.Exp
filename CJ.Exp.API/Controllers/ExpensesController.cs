@@ -16,7 +16,7 @@ namespace CJ.Exp.API.Controllers
   {
     private readonly IExpensesService _expensesService;
 
-    public ExpensesController(IExpensesService expensesService)
+    public ExpensesController(IExpensesService expensesService, ILanguage language) : base(language)
     {
       _expensesService = expensesService;
     }
@@ -45,7 +45,7 @@ namespace CJ.Exp.API.Controllers
     }
 
     [HttpPost]
-    public async Task<IActionResult> Add(AddExpenseAM model)
+    public async Task<IActionResult> Add([FromBody] AddExpenseAM model)
     {
       var expense = Mapper.Map<UpdateExpenseSM>(model);
       expense.ExpenseType = new ExpenseTypeSM { Id = model.ExpenseTypeId };

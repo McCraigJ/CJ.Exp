@@ -6,6 +6,7 @@ import { Router, NavigationStart } from '@angular/router';
 export class AlertService {
 
     private snackBarRef: MatSnackBarRef<SimpleSnackBar>;
+    private keepOpenOnNavigate: boolean = false;
 
     constructor(
         private snackBar: MatSnackBar,
@@ -13,10 +14,13 @@ export class AlertService {
     ) {
         this.router.events.subscribe(evt => {
             if (evt instanceof NavigationStart) {
-                this.clear();
+                if (this.keepOpenOnNavigate) {
+                    this.keepOpenOnNavigate = false;
+                } else {
+                    this.clear();
+                }
             }
         });
-
     }
 
     openSnackBar(message: string, action: string, duration: number, cssClass: string) {
@@ -27,9 +31,9 @@ export class AlertService {
             panelClass: cssClass
         });
     };
-
-    // Create a success message. Keep After Route Change defaults to false
+    
     public success(message: string) {
+        this.keepOpenOnNavigate = true;
         this.openSnackBar(message, 'close', 5000, 'snack-success');
     }
 

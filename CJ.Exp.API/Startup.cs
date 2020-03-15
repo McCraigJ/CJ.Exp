@@ -10,6 +10,7 @@ using CJ.Exp.Data.MongoDb.DataModels;
 using CJ.Exp.Data.MongoDb.Interfaces;
 using CJ.Exp.Data.MongoDb.Mongo;
 using CJ.Exp.DomainInterfaces;
+using CJ.Exp.LanguageProvider;
 using CJ.Exp.Notification;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -17,6 +18,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.IdentityModel.Tokens.Jwt;
@@ -94,10 +96,10 @@ namespace CJ.Exp.API
       services.AddSingleton(appSettings);
       services.AddSingleton<IAppMongoClient, AppMongoClient>();
 
-      //ILanguage languageProvider = new TextCache();
-      //languageProvider.Initialise(_env.IsDevelopment());
+      ILanguage languageProvider = new TextCache();
+      languageProvider.Initialise(_env.IsDevelopment());
 
-      //services.AddSingleton(languageProvider);
+      services.AddSingleton(languageProvider);
 
       services.AddIdentity<ApplicationUserMongo, ApplicationRoleMongo>()
         .AddMongoDbStores<ApplicationUserMongo, ApplicationRoleMongo, Guid>

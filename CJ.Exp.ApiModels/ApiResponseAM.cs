@@ -13,7 +13,7 @@ namespace CJ.Exp.ApiModels
   public class BusinessErrorAM
   {
     public ApiBusinessErrorCodes ErrorCode { get; private set; }
-    public string ErrorMessage { get; private set; }
+    public string ErrorMessage { get; set; }
 
     public BusinessErrorAM(ApiBusinessErrorCodes errorCode, string errorMessage)
     {

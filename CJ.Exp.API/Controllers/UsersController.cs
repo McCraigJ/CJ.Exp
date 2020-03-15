@@ -20,8 +20,9 @@ namespace CJ.Exp.API.Controllers
     public UsersController(
         IAuthService authService,
         IConfiguration configuration,
-        IAuthTokenService authTokenService
-        )
+        IAuthTokenService authTokenService,
+        ILanguage language
+        ) : base(language)
     {
       _authService = authService;
       _configuration = configuration;

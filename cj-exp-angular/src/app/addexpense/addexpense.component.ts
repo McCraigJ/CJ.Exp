@@ -1,16 +1,21 @@
 import { OnInit, Component, OnDestroy } from '@angular/core';
 import { ExpensesService } from '../_services/expenses.service';
 import { Subscription } from 'rxjs';
-import { ExpenseType } from '../_models/expense.models';
+import { expenseType } from '../_models/expense.models';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { FormStatus } from '../_models/form.models';
 import { currencyValidator } from '../_validators/currencyValidator';
+import { first } from 'rxjs/operators';
+import { Router } from '@angular/router';
+import { AlertService } from '../_services/alert.service';
 
 @Component({ templateUrl: 'addexpense.component.html' })
 export class AddExpenseComponent implements OnInit, OnDestroy {
     constructor(
         private formBuilder: FormBuilder,
-        private expensesService: ExpensesService
+        private expensesService: ExpensesService,
+        private router: Router,
+        private alertService: AlertService
     ) {
         this.formStatus = new FormStatus();
     }
@@ -18,7 +23,7 @@ export class AddExpenseComponent implements OnInit, OnDestroy {
     addExpenseForm: FormGroup;
     formStatus: FormStatus;
     expenseTypesSubscription: Subscription;
-    expenseTypes: ExpenseType[];
+    expenseTypes: expenseType[];
     showNewExpenseType: boolean = false;
 
     // convenience getter for easy access to form fields
@@ -31,12 +36,12 @@ export class AddExpenseComponent implements OnInit, OnDestroy {
             expenseType: ['', Validators.required],
             newExpenseType: [''],
             expenseDate: [new Date(), Validators.required],
-            expenseValue: [0, [Validators.required, currencyValidator]]
+            expenseValue: ['', [Validators.required, currencyValidator]]
         });
 
         this.expenseTypesSubscription = this.expensesService.getExpenseTypes()
             .subscribe(expenseTypes => {
-                const otherExpenseType: ExpenseType = { id: '-1', name: 'Other' };
+                const otherExpenseType: expenseType = { id: '-1', name: 'Other' };
                 expenseTypes.push(otherExpenseType);
                 this.expenseTypes = expenseTypes;
                 this.formStatus.loading = false;
@@ -67,29 +72,33 @@ export class AddExpenseComponent implements OnInit, OnDestroy {
 
     onSubmit() {
         this.formStatus.submitted = true;
-
-        // stop here if form is invalid
+        
         if (this.addExpenseForm.invalid) {
             return;
         }
 
         this.formStatus.submitExecuting = true;
 
-        // this.loading = true;
-        // this.authenticationService.login(this.f.username.value, this.f.password.value)
-        //     .pipe(first())
-        //     .subscribe(
-        //         data => {
-        //             if (data === undefined) {
-        //                 this.alertService.error('Invalid login details');
-        //                 this.loading = false;
-        //             } else {
-        //                 this.router.navigate([this.returnUrl]);
-        //             }
-        //         },
-        //         error => {
-        //             this.alertService.error('Error communicating with server');
-        //             this.loading = false;
-        //         });
+        this.expensesService.addExpense({
+            expenseTypeId: this.f.expenseType.value,
+            newExpenseType: this.f.newExpenseType.value,
+            expenseDate: this.f.expenseDate.value,
+            expenseValue: this.f.expenseValue.value
+        }).pipe(first()).subscribe(
+            data => {
+                if (data.success) {
+                    this.alertService.success("Expense added");
+                    this.router.navigate(['/']);
+                } else {
+                    this.alertService.error(data.businessErrors[0].errorMessage);
+                    this.formStatus.submitExecuting = false;
+                }
+            },
+            error => {
+                this.alertService.error("Error communicating with server");
+                this.formStatus.submitExecuting = false;
+            }
+        );
+
     }
 }
