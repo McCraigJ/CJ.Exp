@@ -12,6 +12,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { PageHeaderComponent } from '../_components';
 import { AddExpenseComponent } from '../addexpense';
 import { JwtInterceptor } from '../_helpers/jwt.interceptor';
+import { GetExpensesComponent } from '../getexpenses';
 
 @NgModule({
   declarations: [
@@ -19,7 +20,8 @@ import { JwtInterceptor } from '../_helpers/jwt.interceptor';
     HomeComponent,
     LoginComponent,
     PageHeaderComponent,
-    AddExpenseComponent
+    AddExpenseComponent,
+    GetExpensesComponent
   ],
   imports: [
     BrowserModule,

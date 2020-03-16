@@ -1,0 +1,34 @@
+<page-header pageTitle="Expenses"></page-header>
+
+<mat-progress-spinner *ngIf="formStatus.loading" class="button-spinner" color="accent" mode='indeterminate' diameter="20"></mat-progress-spinner>
+
+<form [formGroup]="getExpensesFilterForm" (ngSubmit)="onSubmit()" *ngIf="!formStatus.loading && !formStatus.loadError">
+
+  <mat-form-field>
+    <mat-label>From Date</mat-label>
+    <input matInput [matDatepicker]="picker1" [formControl]="f.dateFrom">
+    <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+    <mat-datepicker #picker1></mat-datepicker>
+    <mat-error *ngIf="formStatus.submitted && f.dateFrom.errors">
+      <div *ngIf="f.dateFrom.errors.required">From Date is required</div>
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>To Date</mat-label>
+    <input matInput [matDatepicker]="picker2" [formControl]="f.dateTo">
+    <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+    <mat-datepicker #picker2></mat-datepicker>
+    <mat-error *ngIf="formStatus.submitted && f.dateTo.errors">
+      <div *ngIf="f.dateTo.errors.required">To Date is required</div>
+    </mat-error>
+  </mat-form-field>
+
+  <button mat-raised-button color="primary" [disabled]="formStatus.submitExecuting">
+    Search
+    <div class="button-spinner">
+      <mat-progress-spinner *ngIf="formStatus.submitExecuting" class="button-spinner" color="accent" mode='indeterminate' diameter="20"></mat-progress-spinner>
+    </div>
+  </button>
+
+</form>

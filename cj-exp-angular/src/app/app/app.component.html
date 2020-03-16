@@ -22,6 +22,9 @@
         <a mat-list-item routerLink="/addexpense" *ngIf="currentUser">
           <mat-icon>person</mat-icon> Add Expense
         </a>
+        <a mat-list-item routerLink="/getexpenses" *ngIf="currentUser">
+          <mat-icon>person</mat-icon> View Expenses
+        </a>
         <a mat-list-item (click)="logout()" *ngIf="currentUser">
           <mat-icon>person</mat-icon> Logout
         </a>

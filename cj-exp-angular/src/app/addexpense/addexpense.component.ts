@@ -1,7 +1,7 @@
 import { OnInit, Component, OnDestroy } from '@angular/core';
 import { ExpensesService } from '../_services/expenses.service';
 import { Subscription } from 'rxjs';
-import { expenseType } from '../_models/expense.models';
+import { ExpenseType } from '../_models/expense.models';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { FormStatus } from '../_models/form.models';
 import { currencyValidator } from '../_validators/currencyValidator';
@@ -23,8 +23,8 @@ export class AddExpenseComponent implements OnInit, OnDestroy {
     addExpenseForm: FormGroup;
     formStatus: FormStatus;
     expenseTypesSubscription: Subscription;
-    expenseTypes: expenseType[];
-    showNewExpenseType: boolean = false;
+    expenseTypes: ExpenseType[];
+    showNewExpenseType = false;
 
     // convenience getter for easy access to form fields
     get f() { return this.addExpenseForm.controls; }
@@ -41,7 +41,7 @@ export class AddExpenseComponent implements OnInit, OnDestroy {
 
         this.expenseTypesSubscription = this.expensesService.getExpenseTypes()
             .subscribe(expenseTypes => {
-                const otherExpenseType: expenseType = { id: '-1', name: 'Other' };
+                const otherExpenseType: ExpenseType = { id: '-1', name: 'Other' };
                 expenseTypes.push(otherExpenseType);
                 this.expenseTypes = expenseTypes;
                 this.formStatus.loading = false;
@@ -51,17 +51,17 @@ export class AddExpenseComponent implements OnInit, OnDestroy {
                 this.formStatus.loadError = true;
             });
 
-        var newExpenseTypeControl = this.addExpenseForm.get('newExpenseType');
+        const newExpenseTypeControl = this.addExpenseForm.get('newExpenseType');
 
         this.addExpenseForm.get('expenseType').valueChanges
-            .subscribe(expenseType => {
-                this.showNewExpenseType = expenseType === '-1';
+            .subscribe(expType => {
+                this.showNewExpenseType = expType === '-1';
                 if (this.showNewExpenseType) {
                     newExpenseTypeControl.setValidators([Validators.required]);
                 } else {
                     newExpenseTypeControl.setValidators(null);
                 }
-                
+
                 newExpenseTypeControl.updateValueAndValidity();
             });
     }
@@ -72,7 +72,7 @@ export class AddExpenseComponent implements OnInit, OnDestroy {
 
     onSubmit() {
         this.formStatus.submitted = true;
-        
+
         if (this.addExpenseForm.invalid) {
             return;
         }
@@ -87,7 +87,7 @@ export class AddExpenseComponent implements OnInit, OnDestroy {
         }).pipe(first()).subscribe(
             data => {
                 if (data.success) {
-                    this.alertService.success("Expense added");
+                    this.alertService.success('Expense added');
                     this.router.navigate(['/']);
                 } else {
                     this.alertService.error(data.businessErrors[0].errorMessage);
@@ -95,7 +95,7 @@ export class AddExpenseComponent implements OnInit, OnDestroy {
                 }
             },
             error => {
-                this.alertService.error("Error communicating with server");
+                this.alertService.error('Error communicating with server');
                 this.formStatus.submitExecuting = false;
             }
         );
