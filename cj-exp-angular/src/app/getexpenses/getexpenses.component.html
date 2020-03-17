@@ -32,3 +32,18 @@
   </button>
 
 </form>
+
+<table *ngIf="expenses">
+  <thead>
+    <tr>
+      <th>Expense Date</th>
+      <th>Expense Value</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let expense of expenses">
+      <td>{{expense.expenseDate}}</td>
+      <td>{{expense.expenseValue}}</td>
+    </tr>
+  </tbody>
+</table>

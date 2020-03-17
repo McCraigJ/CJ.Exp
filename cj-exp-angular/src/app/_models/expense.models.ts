@@ -10,3 +10,10 @@ export class Expense {
   expenseValue: number;
   // expenseUser: string;
 }
+
+export class ExpensesFilter {
+  startDate: Date;
+  endDate: Date;
+  itemsPerPage: number;
+  pageNumber: number;
+}

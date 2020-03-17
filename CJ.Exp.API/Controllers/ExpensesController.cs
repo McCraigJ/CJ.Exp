@@ -23,7 +23,7 @@ namespace CJ.Exp.API.Controllers
 
     [HttpPost]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public async Task<IActionResult> GetExpenses(ExpensesFilterAM model)
+    public async Task<IActionResult> GetExpenses([FromBody] ExpensesFilterAM model)
     {
       var filter = new ExpensesFilterSM
       {

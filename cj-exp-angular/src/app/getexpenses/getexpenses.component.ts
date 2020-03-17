@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { FormStatus } from '../_models/form.models';
 import { Subscription } from 'rxjs';
-import { Expense } from '../_models/expense.models';
+import { Expense, ExpensesFilter } from '../_models/expense.models';
 import { ExpensesService } from '../_services/expenses.service';
 
 @Component({ templateUrl: 'getexpenses.component.html' })
@@ -45,6 +45,20 @@ export class GetExpensesComponent implements OnInit {
 
     this.formStatus.submitExecuting = true;
 
+    this.expensesSubscription = this.expensesService.getExpenses({
+      startDate: this.f.dateFrom.value,
+      endDate: this.f.dateTo.value,
+      itemsPerPage: 20,
+      pageNumber: this.currentPageNumber
+    }).pipe().subscribe(
+      data => {
+        this.expenses = data;
+      },
+      error => {
+        this.formStatus.loading = false;
+        this.formStatus.loadError = true;
+      }
+    );
     // Do form submit
     // this.formStatus.submitExecuting = false;
   }
