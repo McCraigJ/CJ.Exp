@@ -77,31 +77,28 @@ export class AddExpenseComponent implements OnInit, OnDestroy {
             return;
         }
 
-        this.formStatus.submitExecuting = false;
-        this.resetForm();
-
-        // this.expensesService.addExpense({
-        //     expenseTypeId: this.f.expenseType.value,
-        //     newExpenseType: this.f.newExpenseType.value,
-        //     expenseDate: this.f.expenseDate.value,
-        //     expenseValue: this.f.expenseValue.value
-        // }).pipe(first()).subscribe(
-        //     data => {
-        //         this.formStatus.submitExecuting = false;
-        //         if (data.success) {
-        //             this.alertService.success('Expense added');
-        //             //this.router.navigate(['/']);
-        //             //this.formStatus.submitted = false;
-        //             this.resetForm();
-        //         } else {
-        //             this.alertService.error(data.businessErrors[0].errorMessage);                    
-        //         }
-        //     },
-        //     error => {
-        //         this.alertService.error('Error communicating with server');
-        //         this.formStatus.submitExecuting = false;
-        //     }
-        // );
+        this.expensesService.addExpense({
+            expenseTypeId: this.f.expenseType.value,
+            newExpenseType: this.f.newExpenseType.value,
+            expenseDate: this.f.expenseDate.value,
+            expenseValue: this.f.expenseValue.value
+        }).pipe(first()).subscribe(
+            data => {
+                this.formStatus.submitExecuting = false;
+                if (data.success) {
+                    this.alertService.success('Expense added');
+                    //this.router.navigate(['/']);
+                    //this.formStatus.submitted = false;
+                    this.resetForm();
+                } else {
+                    this.alertService.error(data.businessErrors[0].errorMessage);                    
+                }
+            },
+            error => {
+                this.alertService.error('Error communicating with server');
+                this.formStatus.submitExecuting = false;
+            }
+        );
         
     }
 
