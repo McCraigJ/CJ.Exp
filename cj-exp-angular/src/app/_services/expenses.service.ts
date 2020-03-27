@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { ExpenseType, Expense, ExpensesFilter } from '../_models/expense.models';
+import { ExpenseType, AddExpense, ExpensesFilter, ExpenseGrid } from '../_models/expense.models';
 import { ApiResponse } from '../_models/apiResponse.models';
 
 @Injectable({ providedIn: 'root' })
@@ -26,15 +26,15 @@ export class ExpensesService {
       }));
   }
 
-  getExpenses(filter: ExpensesFilter): Observable<Expense[]> {
+  getExpenses(filter: ExpensesFilter): Observable<ExpenseGrid> {
     return this.http.post<ApiResponse>(`${environment.apiUrl}expenses/GetExpenses`, filter)
       .pipe(map(apiResponse => {
-        const expenses: Expense[] = apiResponse.data;
-        return expenses;
+        const expensesGrid: ExpenseGrid = apiResponse.data;
+        return expensesGrid;
       }));
   }
 
-  addExpense(expense: Expense): Observable<ApiResponse> {
+  addExpense(expense: AddExpense): Observable<ApiResponse> {
     return this.http.post<ApiResponse>(`${environment.apiUrl}expenses/Add`, expense)
     .pipe();
   }

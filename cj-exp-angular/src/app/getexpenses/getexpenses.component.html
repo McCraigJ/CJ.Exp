@@ -33,17 +33,24 @@
 
 </form>
 
-<table *ngIf="expenses">
+<table class="data-table" *ngIf="expenses">
   <thead>
     <tr>
       <th>Expense Date</th>
-      <th>Expense Value</th>
+      <th>Expense Type</th>
+      <th class="align-right">Expense Value</th>
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let expense of expenses">
-      <td>{{expense.expenseDate}}</td>
-      <td>{{expense.expenseValue}}</td>
+    <tr *ngFor="let expense of expenses.gridRows">
+      <td>{{expense.expenseDate | date: 'dd/MM/yyyy'}}</td>
+      <td>{{expense.expenseType.expenseType}}</td>
+      <td class="align-right">{{expense.expenseValue}}</td>
+    </tr>
+    <tr>
+      <th scope="row">Total</th>
+      <td></td>
+      <td class="align-right">{{expenses.gridPageTotal}}</td>
     </tr>
   </tbody>
 </table>

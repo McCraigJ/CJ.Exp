@@ -69,7 +69,7 @@ namespace CJ.Exp.API.Controllers
       {
         foreach (var err in responseModel.BusinessErrors)
         {
-          err.ErrorMessage = _language.GetText(err.ErrorMessage);
+          err.ErrorMessage = _language.GetText($"BusinessError.{err.ErrorMessage}");
         }
         
       }

@@ -45,7 +45,7 @@ namespace CJ.Exp.Data.MongoDb.DataAccess
       return new GridResultSM<UserSM>(filter?.GridFilter?.PageNumber ?? 0,
         (int)count,
         filter?.GridFilter?.ItemsPerPage ?? 0,
-        null,
+        null, null,
         Mapper.Map<List<UserSM>>(users));
     }
 

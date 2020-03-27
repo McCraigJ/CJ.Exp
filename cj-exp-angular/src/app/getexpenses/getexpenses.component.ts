@@ -2,8 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { FormStatus } from '../_models/form.models';
 import { Subscription } from 'rxjs';
-import { Expense, ExpensesFilter } from '../_models/expense.models';
 import { ExpensesService } from '../_services/expenses.service';
+import { first } from 'rxjs/operators';
+import { ExpenseGrid } from '../_models/expense.models';
 
 @Component({ templateUrl: 'getexpenses.component.html' })
 export class GetExpensesComponent implements OnInit {
@@ -11,7 +12,7 @@ export class GetExpensesComponent implements OnInit {
   getExpensesFilterForm: FormGroup;
   formStatus: FormStatus;
   expensesSubscription: Subscription;
-  expenses: Expense[];
+  expenses: ExpenseGrid;
   currentPageNumber = 1;
 
   constructor(
@@ -50,8 +51,9 @@ export class GetExpensesComponent implements OnInit {
       endDate: this.f.dateTo.value,
       itemsPerPage: 20,
       pageNumber: this.currentPageNumber
-    }).pipe().subscribe(
+    }).pipe(first()).subscribe(
       data => {
+        this.formStatus.submitExecuting = false;
         this.expenses = data;
       },
       error => {
@@ -59,7 +61,6 @@ export class GetExpensesComponent implements OnInit {
         this.formStatus.loadError = true;
       }
     );
-    // Do form submit
-    // this.formStatus.submitExecuting = false;
+
   }
 }
