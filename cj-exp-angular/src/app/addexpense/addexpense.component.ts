@@ -67,7 +67,9 @@ export class AddExpenseComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
-        this.expenseTypesSubscription.unsubscribe();
+        if (this.expenseTypesSubscription != null) {
+            this.expenseTypesSubscription.unsubscribe();
+        }
     }
 
     onSubmit() {
@@ -87,9 +89,7 @@ export class AddExpenseComponent implements OnInit, OnDestroy {
                 this.formStatus.submitExecuting = false;
                 if (data.success) {
                     this.alertService.success('Expense added');
-                    //this.router.navigate(['/']);
-                    //this.formStatus.submitted = false;
-                    this.resetForm();
+                    this.router.navigate(['/']);
                 } else {
                     this.alertService.error(data.businessErrors[0].errorMessage);                    
                 }
@@ -102,10 +102,4 @@ export class AddExpenseComponent implements OnInit, OnDestroy {
         
     }
 
-    resetForm() {        
-        this.addExpenseForm.markAsPristine();
-        this.addExpenseForm.markAsUntouched();
-        this.addExpenseForm.reset(); 
-        this.formStatus.submitted = false;       
-    }
 }

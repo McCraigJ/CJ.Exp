@@ -46,3 +46,5 @@ Sum:
 db.expenses.aggregate({$group: {_id: 1, sum: { $sum: "$ExpenseValue"}}})
 Count:
 db.expenses.count()
+
+mongo --port 27019 --username admin --password P@ssw0rd1

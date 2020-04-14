@@ -11,6 +11,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using CJ.Exp.ServiceModels;
 using MongoDB.Bson;
+using System.Linq.Expressions;
 
 namespace CJ.Exp.Data.MongoDb.DataAccess
 {
@@ -19,6 +20,7 @@ namespace CJ.Exp.Data.MongoDb.DataAccess
 
         private readonly IMongoCollection<ExpenseTypeMongoDM> _expenseTypeCollection;
         private readonly IMongoCollection<ExpenseMongoDM> _expenseCollection;
+        private readonly ISessionInfo _sessionInfo;
 
         private class SumResult
         {
@@ -26,11 +28,12 @@ namespace CJ.Exp.Data.MongoDb.DataAccess
             public int Sum { get; set; }
         }
 
-        public ExpensesDataMongo(IAppMongoClient mongoClient, IApplicationSettings applicationSettings) :
+        public ExpensesDataMongo(IAppMongoClient mongoClient, IApplicationSettings applicationSettings, ISessionInfo sessionInfo) :
           base(mongoClient, applicationSettings)
         {
             _expenseTypeCollection = Database.GetCollection<ExpenseTypeMongoDM>("expensetypes");
             _expenseCollection = Database.GetCollection<ExpenseMongoDM>("expenses");
+            _sessionInfo = sessionInfo;
         }
 
         public async Task<ExpenseSM> AddExpenseAsync(ExpenseSM expense)
@@ -80,15 +83,20 @@ namespace CJ.Exp.Data.MongoDb.DataAccess
                 return null;
             }
 
-            var query = _expenseCollection.Find(x => x.ExpenseDate >= filter.StartDate && x.ExpenseDate <= filter.EndDate.AddDays(1));
+            Expression<Func<ExpenseMongoDM, bool>> queryFilter = 
+                x => x.ExpenseDate >= filter.StartDate.Date && x.ExpenseDate <= filter.EndDate.Date.AddDays(1) && x.User.Id == new Guid(_sessionInfo.User.Id);
+
+            var query = _expenseCollection.Find(queryFilter);
 
             List<ExpenseMongoDM> expenses;
 
             expenses = await query.Skip(filter.GridFilter.Skip).Limit(filter.GridFilter.ItemsPerPage).ToListAsync();
 
-            var sum = await _expenseCollection.Aggregate()
+            var sum = await _expenseCollection                
+                .Aggregate()
+                .Match(queryFilter)
               .Group(
-                  x => null as string, //x.Id,
+                  x => null as string,
                   group => new
                   {
                       Id = group.Key,
@@ -103,7 +111,7 @@ namespace CJ.Exp.Data.MongoDb.DataAccess
               (int)count,
               filter.GridFilter.ItemsPerPage,
               gridPageTotal / 100m,
-              sum.Sum / 100m,
+              sum?.Sum / 100m,
               Mapper.Map<List<ExpenseSM>>(expenses));
         }
 

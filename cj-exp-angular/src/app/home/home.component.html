@@ -1,1 +1,14 @@
-<page-header pageTitle="Welcome"></page-header> 
+<page-header pageTitle="Welcome"></page-header>
+
+<mat-progress-spinner *ngIf="formStatus.loading" class="button-spinner" color="accent" mode='indeterminate'
+    diameter="20"></mat-progress-spinner>
+
+<div *ngIf="!formStatus.loading && !formStatus.loadError">
+    <div *ngIf="hasExpensesToday">
+        You have spent <span>{{todaysExpensesTotal}}</span> today
+    </div>
+    <br />
+    <div class="add-expense-button">
+        <button mat-raised-button color="primary" (click)="gotoAddExpense()">Add Expense</button>
+    </div>
+</div>

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { FormStatus } from '../_models/form.models';
 import { Subscription } from 'rxjs';
@@ -7,7 +7,7 @@ import { first } from 'rxjs/operators';
 import { ExpenseGrid } from '../_models/expense.models';
 
 @Component({ templateUrl: 'getexpenses.component.html' })
-export class GetExpensesComponent implements OnInit {
+export class GetExpensesComponent implements OnInit, OnDestroy {
 
   getExpensesFilterForm: FormGroup;
   formStatus: FormStatus;
@@ -35,6 +35,12 @@ export class GetExpensesComponent implements OnInit {
       dateTo: [currentDate],
     });
     this.formStatus.loading = false;
+  }
+
+  ngOnDestroy() {
+    if (this.expensesSubscription != null) {
+      this.expensesSubscription.unsubscribe();
+    }    
   }
 
   onSubmit() {

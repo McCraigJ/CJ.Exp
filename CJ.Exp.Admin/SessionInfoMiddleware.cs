@@ -1,14 +1,12 @@
-﻿using System;
-using System.Threading.Tasks;
-using CJ.Exp.Core;
+﻿using CJ.Exp.Core;
 using CJ.Exp.DomainInterfaces;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
+using System.Threading.Tasks;
 
 namespace CJ.Exp.Admin
 {
-  public class SessionInfoMiddleware
+    public class SessionInfoMiddleware
   {
     private readonly RequestDelegate _next;
 
