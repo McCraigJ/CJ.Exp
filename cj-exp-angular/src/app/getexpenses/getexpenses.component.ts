@@ -5,6 +5,7 @@ import { Subscription } from 'rxjs';
 import { ExpensesService } from '../_services/expenses.service';
 import { first } from 'rxjs/operators';
 import { ExpenseGrid } from '../_models/expense.models';
+import { Router } from '@angular/router';
 
 @Component({ templateUrl: 'getexpenses.component.html' })
 export class GetExpensesComponent implements OnInit, OnDestroy {
@@ -13,21 +14,31 @@ export class GetExpensesComponent implements OnInit, OnDestroy {
   formStatus: FormStatus;
   expensesSubscription: Subscription;
   expenses: ExpenseGrid;
-  currentPageNumber = 1;
+  currentPageNumber = 1;  
+  showTodayOnly = false;
 
   constructor(
     private formBuilder: FormBuilder,
-    private expensesService: ExpensesService
+    private expensesService: ExpensesService,
+    private router: Router
   ) {
     this.formStatus = new FormStatus();
+    var routerState = this.router.getCurrentNavigation().extras.state;
+    if (routerState !== undefined) {
+      this.showTodayOnly = routerState.showToday;
+    }    
   }
 
   get f() { return this.getExpensesFilterForm.controls; }
 
   ngOnInit() {
+    
     const currentDate: Date = new Date();
     const defaultFromDate = new Date();
-    defaultFromDate.setDate(currentDate.getDate() - 7);
+    
+    if (!this.showTodayOnly) {
+      defaultFromDate.setDate(currentDate.getDate() - 7);
+    }
 
     this.formStatus.loading = true;
     this.getExpensesFilterForm = this.formBuilder.group({
@@ -35,6 +46,11 @@ export class GetExpensesComponent implements OnInit, OnDestroy {
       dateTo: [currentDate],
     });
     this.formStatus.loading = false;
+
+    if (this.showTodayOnly) {
+      this.formStatus.submitted = true;
+      this.getExpenses();
+    }
   }
 
   ngOnDestroy() {
@@ -50,7 +66,14 @@ export class GetExpensesComponent implements OnInit, OnDestroy {
       return;
     }
 
+    this.getExpenses();
+  }
+
+  private getExpenses() {
+    
+
     this.formStatus.submitExecuting = true;
+    this.formStatus.updateFilter = false;
 
     this.expensesSubscription = this.expensesService.getExpenses({
       startDate: this.f.dateFrom.value,
@@ -67,6 +90,9 @@ export class GetExpensesComponent implements OnInit, OnDestroy {
         this.formStatus.loadError = true;
       }
     );
+  }
 
+  updateFilter() {
+    this.formStatus.updateFilter = true;
   }
 }

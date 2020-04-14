@@ -3,4 +3,5 @@ export class FormStatus {
   submitted: boolean;
   submitExecuting: boolean;
   loadError: boolean;
+  updateFilter: boolean;
 }

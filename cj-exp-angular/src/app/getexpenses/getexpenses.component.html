@@ -2,7 +2,7 @@
 
 <mat-progress-spinner *ngIf="formStatus.loading" class="button-spinner" color="accent" mode='indeterminate' diameter="20"></mat-progress-spinner>
 
-<form [formGroup]="getExpensesFilterForm" (ngSubmit)="onSubmit()" *ngIf="!formStatus.loading && !formStatus.loadError">
+<form [formGroup]="getExpensesFilterForm" (ngSubmit)="onSubmit()" *ngIf="!formStatus.loading && !formStatus.loadError && (!formStatus.submitted || formStatus.updateFilter)" >
 
   <mat-form-field>
     <mat-label>From Date</mat-label>
@@ -33,7 +33,12 @@
 
 </form>
 
-<table class="data-table" *ngIf="expenses">
+<div *ngIf="formStatus.submitted && !formStatus.updateFilter">
+  <button mat-raised-button color="primary" (click)="updateFilter()">Change Filter</button>
+</div>
+
+<br />
+<table cellspacing="0" cellpadding="0" class="data-table" *ngIf="expenses">
   <thead>
     <tr>
       <th>Expense Date</th>

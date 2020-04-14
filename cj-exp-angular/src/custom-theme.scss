@@ -17,6 +17,7 @@ $cj-exp-angular-accent: mat-palette($mat-blue, A200, A100, A400);
 $font-color-default: #ffffff;
 $snack-success-background: rgb(0, 185, 9);
 $snack-error-background: rgb(204, 14, 52);
+$grid-alternating-background: #383838;
 
 // The warn palette is optional (defaults to red).
 $cj-exp-angular-warn: mat-palette($mat-red);
@@ -58,3 +59,16 @@ $cj-exp-angular-theme: mat-dark-theme($cj-exp-angular-primary, $cj-exp-angular-a
 }
 
 @include snack-theme($cj-exp-angular-theme);
+
+@mixin data-grid-theme($theme) {
+    .data-table tbody tr:nth-child(even) {
+        background-color: $grid-alternating-background;
+    }
+
+    .data-table thead tr th {
+        border-bottom: 1px solid $grid-alternating-background;
+    }
+    
+}
+
+@include data-grid-theme($cj-exp-angular-theme);

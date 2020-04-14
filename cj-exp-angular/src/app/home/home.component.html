@@ -5,7 +5,11 @@
 
 <div *ngIf="!formStatus.loading && !formStatus.loadError">
     <div *ngIf="hasExpensesToday">
-        You have spent <span>{{todaysExpensesTotal}}</span> today
+        You have spent {{todaysExpensesTotal}} today
+        <a mat-raised-button color="accent" routerLink="/getexpenses"
+            [state]="{ showToday: true }">
+            View Today's Expenses
+        </a>
     </div>
     <br />
     <div class="add-expense-button">
