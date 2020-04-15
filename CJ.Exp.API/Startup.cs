@@ -27,130 +27,122 @@ using System.Threading.Tasks;
 
 namespace CJ.Exp.API
 {
-  public class Startup
-  {
-    private readonly IWebHostEnvironment _env;
-
-    public Startup(IConfiguration configuration, IWebHostEnvironment env)
+    public class Startup
     {
-      _env = env;
-      Configuration = configuration;
-    }
+        private readonly IWebHostEnvironment _env;
 
-    public IConfiguration Configuration { get; }
-    private readonly string _corsPolicyKey = "corsPolicy";
-
-    // This method gets called by the runtime. Use this method to add services to the container.
-    public void ConfigureServices(IServiceCollection services)
-    {
-      services.AddCors(options =>
-      {
-        options.AddPolicy(_corsPolicyKey,
-          builder =>
-          {
-            builder.WithOrigins("http://localhost:4200");
-            builder.AllowAnyMethod();
-            builder.AllowCredentials();
-            builder.AllowAnyHeader();
-          });
-      });
-
-      // ===== Add Jwt Authentication ========
-      JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear(); // => remove default claims
-
-      services
-        .AddAuthentication(options =>
+        public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
-          options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-          options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-        })
-        .AddJwtBearer(cfg =>
-        {
-          cfg.RequireHttpsMetadata = false;
-          cfg.SaveToken = true;
-          cfg.TokenValidationParameters = new TokenValidationParameters
-          {
-            ValidIssuer = Configuration["JwtIssuer"],
-            ValidAudience = Configuration["JwtIssuer"],
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JwtKey"])),
-            ClockSkew = TimeSpan.Zero // remove delay of token when expire
-          };
+            _env = env;
+            Configuration = configuration;
+        }
 
-          cfg.Events = new JwtBearerEvents
-          {
-            OnAuthenticationFailed = (context) =>
+        public IConfiguration Configuration { get; }
+        private readonly string _corsPolicyKey = "corsPolicy";
+
+        // This method gets called by the runtime. Use this method to add services to the container.
+        public void ConfigureServices(IServiceCollection services)
+        {
+            services.AddCors(options =>
             {
-              if (context.Exception.GetType() == typeof(SecurityTokenExpiredException))
+                options.AddPolicy(_corsPolicyKey,
+                builder =>
+                {
+                    string[] allowOrigins = Configuration.GetSection("AllowOrigins").Get<string[]>();
+                    builder.WithOrigins(allowOrigins);
+                    builder.AllowAnyMethod();
+                    builder.AllowCredentials();
+                    builder.AllowAnyHeader();
+                });
+            });
+
+            // ===== Add Jwt Authentication ========
+            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear(); // => remove default claims
+
+            services
+              .AddAuthentication(options =>
               {
-                context.Response.Headers.Add("Token-Expired", "true");
-              }
-              return Task.CompletedTask;
-            }
-          };
-        });
+                  options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                  options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+              })
+              .AddJwtBearer(cfg =>
+              {
+                  cfg.RequireHttpsMetadata = false;
+                  cfg.SaveToken = true;
+                  cfg.TokenValidationParameters = new TokenValidationParameters
+                  {
+                      ValidIssuer = Configuration["JwtIssuer"],
+                      ValidAudience = Configuration["JwtIssuer"],
+                      IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JwtKey"])),
+                      ClockSkew = TimeSpan.Zero // remove delay of token when expire
+                  };
 
-      IApplicationSettings appSettings = new ApplicationSettings();
+                  cfg.Events = new JwtBearerEvents
+                  {
+                      OnAuthenticationFailed = (context) =>
+                      {
+                          if (context.Exception.GetType() == typeof(SecurityTokenExpiredException))
+                          {
+                              context.Response.Headers.Add("Token-Expired", "true");
+                          }
+                          return Task.CompletedTask;
+                      }                        
+                  };
+              });
 
-      Configuration.Bind(appSettings);
+            IApplicationSettings appSettings = new ApplicationSettings();
 
-      services.AddSingleton(appSettings);
-      services.AddSingleton<IAppMongoClient, AppMongoClient>();
+            Configuration.Bind(appSettings);
 
-      ILanguage languageProvider = new TextCache();
-      languageProvider.Initialise(_env.IsDevelopment());
+            services.AddSingleton(appSettings);
+            services.AddSingleton<IAppMongoClient, AppMongoClient>();
 
-      services.AddSingleton(languageProvider);
+            ILanguage languageProvider = new TextCache();
+            languageProvider.Initialise(_env.IsDevelopment());
 
-      services.AddIdentity<ApplicationUserMongo, ApplicationRoleMongo>()
-        .AddMongoDbStores<ApplicationUserMongo, ApplicationRoleMongo, Guid>
-        (
-          appSettings.ConnectionString, appSettings.DatabaseName
-        )
-        .AddDefaultTokenProviders();
+            services.AddSingleton(languageProvider);
 
-      // Add application services.
-      services.AddScoped<INotification, EmailSender>();
+            services.AddIdentity<ApplicationUserMongo, ApplicationRoleMongo>()
+              .AddMongoDbStores<ApplicationUserMongo, ApplicationRoleMongo, Guid>
+              (
+                appSettings.ConnectionString, appSettings.DatabaseName
+              )
+              .AddDefaultTokenProviders();
 
-      services.AddScoped<IExpensesService, ExpensesService>();
-      services.AddScoped<IUsersData, UsersDataMongo>();
+            // Add application services.
+            services.AddScoped<INotification, EmailSender>();
 
-      services.AddScoped<IAuthService, AuthService<ApplicationUserMongo, ApplicationRoleMongo>>();
+            services.AddScoped<IExpensesService, ExpensesService>();
+            services.AddScoped<IUsersData, UsersDataMongo>();
 
-      services.AddScoped<IExpensesData, ExpensesDataMongo>();
+            services.AddScoped<IAuthService, AuthService<ApplicationUserMongo, ApplicationRoleMongo>>();
 
-      services.AddScoped<ISessionInfo, SessionInfo>();
+            services.AddScoped<IExpensesData, ExpensesDataMongo>();
 
-      services.AddScoped<IAuthTokenService, AuthTokenService>();
+            services.AddScoped<ISessionInfo, SessionInfo>();
 
-      services.AddSingleton<IAuthTokenCache, AuthTokenCache>();
+            services.AddScoped<IAuthTokenService, AuthTokenService>();
 
-      services.AddScoped<IAuthTokensData, AuthTokenDataMongo>();
+            services.AddSingleton<IAuthTokenCache, AuthTokenCache>();
 
-      services.AddAutoMapper();
+            services.AddScoped<IAuthTokensData, AuthTokenDataMongo>();
 
-      services.AddCors();
+            services.AddAutoMapper();
 
-      services.AddMvc(opt => opt.EnableEndpointRouting = false);
+            services.AddCors();
+
+            services.AddMvc(opt => opt.EnableEndpointRouting = false);
+        }
+
+        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        {
+            app.UseStaticFiles();
+            app.UseMiddleware<ExceptionMiddleware>();
+            app.UseCors(_corsPolicyKey);
+            app.UseMiddleware<AuthMiddleware>();
+            app.UseStatusCodePages();
+            app.UseMvc();
+        }
     }
-
-    // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-    {
-      app.UseStaticFiles();
-      app.UseMiddleware<ExceptionMiddleware>();
-      app.UseCors(_corsPolicyKey);
-      app.UseMiddleware<AuthMiddleware>();
-      app.UseStatusCodePages();
-
-      //app.UseCors(builder => builder
-      //  //.AllowAnyOrigin()
-      //  .AllowAnyMethod()
-      //  .AllowAnyHeader()
-      //  .AllowCredentials()
-      //  );
-
-      app.UseMvc();
-      
-    }
-  }
 }
